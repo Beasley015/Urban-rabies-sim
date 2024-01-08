@@ -7,10 +7,11 @@
 # Load packages ---------------------
 library(tidyverse)
 library(viridis)
+library(quantreg)
 
 # Load data --------------------
 setwd("c:/users/beasl/documents/urban-rabies-sim")
-sero_outs <- read.csv("outputs.csv")
+sero_outs <- read.csv("outputs_prelim.csv")
 
 # Clean data -----------------------------
 # Add seroprevalence column
@@ -38,24 +39,27 @@ ggplot(data = sero_time, aes(x = sero, y = nweek))+
 ggsave(filename = "outbreakduration.jpeg", width = 5, height = 4,
        units = "in", dpi = 600)
 
-test <- aov(data=sero_time, nweek~sero)
-TukeyHSD(test)
+summary(lm(data = sero_time, formula = nweek~as.numeric(sero)))
 
-# % of reps with outbreaks > 100 weeks
-long_outbreaks <- sero_time %>%
-  filter(nweek >= 100) %>%
-  group_by(sero) %>%
-  summarise(count = n())
+summary(rq(data = sero_time, formula = nweek~as.numeric(sero),
+           tau = c(0.1, 0.25, 0.5, 0.75, 0.9)))
 
-ggplot(data = long_outbreaks, aes(x = sero, y = count))+
-  geom_col(fill = "lightgray", color = "black")+
-  labs(x = "Seroprevalence", y = "Outbreaks > 100 Weeks")+
+rq.frame <- tibble(slopes = c(-2.25, -2.667, -5.167, -7, -16.667),
+                      inters = c(80.25, 88, 116.5, 155, 252.333),
+                      quants = c("10%", "25%", "50%", "75%", "90%"))
+
+ggplot(data = sero_time, aes(x = as.numeric(sero), y = nweek))+
+  geom_point()+
+  geom_abline(data = rq.frame, aes(intercept=inters, slope = slopes,
+                                   color = quants))+
+  labs(x = "Seroprevalence", y = "Outbreak Duration (Weeks)")+
+  scale_color_viridis_d(end = 0.9, name = "Quantile")+
   theme_bw()+
   theme(panel.grid = element_blank())
 
-ggsave(filename = "longoutbreaks.jpeg", width = 5, height = 4,
-       units = 'in', dpi = 600)
-
+ggsave(filename = "quantileoubreakduration.jpeg", width = 5, 
+       height = 4, units = "in", dpi = 600)
+  
 # max weekly cases
 infecs <- sero_outs %>%
   mutate(sero = factor(sero)) %>%
