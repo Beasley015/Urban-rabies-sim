@@ -2,10 +2,8 @@ using DataFrames
 using StatsBase
 using Distributions
 using Random
-using NeutralLandscapes # There's an incompatability compiling this with another package, but the ones here aren't it
+using NeutralLandscapes 
 using PkgCite
-using GeoData
-using Counters
 using ProgressMeter
 using CSV
 
@@ -34,7 +32,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
     landscape = initialize_land(land_size=land_size, barrier_strength = barrier, habitats = hab_frame)
 
     # Calculate proportion of landscape filled by barrier
-    ##############################
+    barrier_prop = length(landscape[landscape .== 9.0])/(land_size^2)
 
     # Populate landscape
     lil_guys = populate_landscape(seros=seroprev)
