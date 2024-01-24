@@ -4,7 +4,6 @@ using Distributions
 using Random
 using NeutralLandscapes 
 using PkgCite
-using ProgressMeter
 using CSV
 
 # Land proportions calculated from Burlington raster data
@@ -15,6 +14,9 @@ land_proportions =  [0.29950784172189776, 0.22446136010674367, 0.252374390270577
 hab_names = ["forest", "developed", "pasture", "wetlands", "herbaceous", "cultivated", "barren", "shrub", "barrier"]
 hab_coefs = [0.12, -0.5, -0.03, 0.57, 0, -0.5, 0, 0.4, 0]
 hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:10], coef = hab_coefs)
+
+# Load in functions
+include("Functions.jl")
 
 # Load in parameters
 ########################
@@ -103,17 +105,14 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]],
 
 reps = 2
 
-p = Progress(length(reps))
-
-for i in 1:length(seros) # Need to create a separate frame for each thread, then combine at the end
-    for rep in 1:reps
-        the_mega_loop(years=10, seros=seros, rep=rep, immigration_disease = 0.1, immigration_type="wave", barrier = 2, 
-                        outputs = outputs)
-    end
-    next!(p)
+for rep in 1:reps
+    the_mega_loop(years=1, seros=0.2, rep=rep, immigration_disease = 0.1, immigration_type="wave", barrier = 2, 
+                    outputs = outputs)
+    println("rep =", rep)
 end
 
 # Create filename
+########
 
 # Save results
-#CSV.write("outputs_full.csv", output)
+CSV.write("outputs_test.csv", outputs)
