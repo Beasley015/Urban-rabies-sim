@@ -22,7 +22,7 @@ include("Functions.jl")
 ########################
 
 # Simulation function
-function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, barrier, outputs)
+function the_mega_loop(;years, seros, rep, immigration_type, immigration_seros, immigration_disease, barrier, outputs)
     # Define weeks per year
     time_steps = 52
 
@@ -106,7 +106,7 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]],
 reps = 2
 
 for rep in 1:reps
-    the_mega_loop(years=1, seros=0.2, rep=rep, immigration_disease = 0.1, immigration_type="wave", barrier = 2, 
+    the_mega_loop(years=1, seros=0.2, rep=rep, immigration_seros=0.1, immigration_disease = 0.1, immigration_type="wave", barrier = 2, 
                     outputs = outputs)
     println("rep =", rep)
 end
