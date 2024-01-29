@@ -19,7 +19,8 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:10], coef = ha
 include("Functions.jl")
 
 # Load in parameters
-########################
+job=1
+Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
 function the_mega_loop(;years, seros, rep, immigration_type, immigration_seros, immigration_disease, barrier, outputs)
@@ -103,7 +104,7 @@ end
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
                     ["rep", "year", "week","sero","type","rate","barrier_val","barrier_prop","total_pop","n_infected","n_symptomatic"])
 
-reps = 2
+reps = 1
 
 for rep in 1:reps
     the_mega_loop(years=1, seros=0.2, rep=rep, immigration_seros=0.1, immigration_disease = 0.1, immigration_type="wave", barrier = 2, 
@@ -112,7 +113,8 @@ for rep in 1:reps
 end
 
 # Create filename
-########
+filename = string("sero",string(Params[!,1][1]),"im_type",string(Params[!,2][1]),"bar",string(Params[!,3][1]),"im_ser",
+                    string(Params[!,4][1]),"im_dis",string(Params[!,5][1]),".csv")
 
 # Save results
-CSV.write("outputs_test.csv", outputs)
+CSV.write(filename, outputs)
