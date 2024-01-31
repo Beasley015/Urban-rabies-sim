@@ -19,7 +19,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:10], coef = ha
 include("Functions.jl")
 
 # Load in parameters
-job=1
+job= parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -104,12 +104,12 @@ end
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
                     ["rep", "year", "week","sero","type","rate","barrier_val","barrier_prop","total_pop","n_infected","n_symptomatic"])
 
-reps = 1
+reps = 50
 
 for rep in 1:reps
-    the_mega_loop(years=1, seros=0.2, rep=rep, immigration_seros=0.1, immigration_disease = 0.1, immigration_type="wave", barrier = 2, 
-                    outputs = outputs)
-    println("rep =", rep)
+    the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,4][1], immigration_disease = Params[!,5][1], 
+                    immigration_type=Params[!,2][1], barrier = Params[!,3][1], outputs = outputs)
+    println("rep = $rep")
 end
 
 # Create filename
