@@ -18,10 +18,14 @@ CSV.write("params.csv", param_frame)
 # Write the SLURM file 
 job_file = """
 #! /bin/bash
-#SBATCH --array=1-5
-#SBATCH --time=01:00:00
+#SBATCH --array=1-1250
+#SBATCH --time=02:00:00
 #SBATCH --cpus-per-task=1 
+#SBATCH --account=ctb-tpoisot
 #SBATCH --output=$(joinpath("slurm", "%x-%a.out")) 
+#SBATCH --mem-per-cpu=15G
+#SBATCH --mail-user=emily.beasley@umontreal.ca
+#SBATCH --mail-type=ALL
 
 module load StdEnv/2020 julia/1.9.1 
 julia --project RunTheSim.jl 

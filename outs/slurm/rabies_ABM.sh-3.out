@@ -1,0 +1,2 @@
+/localscratch/spool/slurmd/job25076237/slurm_script: line 12: 1805896 Killed                  julia --project RunTheSim.jl
+slurmstepd: error: Detected 1 oom_kill event in StepId=25076237.batch. Some of the step tasks have been OOM Killed.
