@@ -109,7 +109,6 @@ reps = 50
 for rep in 1:reps
     the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,4][1], immigration_disease = Params[!,5][1], 
                     immigration_type=Params[!,2][1], barrier = Params[!,3][1], outputs = outputs)
-    println("rep = $rep")
 end
 
 # Create filename
