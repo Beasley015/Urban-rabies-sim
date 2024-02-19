@@ -10,7 +10,6 @@ library(viridis)
 library(quantreg)
 
 # Load data --------------------
-setwd("c:/users/beasl/documents/urban-rabies-sim")
 sero_outs <- read.csv("outputs_prelim.csv")
 sero_extended <- read.csv("outputs_extended.csv")
 
@@ -72,20 +71,24 @@ ggplot(data = sero_time, aes(x = as.numeric(as.character(sero)),
 # max weekly cases
 infecs <- sero_outs %>%
   # mutate(sero = factor(sero)) %>%
+  filter(year > 1) %>%
   group_by(rep, sero) %>%
   filter(n_infected != 0 | n_symptomatic != 0) %>%
   group_by(sero, rep) %>%
-  summarise(max = max(n_infected))
+  summarise(mean = mean(n_infected))
 
-summary(lm(max~sero, data = infecs))
+summary(lm(mean~sero, data = infecs))
 
-ggplot(data = infecs, aes(x = factor(sero), y = max))+
+infecs_smol <- infecs %>%
+  filter(!(sero %in% c(0.05, 0.15, 0.55, 0.65, 0.75)))
+
+ggplot(data = infecs_smol, aes(x = factor(sero), y = mean))+
   geom_boxplot(fill = "lightgray")+
-  labs(x = "Seroprevalence", y = "Maximum Weekly Infections")+
-  theme_bw()+
+  labs(x = "Seroprevalence", y = "Mean Weekly Infections")+
+  theme_bw(base_size=14)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "maxcases.jpeg", width = 5, height = 4, 
+# ggsave(filename = "meancases.jpeg", width = 5, height = 4,
 #        units = 'in', dpi = 600)
 
 # mean cases per week

@@ -59,8 +59,8 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
                 barrier = DataFrame(x = Int.(round.(x)), y = Int.(round.(y)))
                 barrier = unique(barrier)
             else
-                x = repeat(startcoords[1], land_size)
-                y = collect(range(1, land_size, 1))
+                x = fill(startcoords[1], land_size)
+                y = collect(range(start=1, stop=land_size, step=1))
 
                 barrier = DataFrame(x = x, y = y)
             end
