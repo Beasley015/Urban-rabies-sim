@@ -116,7 +116,15 @@ bar_set <- first_elim_full %>%
   filter(barrier_val == 2)
 
 ggplot(data = bar_set, aes(x=factor(sero), y=nweek, fill=type))+
-  geom_boxplot()
+  geom_boxplot()+
+  labs(x = "Seroprevalence", y = "Weeks to Elimination")+
+  scale_fill_manual(values = c("limegreen", "darkgray"),
+                    name = "Immigration Type")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename="imm_type_same.jpg", width = 6, height = 4, 
+#        units = "in", dpi = 600)
 
 #OVERALL: MAIN DRIVER OF TIME TO FIRST ELIMINATION IS SEROPREVALENCE
 
