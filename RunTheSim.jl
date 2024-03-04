@@ -8,22 +8,22 @@ using CSV
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.29950784172189776, 0.22446136010674367, 0.2523743902705777, 0.1341207865782969, 0.06295251219458844, 
-                        0.003442920576590765, 0.018693265087385436, 0.0023557976245160445, 0.0020911258394032853, 0.0]
+                        0.003442920576590765, 0.018693265087385436, 0.0023557976245160445, 0.0020911258394032853, 0.0, 0.0]
 
 # Data frame of habitat types & movement coefficients
-hab_names = ["forest", "developed", "pasture", "wetlands", "herbaceous", "cultivated", "barren", "shrub", "barrier"]
-hab_coefs = [0.12, -0.5, -0.03, 0.57, 0, -0.5, 0, 0.4, 0]
-hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:10], coef = hab_coefs)
+hab_names = ["forest", "developed", "pasture", "wetlands", "herbaceous", "cultivated", "barren", "shrub", "barrier", "buffer"]
+hab_coefs = [0.12, -0.5, -0.03, 0.57, 0, -0.5, 0, 0.4, 0, -0.5]
+hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:11], coef = hab_coefs)
 
 # Load in functions
 include("Functions.jl")
 
 # Load in parameters
-job= parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job=1 #parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, seros, rep, immigration_type, immigration_seros, immigration_disease, barrier, outputs)
+function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, barrier, outputs)
     # Define weeks per year
     time_steps = 52
 
@@ -33,9 +33,6 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_seros, 
     # create landscape
     land_size = 60
     landscape = initialize_land(land_size=land_size, barrier_strength = barrier, habitats = hab_frame)
-
-    # Calculate proportion of landscape filled by barrier
-    barrier_prop = length(landscape[landscape .== 9.0])/(land_size^2)
 
     # Populate landscape
     lil_guys = populate_landscape(seros=seroprev)
@@ -52,18 +49,18 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_seros, 
             # Lots of death
             dont_fear_the_reaper(lil_guys, home_coords, 2)
 
-            # Immigration can be a propagule rain, or a wave at a specific time step
+            # Immigration can be a propagule rain (steady rate) or a wave (bursts of high immigration)
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease)
             elseif immigration_type == "wave"
-                if step == 30
-                    immigration(dat=lil_guys,home=home_coords,land_size=land_size,immigration_rate=200, disease_rate = immigration_disease,
+                if year in vcat(2:5, 8:10) && 20 < step < 35
+                    immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
                                 type="wave")
                 end
             end
 
-            # Juveniles reaching independence (default 30 weeks) disperse
-            if size(filter(:age => ==(30), lil_guys),1) > 0 # can change to desired dispersal age
+            # Juveniles reaching independence (default 40 weeks) disperse
+            if size(filter(:age => ==(40), lil_guys),1) > 0 # can change to desired dispersal age
                 juvies_leave(lil_guys, home_coords, land_size)
             end
 
@@ -91,7 +88,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_seros, 
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
 
             # Calculate summary statistics and append to data frame
-            row = [rep, year, step, seros, immigration_type, immigration_disease, barrier, barrier_prop, size(buffer,1), sum(buffer.incubation), 
+            row = [rep, year, step, seros, immigration_type, immigration_disease, barrier, size(buffer,1), sum(buffer.incubation), 
                     sum(buffer.infectious)]
             push!(outputs, row)
             
@@ -101,10 +98,10 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","type","rate","barrier_val","barrier_prop","total_pop","n_infected","n_symptomatic"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[]], 
+                    ["rep", "year", "week","sero","type","rate","barrier", "total_pop", "n_infected", "n_symptomatic"])
 
-reps = 50
+reps = 5
 
 for rep in 1:reps
     the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,4][1], immigration_disease = Params[!,5][1], 
