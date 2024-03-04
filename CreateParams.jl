@@ -18,8 +18,8 @@ CSV.write("params.csv", param_frame)
 # Write the SLURM file 
 job_file = """
 #! /bin/bash
-#SBATCH --array=1-1250
-#SBATCH --time=02:00:00
+#SBATCH --array=1-5
+#SBATCH --time=02:30:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot
 #SBATCH --output=$(joinpath("slurm", "%x-%a.out")) 
