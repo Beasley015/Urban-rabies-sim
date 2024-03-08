@@ -49,17 +49,29 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
         
         # Create barriers by calculating slope and intercept from the coords
         function add_barriers(startcoords, endcoords)
-            slope = (startcoords[2]-endcoords[2])/(startcoords[1]-endcoords[1])
+            # Calculate slope of barrier line
+            if (startcoords[1] - endcoords[1]) == 0
+                slope = "undefined"
+            else
+                slope = (startcoords[2]-endcoords[2])/(startcoords[1]-endcoords[1])
+            end
 
-            intercept = startcoords[2] - slope*startcoords[1]
+            # Intercept of barrier
+            if slope != "undefined"
+                intercept = startcoords[2] - slope*startcoords[1]
+                # Get the cells the barrier falls on
+                x = collect(range(start=minimum([startcoords[1], endcoords[1]]), stop=maximum([startcoords[1],endcoords[1]]), step=0.1))
+                y = (slope .* x) .+ intercept
+                barrier = DataFrame(x = Int.(round.(x)), y = Int.(round.(y)))
+                barrier = unique(barrier)
+            else
+                x = fill(startcoords[1], land_size)
+                y = collect(range(1, land_size, 1))
 
-            x = collect(range(start=minimum([startcoords[1], endcoords[1]]), stop=maximum([startcoords[1],endcoords[1]]), step=0.1))
-            y = (slope .* x) .+ intercept
+                barrier = DataFrame(x = x, y = y)
+            end
 
-            barrier = DataFrame(x = trunc.(Int,round.(x)), y = trunc.(Int, round.(y)))
-            barrier = unique(barrier)
-
-            return barrier
+            return(barrier)
         end
 
         # Build the barrier

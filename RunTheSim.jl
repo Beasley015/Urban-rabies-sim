@@ -89,7 +89,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
 
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_type, immigration_disease, barrier, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious)]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1)]
             push!(outputs, row)
             
         end
@@ -98,8 +98,8 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[]], 
-                    ["rep", "year", "week","sero","type","rate","barrier", "total_pop", "n_infected", "n_symptomatic"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
+                    ["rep", "year", "week","sero","type","rate","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
 
 reps = 5
 
