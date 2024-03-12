@@ -101,7 +101,7 @@ end
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
                     ["rep", "year", "week","sero","type","rate","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
 
-reps = 5
+reps = 50
 
 for rep in 1:reps
     the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,4][1], immigration_disease = Params[!,5][1], 

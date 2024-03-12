@@ -1,5 +1,5 @@
 #! /bin/bash
-#SBATCH --array=1001-1250
+#SBATCH --array=1001-1125
 #SBATCH --time=02:30:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot

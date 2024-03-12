@@ -97,15 +97,16 @@ bar_interac <- first_elim_full %>%
   group_by(sero, barrier) %>%
   summarise(center = median(nweek))
 
-ggplot(data = bar_interac, aes(x = sero, y = center,
-                                     color = factor(barrier)))+
-  geom_line(size = 1.5)+
-  scale_color_viridis_d(end=0.9, name = "Barrier Strength")+
-  labs(x = "Seroprevalence", y = "Median Weeks to Elimination")+
+ggplot(data = bar_interac, aes(x = factor(sero), y = barrier,
+                               fill=center))+
+  geom_tile()+
+  scale_fill_viridis(name = "Weeks to Elimination",
+                       option="B")+
+  labs(x = "Seroprevalence", y = "Barrier Strength")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "./full_Figs/sero_barrier_interac.jpeg", 
+# ggsave(filename = "./full_Figs/sero_barrier_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
 # interaction: type
@@ -119,18 +120,18 @@ ggplot(data = type_interac, aes(x = sero, y = center,
 
 # interaction: proportion diseased immigrants
 rate_interac <- first_elim_full %>%
-  mutate(rate = factor(rate)) %>%
+  mutate(rate = factor(rate), sero=factor(sero)) %>%
   group_by(sero, rate) %>%
   summarise(center = median(nweek))
 
-ggplot(data = rate_interac, aes(x = sero, y = center, 
-                                color = rate))+
-  geom_line(size=1.5)+
-  scale_color_viridis_d(end=0.9, name = "Immigrant infection rate")+
-  labs(x ="Seroprevalence", y="Median Weeks to Elimination")+
+ggplot(data = rate_interac, aes(x = sero, y = rate, 
+                                fill = center))+
+  geom_tile()+
+  scale_fill_viridis(name = "Weeks to Elimination", option="B")+
+  labs(x ="Seroprevalence", y="Immigrant Infection Rate")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
-
+# 
 # ggsave(filename = "./full_Figs/sero_iminfec_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
@@ -139,11 +140,11 @@ vax_interac <- first_elim_full %>%
   group_by(sero, im_sero) %>%
   summarise(center = median(nweek))
 
-ggplot(data = vax_interac, aes(x = sero, y = center, 
-                                color = im_sero))+
-  geom_line(size=1.5)+
-  scale_color_viridis_d(end=0.9, name="Immigrant Seroprevalence")+
-  labs(x = "Seroprevalence", y="Median Weeks to Elimination")+
+ggplot(data = vax_interac, aes(x = factor(sero), y = im_sero, 
+                                fill=center))+
+  geom_tile()+
+  scale_fill_viridis(name="Weeks to Elimination", option="B")+
+  labs(x = "Seroprevalence", y="Immigrant Seroprevalence")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
 
@@ -202,15 +203,15 @@ time_rabies_free <- rabies_free()
 # Start with interactions this time
 # Barrier:
 bar_inter_rfree <- time_rabies_free %>%
-  mutate(barrier=factor(barrier))%>%
+  mutate(barrier=factor(barrier), sero=factor(sero))%>%
   group_by(sero,barrier)%>%
   summarise(med = median(n_rabies_free))
 
-ggplot(data=bar_inter_rfree, aes(x=sero,y=med,
-                                 color=barrier))+
-  geom_line(size=1.5)+
-  scale_color_viridis_d(end=0.9, name="Barrier Strength")+
-  labs(x="Seroprevalence", y="Median Rabies-Free Weeks")+
+ggplot(data=bar_inter_rfree, aes(x=sero,y=barrier,
+                                 fill=med))+
+  geom_tile()+
+  scale_fill_viridis(end=0.9, name="Weeks Rabies-Free")+
+  labs(x="Seroprevalence", y="Barrier Strength")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -222,7 +223,7 @@ type_inter_rfree <- time_rabies_free %>%
   group_by(sero,type)%>%
   summarise(med = median(n_rabies_free))
 
-ggplot(data=type_inter_rfree, aes(x=sero,y=med,
+ggplot(data=type_inter_rfree, aes(x=factor(sero),y=med,
                                  color=type))+
   geom_line(size=1.5)+
   scale_color_viridis_d(end=0.9, name="Immigration Type")+
@@ -236,11 +237,11 @@ iminfec_inter_rfree <- time_rabies_free %>%
   group_by(sero,rate)%>%
   summarise(med = median(n_rabies_free))
 
-ggplot(data=iminfec_inter_rfree, aes(x=sero,y=med,
-                                 color=rate))+
-  geom_line(size=1.5)+
-  scale_color_viridis_d(end=0.9, name="% Infected Immigrants")+
-  labs(x="Seroprevalence", y="Median Rabies-Free Weeks")+
+ggplot(data=iminfec_inter_rfree, aes(x=factor(sero),y=rate,
+                                 fill=med))+
+  geom_tile()+
+  scale_fill_viridis(name="Weeks Rabies-Free", option="D")+
+  labs(x="Seroprevalence", y="% Infected Immigrants")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -251,11 +252,11 @@ imsero_inter_rfree <- time_rabies_free %>%
   group_by(sero,im_sero)%>%
   summarise(med = median(n_rabies_free))
 
-ggplot(data=imsero_inter_rfree, aes(x=sero,y=med,
-                                 color=im_sero))+
-  geom_line(size=1.5)+
-  scale_color_viridis_d(end=0.9, name="Immigrant Seroprevalence")+
-  labs(x="Seroprevalence", y="Median Rabies-Free Weeks")+
+ggplot(data=imsero_inter_rfree, aes(x=factor(sero),y=im_sero,
+                                 fill=med))+
+  geom_tile()+
+  scale_fill_viridis(name="Weeks Rabies-Free", option="D")+
+  labs(x="Seroprevalence", y="Immigrant Seroprevalence")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -307,7 +308,7 @@ reinfection <- function(){
       mutate(im_sero = imm_sero) %>%
       group_by(rep, sero, type, rate, im_sero, barrier) %>%
       # rate=disease rate of immigrants
-      filter(n_infected == 0 & n_symptomatic == 0) %>%
+      filter(n_infected == 0 & n_symptomatic == 0)
       mutate(nweek = ((year-1)*52) + week) %>%
       filter(nweek == min(nweek))
     
@@ -323,7 +324,7 @@ reinfection <- function(){
       filter(nweek > elim) %>%
       filter(n_infected > 0 | n_symptomatic > 0) %>%
       summarise(reinf_length = n()) %>%
-      filter(reinf_length > 1) %>%
+      filter(reinf_length > 0) %>%
       ungroup() %>%
       mutate(reinf_prob = length(unique(rep))/50)
     
@@ -340,10 +341,17 @@ reinfection <- function(){
 
 reinf_outs <- reinfection()
 
-# RESUME HERE ----------------------
 # Figures: reinfection prob & length -------------------
-# quick look
-summary(aov(reinf_prob~factor(sero)+factor(rate)+im_sero+factor(barrier)+type,data=reinf_outs))
+
+ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob))+
+  geom_boxplot()
+
+# ggsave(filename = "./full_Figs/nweekfree_barrier_interac.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
+
+
+
 
 ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob))+
   geom_boxplot(fill="lightgray")+
