@@ -88,7 +88,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
 
             # Calculate summary statistics and append to data frame
-            row = [rep, year, step, seros, immigration_type, immigration_disease, barrier, size(buffer,1), sum(buffer.incubation), 
+            row = [rep, year, step, seros, immigration_disease, immigration_seros, barrier, size(buffer,1), sum(buffer.incubation), 
                     sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1)]
             push!(outputs, row)
             
@@ -99,18 +99,18 @@ end
 # Run it!
 # Create empty data frame
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","type","rate","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
+                    ["rep", "year", "week","sero","rate","im_sero","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
 
 reps = 50
 
 for rep in 1:reps
-    the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,4][1], immigration_disease = Params[!,5][1], 
-                    immigration_type=Params[!,2][1], barrier = Params[!,3][1], outputs = outputs)
+    the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,3][1], immigration_disease = Params[!,4][1], 
+                    immigration_type="propagule", barrier = Params[!,2][1], outputs = outputs)
 end
 
 # Create filename
-filename = string("sero",string(Params[!,1][1]),"im_type",string(Params[!,2][1]),"bar",string(Params[!,3][1]),"im_ser",
-                    string(Params[!,4][1]),"im_dis",string(Params[!,5][1]),".csv")
+filename = string("sero",string(Params[!,1][1]),"bar",string(Params[!,2][1]),"im_ser",
+                    string(Params[!,3][1]),"im_dis",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)
