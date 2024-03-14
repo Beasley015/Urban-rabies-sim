@@ -28,14 +28,9 @@ first_elim <- function(){
     # Read 'em in
     testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],sep = ""))
 
-    # add seroprevalence of immigrants because I forgot
-    imm_sero <- str_extract(filenames[i], "(im_ser)(\\d*\\.\\d*)", 
-                        group = 2)
-
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
-      mutate(im_sero = imm_sero) %>%
-      group_by(rep, sero, type, rate, im_sero, barrier) %>%
+      group_by(rep, sero, rate, im_sero, barrier) %>%
       # rate=disease rate of immigrants
       filter(n_infected == 0 & n_symptomatic == 0) %>%
       mutate(nweek = ((year-1)*52) + week) %>%
@@ -54,27 +49,14 @@ first_elim <- function(){
 
 first_elim_full <- first_elim()
 
-# Time to elimination: prelim figs ------------------
-# gross figs to start
-ggplot(data=first_elim_full, aes(x=actual_sero, y=nweek,
-                                 color=factor(rate)))+
-  geom_point()
-
-ggplot(data = first_elim_full, aes(x=factor(sero), y=nweek,
-                                   fill=type))+
-  geom_boxplot()
-
-ggplot(data = first_elim_full, aes(x=factor(sero), y=nweek,
-                                   fill=factor(barrier)))+
-  geom_boxplot()
-
+# Time to elimination: figs ------------------
 # is the effect of seroprevalence similar to prelim model?
-# filter out 1 barrier value & 1 immigration type, then plot
-elim_sansbar_type <- first_elim_full %>%
-  filter(barrier == 3 & type == "propagule") %>%
+# filter out 1 barrier value then plot
+elim_sansbar <- first_elim_full %>%
+  filter(barrier == 0) %>%
   mutate(sero = factor(sero))
 
-sero_nweek <- aov(elim_sansbar_type, formula=nweek~sero)
+sero_nweek <- aov(elim_sansbar, formula=nweek~sero)
 sero_nweek_HSD <- HSD.test(sero_nweek, 
                            trt = "sero")$groups %>%
   mutate(sero = rownames(.)) %>%
@@ -85,12 +67,12 @@ elim_sansbar_type <- elim_sansbar_type %>%
   
 ggplot(data = elim_sansbar_type, aes(x=factor(sero),y=nweek))+
   geom_boxplot(fill='lightgray')+
-  geom_text(aes(y = 500, label = groups))+
+  geom_text(aes(y = 525, label = groups))+
   labs(x = "Seroprevalence", y = "Time to Elimination (Weeks)")+
   theme_bw()+
   theme(panel.grid=element_blank())
 
-# ggsave(filename = "./full_Figs/sero_elim.jpeg", width=6,
+# ggsave(filename = "./full_Figs/sero_elim_bar0.jpeg", width=6,
 #        height=4, dpi=600, units="in")
 
 bar_interac <- first_elim_full %>%
@@ -109,23 +91,6 @@ ggplot(data = bar_interac, aes(x = factor(sero), y = barrier,
 # ggsave(filename = "./full_Figs/sero_barrier_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
-# interaction: type
-type_interac <- first_elim_full %>%
-  group_by(sero, type) %>%
-  summarise(center = median(nweek))
-
-ggplot(data = type_interac, aes(x = sero, y = center, 
-                                color = type))+
-  geom_line(size=1.5)+
-  scale_color_manual(values = c("black", "limegreen"), 
-                     name="Immigration Type")+
-  labs(x = "Seroprevalence", y = "Median Weeks to Elimination")+
-  theme_bw(base_size=12)+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "./full_Figs/sero_type_interac.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
-
 # interaction: proportion diseased immigrants
 rate_interac <- first_elim_full %>%
   mutate(rate = factor(rate), sero=factor(sero)) %>%
@@ -139,7 +104,7 @@ ggplot(data = rate_interac, aes(x = sero, y = rate,
   labs(x ="Seroprevalence", y="Immigrant Infection Rate")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
-# 
+
 # ggsave(filename = "./full_Figs/sero_iminfec_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
@@ -159,11 +124,6 @@ ggplot(data = vax_interac, aes(x = factor(sero), y = im_sero,
 # ggsave(filename = "./full_Figs/sero_imsero_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
-#OVERALL: MAIN DRIVER OF TIME TO FIRST ELIMINATION IS SEROPREVALENCE
-#Longest duration at 0.2 seroprevalence
-#0.6 is actually a good sero threshold for this metric
-#Weird interactions with other variables at 0.2 seroprevalence
-
 # Function to calculate # weeks rabies-free -------------
 rabies_free <- function(){
   # Get names of files
@@ -180,15 +140,10 @@ rabies_free <- function(){
     # Read 'em in
     testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
                                sep = ""))
-    
-    # add seroprevalence of immigrants because I forgot
-    imm_sero <- str_extract(filenames[i], "(im_ser)(\\d*\\.\\d*)", 
-                            group = 2)
-    
+
     # Calculate time in weeks & get time to first elimination
     time_rabies_free <- testfile %>%
-      mutate(im_sero = imm_sero) %>%
-      group_by(rep, sero, type, rate, im_sero, barrier) %>%
+      group_by(rep, sero, rate, im_sero, barrier) %>%
       # rate=disease rate of immigrants
       filter(n_infected == 0 & n_symptomatic == 0) %>%
       mutate(nweek = ((year-1)*52) + week) %>%
@@ -226,19 +181,6 @@ ggplot(data=bar_inter_rfree, aes(x=sero,y=barrier,
 # ggsave(filename = "./full_Figs/nweekfree_barrier_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
-# Immigration type
-type_inter_rfree <- time_rabies_free %>%
-  group_by(sero,type)%>%
-  summarise(med = median(n_rabies_free))
-
-ggplot(data=type_inter_rfree, aes(x=factor(sero),y=med,
-                                 color=type))+
-  geom_line(size=1.5)+
-  scale_color_viridis_d(end=0.9, name="Immigration Type")+
-  labs(x="Seroprevalence", y="Median Rabies-Free Weeks")+
-  theme_bw(base_size=12)+
-  theme(panel.grid = element_blank())
-
 # Proportion diseased immigrants
 iminfec_inter_rfree <- time_rabies_free %>%
   mutate(rate=factor(rate))%>%
@@ -273,7 +215,7 @@ ggplot(data=imsero_inter_rfree, aes(x=factor(sero),y=im_sero,
 
 # Seroprevalence boxplot
 rfree_sero <- time_rabies_free %>%
-  filter(barrier==3 & type=="propagule") 
+  filter(barrier==0) 
 
 rfree_aov <- aov(data=rfree_sero, n_rabies_free~factor(sero))
 rfreeHSD <- HSD.test(rfree_aov, "factor(sero)")$group %>%
@@ -294,6 +236,9 @@ ggplot(data = rfree_sero, aes(x = factor(sero),y=n_rabies_free))+
 # ggsave(filename = "./full_Figs/nweekfree_box.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
+# Did not save these figures since they're the inverse 
+# of time to elimination
+
 # Probabilty and duration of reinvasion ----------------------
 reinfection <- function(){
   # Get names of files
@@ -305,16 +250,12 @@ reinfection <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],sep = ""))
-    
-    # add seroprevalence of immigrants because I forgot
-    imm_sero <- str_extract(filenames[i], "(im_ser)(\\d*\\.\\d*)", 
-                            group = 2)
+    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
+                               sep = ""))
     
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
-      mutate(im_sero = imm_sero) %>%
-      group_by(rep, sero, type, rate, im_sero, barrier) %>%
+      group_by(rep, sero, rate, im_sero, barrier) %>%
       # rate=disease rate of immigrants
       filter(n_infected == 0 & n_symptomatic == 0) %>%
       mutate(nweek = ((year-1)*52) + week) %>%
@@ -325,16 +266,15 @@ reinfection <- function(){
     
     reinf_frame <- testfile %>%
       left_join(first_elim, by = "rep") %>%
-      mutate(im_sero = imm_sero) %>%
       # rate=disease rate of immigrants
       mutate(nweek = ((year-1)*52) + week) %>%
-      group_by(rep,sero, type, rate, im_sero, barrier) %>%
+      group_by(rep,sero, rate, im_sero, barrier) %>%
       filter(nweek > elim) %>%
       filter(n_infected > 0 | n_symptomatic > 0) %>%
       summarise(reinf_length = n()) %>%
-      filter(reinf_length > 0) %>%
+      filter(reinf_length > 1) %>%
       ungroup() %>%
-      mutate(reinf_prob = length(unique(rep))/5) # CHANGE THIS!!! ####
+      mutate(reinf_prob = length(unique(rep))/50)
     
     if(i==1){
       reinf_frame_full <- reinf_frame
@@ -361,7 +301,7 @@ reinf_outs <- reinf_outs %>%
 
 ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob))+
   geom_boxplot(fill='lightgray')+
-  geom_text(aes(y=0.8, label = groups))+
+  geom_text(aes(y=0.2, label = groups))+
   labs(x = "Seroprevalence", y = "Recolonization Probability")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
@@ -383,6 +323,9 @@ ggplot(data=bar_inter_rinf, aes(x=sero,y=barrier,
   labs(x="Seroprevalence", y="Barrier Strength")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/rinfprob_bar.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
 
 # Immigrant vax rate
 imsero_inter_rinf <- reinf_outs %>%
@@ -414,6 +357,9 @@ ggplot(data=rate_inter_rinf, aes(x=sero,y=rate,
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
+# ggsave(filename = "./full_Figs/rinfprob_imdis.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
 # Reinfection length ------------------
 # Sero only
 rinf_aov <- aov(data=reinf_outs, reinf_length~factor(sero))
@@ -427,10 +373,15 @@ reinf_outs <- reinf_outs %>%
 
 ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_length))+
   geom_boxplot(fill='lightgray')+
-  geom_text(aes(y=200, label = groups))+
+  # geom_text(aes(y=200, label = groups.y))+
   labs(x = "Seroprevalence", y = "Reinfection Length (Weeks)")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/rinflength_sero.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
+# Add quantile regression?
 
 # Barrier
 bar_inter_rlen <- reinf_outs %>%
@@ -490,16 +441,11 @@ cases <- function(){
     # Read 'em in
     testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
                                sep = ""))
-    
-    # add seroprevalence of immigrants because I forgot
-    imm_sero <- str_extract(filenames[i], "(im_ser)(\\d*\\.\\d*)", 
-                            group = 2)
-    
+
     cases_frame <- testfile %>%
-      mutate(im_sero = imm_sero) %>%
       # rate=disease rate of immigrants
       mutate(nweek = ((year-1)*52) + week) %>%
-      group_by(rep,sero, type, rate, im_sero, barrier) %>%
+      group_by(rep,sero, rate, im_sero, barrier) %>%
       summarise(ncases = sum(n_symptomatic))
 
     if(i==1){
@@ -532,6 +478,9 @@ ggplot(data=total_cases, aes(x=factor(sero),y=ncases))+
   labs(x = "Seroprevalence", y = "Total Cases")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/totalcases_sero.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
 
 # Barrier
 bar_inter_cases <- total_cases %>%
@@ -589,16 +538,12 @@ reinf_cases <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],sep = ""))
-    
-    # add seroprevalence of immigrants because I forgot
-    imm_sero <- str_extract(filenames[i], "(im_ser)(\\d*\\.\\d*)", 
-                            group = 2)
+    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
+                               sep = ""))
     
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
-      mutate(im_sero = imm_sero) %>%
-      group_by(rep, sero, type, rate, im_sero, barrier) %>%
+      group_by(rep, sero, rate, im_sero, barrier) %>%
       # rate=disease rate of immigrants
       filter(n_infected == 0 & n_symptomatic == 0) %>%
       mutate(nweek = ((year-1)*52) + week) %>%
@@ -609,10 +554,9 @@ reinf_cases <- function(){
     
     reinf_frame <- testfile %>%
       left_join(first_elim, by = "rep") %>%
-      mutate(im_sero = imm_sero) %>%
       # rate=disease rate of immigrants
       mutate(nweek = ((year-1)*52) + week) %>%
-      group_by(rep,sero, type, rate, im_sero, barrier) %>%
+      group_by(rep,sero, rate, im_sero, barrier) %>%
       filter(nweek > elim) %>%
       filter(n_infected > 0 | n_symptomatic > 0) %>%
       summarise(ncases = sum(n_symptomatic))
@@ -643,10 +587,13 @@ reinf_case_frame <- reinf_case_frame %>%
 
 ggplot(data=reinf_case_frame, aes(x=factor(sero),y=ncases))+
   geom_boxplot(fill='lightgray')+
-  geom_text(aes(y=1300, label = groups))+
+  # geom_text(aes(y=1300, label = groups))+
   labs(x = "Seroprevalence", y = "Cases Post-Reinvasion")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/reinfcases_sero.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
 
 # Barrier
 bar_inter_rcases <- reinf_case_frame %>%
@@ -707,15 +654,10 @@ cases_per_week <- function(metric){
     testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
                                sep = ""))
     
-    # add seroprevalence of immigrants because I forgot
-    imm_sero <- str_extract(filenames[i], "(im_ser)(\\d*\\.\\d*)", 
-                            group = 2)
-    
     cases_frame <- testfile %>%
-      mutate(im_sero = imm_sero) %>%
       # rate=disease rate of immigrants
       mutate(nweek = ((year-1)*52) + week) %>%
-      group_by(sero, type, rate, im_sero, barrier,nweek)
+      group_by(sero, rate, im_sero, barrier,nweek)
     
     if(metric=="mean"){
       cases_frame <- cases_frame %>%
@@ -746,53 +688,133 @@ meancase_seros <- meancase %>%
 ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases, 
                                 color = factor(sero)))+
   geom_line()+
-  geom_vline(xintercept=20, linetype="dashed")
+  geom_vline(xintercept=20, linetype="dashed")+
+  scale_color_viridis_d(end = 0.9, name="Seroprevalence")+
+  labs(x = "Week", y = "Mean Cases")+
+  theme_bw(base_size=12)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/meanwkcases_sero.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
 
 ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases, 
                                 color = factor(sero)))+
   geom_line()+
   geom_vline(xintercept=72, linetype="dashed")+
-  lims(x=c(52,500), y=c(0,100))
+  geom_vline(xintercept = 124, linetype = "dashed")+
+  lims(x=c(52,500), y=c(0,100))+
+  scale_color_viridis_d(end = 0.9, name="Seroprevalence")+
+  labs(x = "Week", y = "Mean Cases")+
+  theme_bw(base_size=12)+
+  theme(panel.grid = element_blank())
 
-# Do some interaction plots maybe
+# ggsave(filename = "./full_Figs/meanwkcases_sero1yr.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
+# Ask Tim about follow-up analyses
 
 # Maximum cases per week ------------------------
 maxcase <- cases_per_week(metric="max")
 
-summary(aov(data=maxcase, formula=max_cases~factor(sero)+
-              factor(barrier_val)+factor(rate)+im_sero+type+nweek))
-
 # filter out 1 barrier value
 maxcase_seros <- maxcase %>%
-  filter(barrier_val == 2)
+  filter(barrier == 2)
 
 ggplot(data=maxcase_seros, aes(x=nweek, y=max_cases, 
                                 color = factor(sero)))+
   geom_line()+
-  geom_vline(xintercept=20, linetype="dashed")
+  geom_vline(xintercept=20, linetype="dashed")+
+  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  labs(x = "Weeks", y = "Maximum Cases")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
 
-# filter out 1 seroprevalence value
-maxcase_barrier <- maxcase %>%
-  filter(sero == 0.8)
+# ggsave(filename = "./full_Figs/maxwkcases_sero.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
 
-ggplot(data=maxcase_barrier, aes(x=nweek, y=max_cases,
-                                  color = factor(barrier_val)))+
+ggplot(data=maxcase_seros, aes(x=nweek, y=max_cases, 
+                               color = factor(sero)))+
   geom_line()+
-  geom_vline(xintercept=20, linetype = "dashed")
+  lims(x = c(52, 500), y= c(0,75))+
+  geom_vline(xintercept=72, linetype="dashed")+
+  geom_vline(xintercept=124, linetype="dashed")+
+  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  labs(x = "Weeks", y = "Maximum Cases")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
 
-# Look after 100 weeks
-maxcase_seros_late <- maxcase_seros %>%
-  filter(nweek > 100)
-
-ggplot(data=maxcase_seros_late, aes(x=nweek, y=max_cases, 
-                                     color = factor(sero)))+
-  geom_line()
-
-maxcase_barrier_late <- maxcase_barrier %>%
-  filter(nweek > 100)
-
-ggplot(data=maxcase_barrier_late, aes(x=nweek, y=max_cases, 
-                                       color = factor(barrier_val)))+
-  geom_line()
+# ggsave(filename = "./full_Figs/maxwkcases_sero1yr.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
 
 # Avg Prevalence -----------------------
+prev <- function(metric){
+  # Get names of files
+  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
+  for(i in 1:length(filenames)){
+    # Read 'em in
+    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
+                               sep = ""))
+
+    cases_frame <- testfile %>%
+      # rate=disease rate of immigrants
+      mutate(nweek = ((year-1)*52) + week) %>%
+      group_by(sero, rate, im_sero, barrier, nweek) %>%
+      summarise(prev = n_infected/total_pop) 
+    
+    if(metric=="mean"){
+      cases_frame <- cases_frame %>%
+        summarise(mean_prev = mean(prev))
+    }else if(metric == "max"){
+      cases_frame <- cases_frame %>%
+        summarise(max_prev = max(prev))
+    }
+
+    if(i==1){
+      cases_frame_full <- cases_frame
+    } else{
+      cases_frame_full <- rbind(cases_frame_full, cases_frame)
+    }
+    
+    setTxtProgressBar(pb,i)
+  }
+  return(cases_frame_full)
+}
+
+prev.mean <- prev(metric = "mean")
+prev.max <- prev(metric = "max")
+
+# Prevalence figs -------------------
+prev.sero <- prev.mean %>%
+  filter(barrier == 2)
+
+# Sero only
+ggplot(data=prev.sero, aes(x=nweek, y=mean_prev, 
+                               color = factor(sero)))+
+  geom_line()+
+  geom_vline(xintercept=20, linetype="dashed")+
+  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  labs(x = "Weeks", y = "Rabies Prevalence")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/meanwkprev_sero.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
+ggplot(data=prev.sero, aes(x=nweek, y=mean_prev, 
+                           color = factor(sero)))+
+  geom_line()+
+  geom_vline(xintercept=72, linetype="dashed")+
+  geom_vline(xintercept=124, linetype="dashed")+
+  lims(x=c(52,500), y=c(0,0.05))+
+  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  labs(x = "Weeks", y = "Rabies Prevalence")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/meanwkprev_sero1yr.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
