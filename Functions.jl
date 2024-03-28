@@ -271,14 +271,14 @@ end
 
 # Reproduction function
 function reproduce(dat, home)
-    # Get females only
-    females = filter(:sex => ==(1), dat)
+    # Get females of reproductive age
+    females = filter([:sex, :age] => (x, y) -> x == 1 && y >= 75, dat)
     
     # Choose females that actually reproduce
     reproducing = females[randsubseq(1:size(females,1), 0.9),:]
 
     # Assign number of offspring to each reproducing female
-    noffspring = rand(Poisson(2), size(reproducing,1))
+    noffspring = rand(Poisson(4), size(reproducing,1))
 
     # Create offspring at location of mother
     devil_spawn = DataFrame(x = Int[], y = Int[], mom = String[])
@@ -345,7 +345,7 @@ function dont_fear_the_reaper(dat, home, time=2)
     indices = [findall(==(x), new_location) for x in many_guys]
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 10) #can adjust this number
+    too_many_guys = findall(length.(indices) .> 7.5) #can adjust this number
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -391,9 +391,9 @@ function ORV(;dat, land_size, land=nothing, sero_prob)
 end
 
 # Juvenile distribution
-function juvies_leave(dat, home, land_size, dispersal_age=40)
+function juvies_leave(dat, home, land_size)
     # Get Juveniles
-    juvies = dat[findall(x -> x==40, dat.age),:]
+    juvies = dat[findall(x -> 20<x<75, dat.age),:]
 
     # Create break point so it doesn't get stuck
     niter = 0
@@ -468,7 +468,7 @@ function juvies_leave(dat, home, land_size, dispersal_age=40)
 end
 
 # Immigration function
-function immigration(;dat, home, land_size, immigration_rate=1, sero_rate=0, disease_rate=0.3, type="propagule")
+function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule")
     if type == "wave"
         immigration_rate = immigration_rate*20
     end

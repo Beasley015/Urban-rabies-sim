@@ -19,7 +19,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:11], coef = ha
 include("Functions.jl")
 
 # Load in parameters
-job= parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -60,8 +60,11 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             end
 
             # Juveniles reaching independence (default 40 weeks) disperse
-            if size(filter(:age => ==(40), lil_guys),1) > 0 # can change to desired dispersal age
-                juvies_leave(lil_guys, home_coords, land_size)
+
+            if size(filter(x -> 20<=x<=75, lil_guys.age),1) > 0 # can change to desired dispersal age
+                if step == 40  
+                    juvies_leave(lil_guys, home_coords, land_size)
+                end
             end
 
             # Reproduction occurs at specific time steps

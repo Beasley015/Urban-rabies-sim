@@ -79,13 +79,16 @@ bar_interac <- first_elim_full %>%
   group_by(sero, barrier) %>%
   summarise(center = median(nweek))
 
+# dev.new(width = 80, height = 60, unit = "mm", res=600,
+#         noRStudioGD=TRUE)
+
 ggplot(data = bar_interac, aes(x = factor(sero), y = barrier,
                                fill=center))+
   geom_tile()+
   scale_fill_viridis(name = "Weeks to Elimination",
                        option="B")+
   labs(x = "Seroprevalence", y = "Barrier Strength")+
-  theme_bw(base_size=12)+
+  theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
 # ggsave(filename = "./full_Figs/sero_barrier_interac.jpeg",
@@ -123,6 +126,137 @@ ggplot(data = vax_interac, aes(x = factor(sero), y = im_sero,
 
 # ggsave(filename = "./full_Figs/sero_imsero_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
+
+# Prob of elimination at time t --------------------
+first_elim_prob <- function(){
+  # Get names of files
+  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
+  for(i in 1:length(filenames)){
+    # Read 'em in
+    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
+                               sep = ""))
+    
+    colnames=logical(length=10)
+    for(yr in 1:10){colnames[yr]=paste("yr",yr,sep="")}
+
+    # Calculate time in weeks & get time to first elimination
+    time_to_elim <- testfile %>%
+      group_by(rep, sero, rate, im_sero, barrier) %>%
+      # rate=disease rate of immigrants
+      filter(n_infected == 0 & n_symptomatic == 0) %>%
+      mutate(nweek = ((year-1)*52) + week) %>%
+      filter(nweek == min(nweek)) %>%
+      ungroup()
+    
+    yrvec <- do.call(cbind,imap(colnames, 
+                    .f=function(x,i){df = data.frame(x=rep(i*52,
+                              length(unique(time_to_elim$rep))))}))
+    
+    time_to_elim <- cbind(time_to_elim, yrvec)
+    colnames(time_to_elim)[13:22] <- colnames
+    
+    time_to_elim <- time_to_elim %>%
+      mutate(across(yr1:yr10, 
+                    .fns = function(x) length(which(nweek<x)),
+                    .names = "{.col}_elim")) %>%
+      select(-(yr1:yr10)) %>%
+      select(-(rep:week)) %>%
+      select(-(total_pop:actual_sero),-nweek) %>%
+      distinct() %>%
+      mutate(across(yr1_elim:yr10_elim, function(x) x/50))
+    
+    if(i==1){
+      first_elim_frame <- time_to_elim
+    } else{
+      first_elim_frame <- rbind(first_elim_frame, time_to_elim)
+    }
+    
+    setTxtProgressBar(pb,i)
+  }
+  return(first_elim_frame)
+}
+
+elim_prob_t <- first_elim_prob()
+
+# Prob elim w/in time figs ------------
+elim_prob_smol <- elim_prob_t %>%
+  pivot_longer(cols = yr1_elim:yr10_elim, names_to = "year", 
+               values_to = "prob") %>%
+  mutate(year = as.numeric(str_extract(year, "(\\d)+"))) %>%
+  group_by(year, sero) %>%
+  summarise(mean_prob = mean(prob))
+
+# dev.new(width = 80, height = 60, unit = "mm", res = 600,
+#         noRStudioGD=TRUE)
+
+ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
+                                color = factor(sero)))+
+  geom_line(size = 1)+
+  geom_hline(yintercept = 0.95, linetype="dashed")+
+  scale_color_viridis_d(end = 0.9, name = "Seroprevalence")+
+  lims(x = c(1,8))+
+  labs(x = "Year", y = "Mean Elimination Probability")+
+  theme_bw(base_size=16)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/sero_elim_meant.jpeg", width=8,
+#        dpi=600, units="in", height = 6)
+
+ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
+                                color = factor(sero)))+
+  geom_line(size = 1)+
+  geom_hline(yintercept = 0.95, linetype="dashed")+
+  scale_color_viridis_d(end = 0.9, name = "Seroprevalence")+
+  lims(x = c(3,8), y = c(0.8, 1))+
+  labs(x = "Year", y = "Mean Elimination Probability")+
+  theme_bw(base_size=12)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/sero_elim_meant_zoom.jpeg", width=6,
+#        height=4, dpi=600, units="in")
+
+# Look at interactions: barrier
+elim_prob_bar <- elim_prob_t %>%
+  pivot_longer(cols = yr1_elim:yr10_elim, names_to = "year", 
+               values_to = "prob") %>%
+  mutate(year = as.numeric(str_extract(year, "(\\d)+"))) %>%
+  group_by(year, sero, barrier) %>%
+  summarise(mean_prob = mean(prob))
+
+ggplot(data = elim_prob_bar[elim_prob_bar$year==6,], 
+       aes(x=factor(barrier), y=factor(sero), fill=mean_prob))+
+  geom_tile()
+# nothing interesting, really
+
+# Look at interactions: immigrant infection
+elim_prob_rate <- elim_prob_t %>%
+  pivot_longer(cols = yr1_elim:yr10_elim, names_to = "year", 
+               values_to = "prob") %>%
+  mutate(year = as.numeric(str_extract(year, "(\\d)+"))) %>%
+  group_by(year, sero, rate) %>%
+  summarise(mean_prob = mean(prob))
+
+ggplot(data = elim_prob_rate[elim_prob_rate$year==6,], 
+       aes(x=factor(rate), y=factor(sero), fill=mean_prob))+
+  geom_tile()
+# Nothing here either
+
+# Try immigrant seroprevalence rates
+elim_prob_sero <- elim_prob_t %>%
+  pivot_longer(cols = yr1_elim:yr10_elim, names_to = "year", 
+               values_to = "prob") %>%
+  mutate(year = as.numeric(str_extract(year, "(\\d)+"))) %>%
+  group_by(year, sero, im_sero) %>%
+  summarise(mean_prob = mean(prob))
+
+ggplot(data = elim_prob_sero[elim_prob_sero$year==6,], 
+       aes(x=im_sero, y=factor(sero), fill=mean_prob))+
+  geom_tile()
 
 # Function to calculate # weeks rabies-free -------------
 rabies_free <- function(){
@@ -472,11 +606,14 @@ total_cases <- total_cases %>%
   mutate(sero=factor(sero)) %>%
   left_join(casesHSD, by = "sero")
 
+# dev.new(width = 80, height = 60, unit = "mm", res=600,
+#         noRStudioGD=TRUE)
+
 ggplot(data=total_cases, aes(x=factor(sero),y=ncases))+
   geom_boxplot(fill='lightgray')+
   # geom_text(aes(y=13500, label = groups))+
   labs(x = "Seroprevalence", y = "Total Cases")+
-  theme_bw(base_size=12)+
+  theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
 # ggsave(filename = "./full_Figs/totalcases_sero.jpeg",
@@ -685,18 +822,54 @@ meancase <- cases_per_week(metric="mean")
 meancase_seros <- meancase %>%
   filter(barrier == 2)
 
+dev.new(width = 80, height = 60, unit = "mm", res=600,
+        noRStudioGD=TRUE)
+
 ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases, 
                                 color = factor(sero)))+
   geom_line()+
-  geom_vline(xintercept=20, linetype="dashed")+
+  geom_vline(xintercept=c(20, 52+20, (52*2+20), 52*3+20), 
+             linetype="dashed", size = 1)+
   scale_color_viridis_d(end = 0.9, name="Seroprevalence")+
   labs(x = "Week", y = "Mean Cases")+
-  theme_bw(base_size=12)+
+  theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
 # ggsave(filename = "./full_Figs/meanwkcases_sero.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
+# At what time step does it hit the maximum?
+meancase_max_t <- meancase_seros %>%
+  group_by(sero, rate, im_sero) %>%
+  select(-barrier) %>%
+  filter(mean_cases == max(mean_cases))
+
+ggplot(data=meancase_max_t, aes(x=factor(sero), y=nweek))+
+  geom_boxplot(fill='lightgray')+
+  labs(x="Seroprevalence", y="Week with Max Cases")+
+  theme_bw(base_size=12)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/TimeMaxCases.jpeg", width=6,
+#        height=4, dpi=600, units="in")
+
+# What about after the initial peak?
+meancase_max_1yr <- meancase_seros %>%
+  group_by(sero, rate, im_sero) %>%
+  select(-barrier) %>%
+  filter(nweek >= 72) %>%
+  filter(mean_cases == max(mean_cases))
+
+ggplot(data=meancase_max_1yr, aes(x=factor(sero), y=nweek))+
+  geom_boxplot(fill='lightgray')+
+  labs(x="Seroprevalence", y="Week with Max Cases")+
+  theme_bw(base_size=12)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/TimeMaxCases_1yr.jpeg", width=6,
+#        height=4, dpi=600, units="in")
+
+# Zoom in
 ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases, 
                                 color = factor(sero)))+
   geom_line()+
@@ -710,8 +883,6 @@ ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases,
 
 # ggsave(filename = "./full_Figs/meanwkcases_sero1yr.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
-
-# Ask Tim about follow-up analyses
 
 # Maximum cases per week ------------------------
 maxcase <- cases_per_week(metric="max")
