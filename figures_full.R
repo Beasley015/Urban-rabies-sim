@@ -14,11 +14,13 @@ library(viridis)
 library(agricolae)
 
 options(dplyr.summarise.inform = FALSE)
+# dir <- "./outs" # juveniles reproduce
+dir <- "./outs2" # juveniles do not reproduce
 
 # Function for calculating time to first elimination --------
 first_elim <- function(){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
 
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -53,7 +55,7 @@ first_elim_full <- first_elim()
 # is the effect of seroprevalence similar to prelim model?
 # filter out 1 barrier value then plot
 elim_sansbar <- first_elim_full %>%
-  filter(barrier == 0) %>%
+  # filter(barrier == 0) %>%
   mutate(sero = factor(sero))
 
 sero_nweek <- aov(elim_sansbar, formula=nweek~sero)
@@ -62,12 +64,12 @@ sero_nweek_HSD <- HSD.test(sero_nweek,
   mutate(sero = rownames(.)) %>%
   select(-nweek)
 
-elim_sansbar_type <- elim_sansbar_type %>%
+elim_sansbar <- elim_sansbar %>%
   left_join(sero_nweek_HSD, by = "sero")
   
-ggplot(data = elim_sansbar_type, aes(x=factor(sero),y=nweek))+
+ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
   geom_boxplot(fill='lightgray')+
-  geom_text(aes(y = 525, label = groups))+
+  geom_text(aes(y = 550, label = groups))+
   labs(x = "Seroprevalence", y = "Time to Elimination (Weeks)")+
   theme_bw()+
   theme(panel.grid=element_blank())

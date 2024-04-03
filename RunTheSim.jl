@@ -19,7 +19,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:11], coef = ha
 include("Functions.jl")
 
 # Load in parameters
-job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job= parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
