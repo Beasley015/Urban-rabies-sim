@@ -272,7 +272,8 @@ end
 # Reproduction function
 function reproduce(dat, home)
     # Get females of reproductive age
-    females = filter([:sex, :age] => (x, y) -> x == 1 && y >= 75, dat)
+    females = filter([:sex, :age] => (x,y) -> x == 1 && y >= 52, dat)
+    #females = filter([:sex, :age] => (x, y) -> x == 1 && y >= 75, dat)
     
     # Choose females that actually reproduce
     reproducing = females[randsubseq(1:size(females,1), 0.9),:]

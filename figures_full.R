@@ -28,7 +28,9 @@ first_elim <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
 
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
@@ -69,12 +71,12 @@ elim_sansbar <- elim_sansbar %>%
   
 ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
   geom_boxplot(fill='lightgray')+
-  geom_text(aes(y = 550, label = groups))+
+  # geom_text(aes(y = 350, label = groups))+
   labs(x = "Seroprevalence", y = "Time to Elimination (Weeks)")+
   theme_bw()+
   theme(panel.grid=element_blank())
 
-# ggsave(filename = "./full_Figs/sero_elim_bar0.jpeg", width=6,
+# ggsave(filename = "./full_Figs/alt_sero_elim_bar0.jpeg", width=6,
 #        height=4, dpi=600, units="in")
 
 bar_interac <- first_elim_full %>%
@@ -93,7 +95,7 @@ ggplot(data = bar_interac, aes(x = factor(sero), y = barrier,
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "./full_Figs/sero_barrier_interac.jpeg",
+# ggsave(filename = "./full_Figs/alt_sero_barrier_interac.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
 # interaction: proportion diseased immigrants
@@ -132,7 +134,7 @@ ggplot(data = vax_interac, aes(x = factor(sero), y = im_sero,
 # Prob of elimination at time t --------------------
 first_elim_prob <- function(){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -140,8 +142,9 @@ first_elim_prob <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
-                               sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
     
     colnames=logical(length=10)
     for(yr in 1:10){colnames[yr]=paste("yr",yr,sep="")}
@@ -206,7 +209,7 @@ ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "./full_Figs/sero_elim_meant.jpeg", width=8,
+# ggsave(filename = "./full_Figs/alt_sero_elim_meant.jpeg", width=8,
 #        dpi=600, units="in", height = 6)
 
 ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
@@ -230,7 +233,7 @@ elim_prob_bar <- elim_prob_t %>%
   group_by(year, sero, barrier) %>%
   summarise(mean_prob = mean(prob))
 
-ggplot(data = elim_prob_bar[elim_prob_bar$year==6,], 
+ggplot(data = elim_prob_bar[elim_prob_bar$year==2,], 
        aes(x=factor(barrier), y=factor(sero), fill=mean_prob))+
   geom_tile()
 # nothing interesting, really
@@ -243,7 +246,7 @@ elim_prob_rate <- elim_prob_t %>%
   group_by(year, sero, rate) %>%
   summarise(mean_prob = mean(prob))
 
-ggplot(data = elim_prob_rate[elim_prob_rate$year==6,], 
+ggplot(data = elim_prob_rate[elim_prob_rate$year==2,], 
        aes(x=factor(rate), y=factor(sero), fill=mean_prob))+
   geom_tile()
 # Nothing here either
@@ -256,14 +259,14 @@ elim_prob_sero <- elim_prob_t %>%
   group_by(year, sero, im_sero) %>%
   summarise(mean_prob = mean(prob))
 
-ggplot(data = elim_prob_sero[elim_prob_sero$year==6,], 
+ggplot(data = elim_prob_sero[elim_prob_sero$year==2,], 
        aes(x=im_sero, y=factor(sero), fill=mean_prob))+
   geom_tile()
 
 # Function to calculate # weeks rabies-free -------------
 rabies_free <- function(){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -274,8 +277,9 @@ rabies_free <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
-                               sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
 
     # Calculate time in weeks & get time to first elimination
     time_rabies_free <- testfile %>%
@@ -378,7 +382,7 @@ ggplot(data = rfree_sero, aes(x = factor(sero),y=n_rabies_free))+
 # Probabilty and duration of reinvasion ----------------------
 reinfection <- function(){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -386,8 +390,9 @@ reinfection <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
-                               sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
     
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
@@ -534,6 +539,9 @@ ggplot(data=bar_inter_rlen, aes(x=sero,y=barrier,
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
+# ggsave(filename = "./full_Figs/rinflength_serobar.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
 # Immigrant disease rate
 rate_inter_rinf <- reinf_outs %>%
   mutate(rate=factor(rate), sero=factor(sero))%>%
@@ -567,7 +575,7 @@ ggplot(data=vax_inter_rinf, aes(x=sero,y=im_sero,
 # Total cases -----------------------
 cases <- function(){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -575,8 +583,9 @@ cases <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
-                               sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
 
     cases_frame <- testfile %>%
       # rate=disease rate of immigrants
@@ -669,7 +678,7 @@ ggplot(data=vax_inter_cases, aes(x=sero,y=im_sero,
 # Total cases after first elimination ------------------
 reinf_cases <- function(){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -677,8 +686,9 @@ reinf_cases <- function(){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
-                               sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
     
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
@@ -782,7 +792,7 @@ ggplot(data=vax_inter_rcases, aes(x=sero,y=im_sero,
 # Cases per week ----------------------
 cases_per_week <- function(metric){
   # Get names of files
-  filenames <- list.files(path = "./outs", pattern = "*.csv")
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -790,8 +800,9 @@ cases_per_week <- function(metric){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/outs/",filenames[i],
-                               sep = ""))
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
     
     cases_frame <- testfile %>%
       # rate=disease rate of immigrants
@@ -837,7 +848,7 @@ ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases,
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "./full_Figs/meanwkcases_sero.jpeg",
+# ggsave(filename = "./full_Figs/alt_meanwkcases_sero.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
 # At what time step does it hit the maximum?
