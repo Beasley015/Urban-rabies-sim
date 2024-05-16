@@ -14,8 +14,8 @@ library(viridis)
 library(agricolae)
 
 options(dplyr.summarise.inform = FALSE)
-# dir <- "./outs" # juveniles reproduce
-dir <- "./outs2" # juveniles do not reproduce
+dir <- "./outs" # juveniles reproduce
+# dir <- "./outs2" # juveniles do not reproduce
 
 # Function for calculating time to first elimination --------
 first_elim <- function(){
@@ -930,6 +930,9 @@ ggplot(data=maxcase_seros, aes(x=nweek, y=max_cases,
 # ggsave(filename = "./full_Figs/maxwkcases_sero1yr.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
+# Active cases per week ---------------------
+
+
 # Avg Prevalence -----------------------
 prev <- function(metric){
   # Get names of files
@@ -1002,3 +1005,61 @@ ggplot(data=prev.sero, aes(x=nweek, y=mean_prev,
 
 # ggsave(filename = "./full_Figs/meanwkprev_sero1yr.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
+
+# Weekly population -----------------------------
+get_weekly_pop <- function(){
+  # Get names of files
+  filenames <- list.files(path = dir, pattern = "*.csv")
+  
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
+  for(i in 1:length(filenames)){
+    # Read 'em in
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
+    
+    pop_frame <- testfile %>%
+      # rate=disease rate of immigrants
+      mutate(nweek = ((year-1)*52) + week) %>%
+      group_by(sero, rate, im_sero, barrier,nweek) %>%
+      summarise(mean_pop = mean(total_pop))
+    
+    if(i==1){
+      pop_frame_full <- pop_frame
+    } else{
+      pop_frame_full <- rbind(pop_frame_full, pop_frame)
+    }
+    
+    setTxtProgressBar(pb,i)
+  }
+  return(pop_frame_full)
+}
+
+weekly_pop <- get_weekly_pop()
+
+# Population figs -------------------------
+pop.sero <- weekly_pop %>%
+  filter(barrier == 2)
+
+# Sero only, full sim
+ggplot(data=pop.sero, aes(x=nweek, y=mean_pop, 
+                           color = factor(sero)))+
+  geom_line()+
+  geom_vline(xintercept=20, linetype="dashed")+
+  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  labs(x = "Weeks", y = "Population Size")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+# Sero only, after initial case peak
+ggplot(data=pop.sero, aes(x=nweek, y=mean_pop, 
+                          color = factor(sero)))+
+  geom_line()+
+  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  lims(x = c(150,550))+
+  labs(x = "Weeks", y = "Population Size")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())

@@ -346,7 +346,7 @@ function dont_fear_the_reaper(dat, home, time=2)
     indices = [findall(==(x), new_location) for x in many_guys]
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 7.5) #can adjust this number
+    too_many_guys = findall(length.(indices) .> 10) #can adjust this number
 
     crowded_spots = many_guys[too_many_guys]
 
