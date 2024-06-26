@@ -108,18 +108,11 @@ function populate_landscape(;land_size = 60, guy_density = 2.75, seros)
     # Create data frame of guys
     lil_guys = DataFrame(id = string.(collect(1:nguys)), x = convert.(Int64,trunc.(xmax*rand(nguys,1)))[:,1],
         y = convert.(Int64,trunc.(ymax*rand(nguys,1)))[:,1], incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0,
-        sex = Int.(rand(Bernoulli(0.5), nguys)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), nguys))
+        sex = Int.(rand(Bernoulli(0.5), nguys)), mom = NaN, vaccinated = rand(Bernoulli(seros), nguys), age = rand(52:(52*8), nguys))
 
     # Remove 0's 
     lil_guys.x[lil_guys.x .== 0] .= 1
     lil_guys.y[lil_guys.y .== 0] .= 1
-
-    # Initialize disease
-    lil_guys.incubation[rand(1:nguys,convert(Int64,round(nguys * 0.01)))] .= 1
-    lil_guys.time_since_inf = ifelse.(lil_guys.incubation .== 1, 1, lil_guys.time_since_inf)
-
-    # Initialize immunity
-    lil_guys.vaccinated[lil_guys.incubation .!= 1] = rand(Bernoulli(seros), length(lil_guys.vaccinated[lil_guys.incubation .!= 1]))
 
     # Repeat at a low density to populate the buffer
     xpossible = vcat(1:5, 56:60)
@@ -136,14 +129,32 @@ function populate_landscape(;land_size = 60, guy_density = 2.75, seros)
         incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, sex = Int.(rand(Bernoulli(0.5), nbuffer)),
         mom = NaN, vaccinated = 0, age = rand(52:(52*8), nbuffer))
 
-    lil_guys_buffer.incubation[rand(1:nbuffer,convert(Int64,round(nbuffer * 0.01)))] .= 1
-    lil_guys_buffer.time_since_inf = ifelse.(lil_guys_buffer.incubation .== 1, 1, lil_guys_buffer.time_since_inf)
-    lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1] = rand(Bernoulli(0.8), 
+        lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1] = rand(Bernoulli(0.8), 
                 length(lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1]))
 
     lil_guys = [lil_guys; lil_guys_buffer]
 
     return lil_guys
+end
+
+function initialize_disease(dat)
+    # Get indices of unvaccinated guys
+    unvax = findall(dat.vaccinated .== 0)
+
+    # Choose raccoons to infect
+    if length(unvax) > 30
+        new_diseases = sample(unvax, 30, replace = false)
+    else
+        new_diseases = unvax
+    end
+
+    # Initialize disease
+    dat.incubation[new_diseases] .= 1
+
+    # Start infection timer
+    dat.time_since_inf = ifelse.(dat.incubation .== 1, 1, dat.time_since_inf)
+
+    return dat
 end
 
 # Create function for the guys to look at their surroundings
@@ -243,8 +254,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
             # spread disease to unvaccinated guys
             if any(diseases[indices[i]] .== 1)
                 test = diseases[indices[i]]
-                # Disease transmission is contact rate * trasmission|contact
-                test[test .!= 1].= rand(Bernoulli(0.5*0.5), length(test[test .!= 1]))
+                test[test .!= 1].= rand(Bernoulli(0.04), length(test[test .!= 1]))
 
                 diseases[indices[i]] = test
             end  
@@ -312,7 +322,7 @@ function dont_fear_the_reaper(dat, home, time=2)
     # disease mortality set at 2 weeks to avoid bug
     
     # random mortality
-    rand_deaths = rand(Bernoulli(0.005),size(dat,1))
+    rand_deaths = rand(Bernoulli(0.0005),size(dat,1))
     deleteat!(dat, findall(rand_deaths==1))
     deleteat!(home, findall(rand_deaths==1))
 
@@ -336,10 +346,13 @@ function dont_fear_the_reaper(dat, home, time=2)
     filter!(:mom => !in(dat.mom[kids][no_mom]), dat)
 
     # Density-related mortality
+    # filter out juveniles 
+    adults = filter(:age => x -> x >= 30, dat)
+
     # get coordinates where there are multiple guys
-    new_location = Vector(undef, size(dat,1))
-    for i in 1:size(dat,1)
-        new_location[i] = (dat.x[i], dat.y[i]) 
+    new_location = Vector(undef, size(adults,1))
+    for i in 1:size(adults,1)
+        new_location[i] = (adults.x[i], adults.y[i]) 
     end
 
     many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
@@ -356,7 +369,7 @@ function dont_fear_the_reaper(dat, home, time=2)
         crowded_indices[i] = intersect(findall(x -> x == crowded_spots[i][1], dat.x), findall(x -> x == crowded_spots[i][2], dat.y))
     end
 
-    crowding_deaths = sort(unique(vcat(crowded_indices[findall(rand(Bernoulli(0.1), length(crowded_indices)) .== 1)]...)))
+    crowding_deaths = sort(unique(vcat(crowded_indices[findall(rand(Bernoulli(0.05), length(crowded_indices)) .== 1)]...)))
     
     if length(crowding_deaths) > 0
         deleteat!(dat, crowding_deaths)
@@ -410,7 +423,7 @@ function juvies_leave(dat, home, land_size)
                         downleft, down, downright], size(juvies,1))
 
         # Get dispersal distance
-        distances = rand(Poisson(10), size(juvies,1))
+        distances = rand(Poisson(5), size(juvies,1))
 
         # RUN!
         coords = Vector(undef, size(juvies,1))

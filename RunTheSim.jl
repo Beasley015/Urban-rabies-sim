@@ -23,7 +23,7 @@ job= parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, immigration_seros, barrier, outputs)
+function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, barrier, outputs)
     # Define weeks per year
     time_steps = 52
 
@@ -42,6 +42,11 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
 
     for year in 1:years
         for step in 1:time_steps
+            # Initialize disease at year 4, when population stabilizes
+            if year == 4 && step == 1
+                initialize_disease(lil_guys)
+            end
+
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
@@ -51,16 +56,16 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
 
             # Immigration can be a propagule rain (steady rate) or a wave (bursts of high immigration)
             if immigration_type == "propagule"
-                immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease)
+                immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
+                                sero_rate=0.6)
             elseif immigration_type == "wave"
                 if year in vcat(2:5, 8:10) && 20 < step < 35
                     immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                type="wave")
+                                type="wave", sero_rate=0.6)
                 end
             end
 
             # Juveniles reaching independence (default 40 weeks) disperse
-
             if size(filter(x -> 20<=x<=75, lil_guys.age),1) > 0 # can change to desired dispersal age
                 if step == 40  
                     juvies_leave(lil_guys, home_coords, land_size)
@@ -91,7 +96,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
 
             # Calculate summary statistics and append to data frame
-            row = [rep, year, step, seros, immigration_disease, immigration_seros, barrier, size(buffer,1), sum(buffer.incubation), 
+            row = [rep, year, step, seros, immigration_disease, barrier, size(buffer,1), sum(buffer.incubation), 
                     sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1)]
             push!(outputs, row)
             
@@ -101,19 +106,19 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","rate","im_sero","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],], 
+                    ["rep", "year", "week","sero","rate","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
 
 reps = 50
 
 for rep in 1:reps
-    the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_seros=Params[!,3][1], immigration_disease = Params[!,4][1], 
-                    immigration_type="propagule", barrier = Params[!,2][1], outputs = outputs)
+    the_mega_loop(years=14, seros=Params[!,1][j], rep=rep, immigration_disease = Params[!,3][j], 
+                    immigration_type=Params[!,4][j], barrier = Params[!,2][j], outputs = outputs)
 end
 
 # Create filename
-filename = string("sero",string(Params[!,1][1]),"bar",string(Params[!,2][1]),"im_ser",
-                    string(Params[!,3][1]),"im_dis",string(Params[!,4][1]),".csv")
+filename = string("sero",string(Params[!,1][1]),"bar",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+                                        "im_type",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)
