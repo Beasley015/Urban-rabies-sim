@@ -112,8 +112,8 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],],
 reps = 50
 
 for rep in 1:reps
-    the_mega_loop(years=14, seros=Params[!,1][j], rep=rep, immigration_disease = Params[!,3][j], 
-                    immigration_type=Params[!,4][j], barrier = Params[!,2][j], outputs = outputs)
+    the_mega_loop(years=14, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                    immigration_type=Params[!,4][1], barrier = Params[!,2][1], outputs = outputs)
 end
 
 # Create filename

@@ -22,7 +22,7 @@ job_file = """
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot
 #SBATCH --output=$(joinpath("slurm", "%x-%a.out")) 
-#SBATCH --mem-per-cpu=25G
+#SBATCH --mem-per-cpu=100G
 #SBATCH --mail-user=emily.beasley@umontreal.ca
 #SBATCH --mail-type=ALL
 
