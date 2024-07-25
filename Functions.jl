@@ -129,7 +129,7 @@ function populate_landscape(;land_size = 60, guy_density = 2.75, seros)
         incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, sex = Int.(rand(Bernoulli(0.5), nbuffer)),
         mom = NaN, vaccinated = 0, age = rand(52:(52*8), nbuffer))
 
-        lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1] = rand(Bernoulli(0.8), 
+        lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1] = rand(Bernoulli(0.6), 
                 length(lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1]))
 
     lil_guys = [lil_guys; lil_guys_buffer]
@@ -319,7 +319,8 @@ end
 
 # Mortality function
 function dont_fear_the_reaper(dat, home, time=2)
-    # disease mortality set at 2 weeks to avoid bug
+    # disease mortality set at 2 weeks, which results in 1 infectious time step
+    # due to the order in which functions are executed in the loop
     
     # random mortality
     rand_deaths = rand(Bernoulli(0.0005),size(dat,1))
