@@ -347,9 +347,6 @@ function dont_fear_the_reaper(dat, home, time=2)
     filter!(:mom => !in(dat.mom[kids][no_mom]), dat)
 
     # Density-related mortality
-    # filter out juveniles 
-    adults = filter(:age => x -> x >= 30, dat)
-
     # get coordinates where there are multiple guys
     new_location = Vector(undef, size(adults,1))
     for i in 1:size(adults,1)
@@ -367,14 +364,24 @@ function dont_fear_the_reaper(dat, home, time=2)
     # Apply increased mortality
     crowded_indices = Vector(undef, length(crowded_spots))
     for i in 1:length(crowded_spots)
-        crowded_indices[i] = intersect(findall(x -> x == crowded_spots[i][1], dat.x), findall(x -> x == crowded_spots[i][2], dat.y))
+        crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end
+    crowded_indices
 
-    crowding_deaths = sort(unique(vcat(crowded_indices[findall(rand(Bernoulli(0.05), length(crowded_indices)) .== 1)]...)))
+    # Split juveniles and adults for differential mortality
+    crowded_indices = sort(unique(vcat(crowded_indices...)))
+    crowded_adults = intersect(crowded_indices, findall(x -> x > 52, dat.age))
+    crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
+
+    # Decide who dies
+    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(0.01), length(crowded_juvies))
+
+    dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
     
-    if length(crowding_deaths) > 0
-        deleteat!(dat, crowding_deaths)
-        deleteat!(home, crowding_deaths)
+    if length(dead_guys) > 0
+        deleteat!(dat, dead_guys)
+        deleteat!(home, dead_guys)
     end  
 end
 
