@@ -237,37 +237,30 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
 
     dat.x[kids] = deepcopy(x_coords)
     dat.y[kids] = deepcopy(y_coords)
-  
-    # Disease transmission
-    if length(filter(kv -> kv.second > 1, countmap(new_location))) > 0
-        # get coordinates where there are multiple guys
-        many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
-        indices = [findall(==(x), new_location) for x in many_guys]
+end
 
-        # spread disease
-        diseases = deepcopy(dat.infectious)
-        vax_rows = findall(x->x==1, dat.vaccinated)
+function spread_disease(;dat)
+    # Find all infected guys
+    diseased = filter(:infectious => x -> x .== 1, dat)
+    diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:nrow(diseased)]
 
-        for i in 1:length(indices) 
-            # Remove vaccinated guys
-            to_remove = findall(in(intersect(vax_rows, indices[i])), indices[i])
-            indices[i] = ifelse(length(to_remove) > 0, deleteat!(indices[i], to_remove), indices[i])
-
-            # spread disease to unvaccinated guys
-            if any(diseases[indices[i]] .== 1)
-                test = diseases[indices[i]]
-                test[test .!= 1].= rand(Bernoulli(0.04), length(test[test .!= 1]))
-
-                diseases[indices[i]] = test
-            end  
-        end
-
-        # Keep existing infections
-        diseases[findall(dat.incubation .== 1)] .= 1
+    # Infect raccoons that share cell with diseased guy
         
-        dat.incubation = deepcopy(diseases) 
+    if length(diseased_coords) != 0
+        # Get all guys with shared coords
+        direct_exposure = [intersect(findall(.==(diseased_coords[i][1]), dat.x),findall(.==(diseased_coords[i][2]), dat.y)) 
+            for i in 1:length(diseased_coords)]
+        direct_exposure = sort(unique(vcat(direct_exposure...)))
 
-    end 
+        # Remove vaccinated individuals
+        direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
+
+        # Infect with set probability
+        infections = rand(Bernoulli(0.04), length(direct_exposure))
+        direct_exposure = direct_exposure[infections .== 1]
+
+        dat.incubation[direct_exposure] .= 1
+    end
 end
 
 # Transition from incubation period to infectious period
@@ -350,9 +343,9 @@ function dont_fear_the_reaper(dat, home, time=2)
 
     # Density-related mortality
     # get coordinates where there are multiple guys
-    new_location = Vector(undef, size(adults,1))
-    for i in 1:size(adults,1)
-        new_location[i] = (adults.x[i], adults.y[i]) 
+    new_location = Vector(undef, size(dat,1))
+    for i in 1:size(dat,1)
+        new_location[i] = (dat.x[i], dat.y[i]) 
     end
 
     many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
@@ -363,12 +356,10 @@ function dont_fear_the_reaper(dat, home, time=2)
 
     crowded_spots = many_guys[too_many_guys]
 
-    # Apply increased mortality
     crowded_indices = Vector(undef, length(crowded_spots))
     for i in 1:length(crowded_spots)
         crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end
-    crowded_indices
 
     # Split juveniles and adults for differential mortality
     crowded_indices = sort(unique(vcat(crowded_indices...)))

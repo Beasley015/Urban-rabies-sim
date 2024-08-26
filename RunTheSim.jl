@@ -19,7 +19,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:11], coef = ha
 include("Functions.jl")
 
 # Load in parameters
-job= parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -50,6 +50,9 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
+
+            # Spread disease
+            spread_disease(dat=lil_guys)
 
             # Lots of death
             dont_fear_the_reaper(lil_guys, home_coords, 2)
@@ -109,10 +112,10 @@ end
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],], 
                     ["rep", "year", "week","sero","rate","barrier", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
 
-reps = 50
+reps = 1
 
 for rep in 1:reps
-    the_mega_loop(years=14, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+    the_mega_loop(years=5, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                     immigration_type=Params[!,4][1], barrier = Params[!,2][1], outputs = outputs)
 end
 

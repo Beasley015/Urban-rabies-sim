@@ -3,9 +3,10 @@ Planned updates to ABM: (X = complete)
 X Figure out correct timing for birth, juvenile dispersal, and ORV
 X Add proportionally higher juvenile mortality when carrying capacity is reached
 X Immigrants skew young
-- Split movement and disease functions
+X Split movement and disease functions
+- Add lower infection rate to raccoons in home range, but not in current cell
 X Remove landscape barriers
 - Pivot to immigration questions
-- Add variation in home range size
 X Decrease carrying capacity slightly
 X Change ORV function so landscape buffer has vaccination rate of 60%
+- Fix immigration so they can't be both vaccinated and infected
