@@ -1,10 +1,11 @@
 Planned updates to ABM: (X = complete)
 
-- Figure out correct timing for birth, juvenile dispersal, and ORV
+X Figure out correct timing for birth, juvenile dispersal, and ORV
 X Add proportionally higher juvenile mortality when carrying capacity is reached
-- Immigrants skew young
-- Fix issue where immigrants/dispersing juveniles ignore landscape barriers
+X Immigrants skew young
 - Split movement and disease functions
-- Remove landscape barriers
+X Remove landscape barriers
 - Pivot to immigration questions
 - Add variation in home range size
+X Decrease carrying capacity slightly
+X Change ORV function so landscape buffer has vaccination rate of 60%

@@ -13,6 +13,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     landscape[:,1:5] .= 10
     landscape[:,56:60] .= 10
 
+    #=
     # Create barrier if one exists
     if barrier_strength != 0
         # Pick starting and ending edges for barrier
@@ -91,6 +92,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 
         habitats[9,:] = ["barrier", 0.0, coef[1]]
     end
+    =#
 
     return landscape
 end
@@ -390,6 +392,12 @@ function ORV(;dat, land_size, land=nothing, sero_prob)
     if land==nothing 
         # Create array of vaccination probabilities
         land = fill(sero_prob, (land_size,land_size))
+
+        # Fill in buffer zone
+        land[1:5,:] .= 0.6
+        land[56:60,:] .= 0.6
+        land[:,1:5] .= 0.6
+        land[:,56:60] .= 0.6
     end
 
     # Get probs of vaccination at guys' locations
@@ -469,7 +477,7 @@ function juvies_leave(dat, home, land_size)
         indices = [findall(==(x), new_location) for x in many_guys]
     
         # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 10) #can adjust this number
+        enough_guys = findall(length.(indices) .<= 8) #can adjust this number
     
         good_spots = many_guys[enough_guys]
     
@@ -501,7 +509,7 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     # Data frame of immigrants
     immigrants = DataFrame(id = string.(collect(range(start=maximum(parse.(Int, dat.id)),stop=maximum(parse.(Int, dat.id))+(n_new-1),step=1))), 
                         x = 0, y = 0, incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, 
-                        sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), n_new))
+                        sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(Poisson(65), n_new))
 
     # Initialize disease
     immigrants.incubation = rand(Bernoulli(disease_rate), n_new)

@@ -65,9 +65,9 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
                 end
             end
 
-            # Juveniles reaching independence (default 40 weeks) disperse
+            # Juveniles reaching independence disperse
             if size(filter(x -> 20<=x<=75, lil_guys.age),1) > 0 # can change to desired dispersal age
-                if step == 40  
+                if step == 45
                     juvies_leave(lil_guys, home_coords, land_size)
                 end
             end
@@ -78,7 +78,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             end
 
             # Vaccine baits are distributed at specific time steps
-            if step == 45 
+            if step == 35 
                 ORV(dat=lil_guys, land_size=land_size, sero_prob=seroprev)
             end 
         
