@@ -175,7 +175,7 @@ function look_around(x,y,land_size)
     return poss_moves
 end
 
-# Movement and disease function
+# Movement function
 function move(coords, dat, home, landscape, reso=500, rate=-0.5)
     # Where coords = list of tuples representing possible moves,
     # dat = data frame of agents,
@@ -489,6 +489,7 @@ function juvies_leave(dat, home, land_size)
 end
 
 # Immigration function
+# Immigration function
 function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule")
     if type == "wave"
         immigration_rate = immigration_rate*20
@@ -500,7 +501,7 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     # Data frame of immigrants
     immigrants = DataFrame(id = string.(collect(range(start=maximum(parse.(Int, dat.id)),stop=maximum(parse.(Int, dat.id))+(n_new-1),step=1))), 
                         x = 0, y = 0, incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, 
-                        sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(Poisson(65), n_new))
+                        sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), n_new))
 
     # Initialize disease
     immigrants.incubation = rand(Bernoulli(disease_rate), n_new)
@@ -509,6 +510,14 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     # Initialize immunity
     immigrants.vaccinated[immigrants.incubation .!= 1] = rand(Bernoulli(sero_rate), length(immigrants.vaccinated[immigrants.incubation .!= 1]))
 
+    # Define movement directions
+    upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
+    left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
+    downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
+
+    # Create vector of directions
+    directions = Any[]
+    
     # Get starting edges
     edges = ["north", "east", "south", "west"]
 
@@ -518,24 +527,29 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
         if immigrant_edges[i] == "north"
             immigrants.x[i] = rand(1:land_size)
             immigrants.y[i] = land_size
+
+            push!(directions, rand([left, right, downleft, down, downright],1))
+
         elseif immigrant_edges[i] == "east"
             immigrants.x[i] = land_size
             immigrants.y[i] = rand(1:land_size)
+
+            push!(directions, rand([upleft, up, left, downleft, down],1))
+
         elseif immigrant_edges[i] == "south"
             immigrants.x[i] = rand(1:land_size)
             immigrants.y[i] = 1
+
+            push!(directions, rand([upleft, up, upright, left, right],1))
+
         else 
             immigrants.x[i] = 1
             immigrants.y[i] = rand(1:land_size)
+
+            push!(directions, rand([up, upright, right, down, downright],1))
+
         end
     end
-
-    # Pick a direction from list of inline functions
-    upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
-    left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
-    downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
-    directions = rand([upleft, up, upright, left, right, 
-                    downleft, down, downright], size(immigrants,1))
 
     # Get dispersal distance
     distances = rand(Poisson(10), size(immigrants,1))
