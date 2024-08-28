@@ -528,25 +528,25 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
             immigrants.x[i] = rand(1:land_size)
             immigrants.y[i] = land_size
 
-            push!(directions, rand([left, right, downleft, down, downright],1))
+            append!(directions, rand([left, right, downleft, down, downright],1))
 
         elseif immigrant_edges[i] == "east"
             immigrants.x[i] = land_size
             immigrants.y[i] = rand(1:land_size)
 
-            push!(directions, rand([upleft, up, left, downleft, down],1))
+            append!(directions, rand([upleft, up, left, downleft, down],1))
 
         elseif immigrant_edges[i] == "south"
             immigrants.x[i] = rand(1:land_size)
             immigrants.y[i] = 1
 
-            push!(directions, rand([upleft, up, upright, left, right],1))
+            append!(directions, rand([upleft, up, upright, left, right],1))
 
         else 
             immigrants.x[i] = 1
             immigrants.y[i] = rand(1:land_size)
 
-            push!(directions, rand([up, upright, right, down, downright],1))
+            append!(directions, rand([up, upright, right, down, downright],1))
 
         end
     end

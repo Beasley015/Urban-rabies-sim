@@ -10,4 +10,4 @@ X Remove landscape barriers
 X Decrease carrying capacity slightly
 X Change ORV function so landscape buffer has vaccination rate of 60%
 X Fix immigration so they can't be both vaccinated and infected
-- Fix issue where immigrants can immediately leave the landscape
+X Fix issue where immigrants can immediately leave the landscape
