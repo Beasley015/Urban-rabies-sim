@@ -239,7 +239,8 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
     dat.y[kids] = deepcopy(y_coords)
 end
 
-function spread_disease(;dat)
+# Disease transmission
+function spread_disease(;dat, home)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:nrow(diseased)]
@@ -260,6 +261,41 @@ function spread_disease(;dat)
         direct_exposure = direct_exposure[infections .== 1]
 
         dat.incubation[direct_exposure] .= 1
+    end
+
+    # Infect raccoons in diseased guy's home range
+    if size(diseased,1) != 0
+        # Define diseased guys' home ranges
+        x = home.x[findall(in(home.id).(diseased.id))] # Bounds error here? ################ 
+        y = home.y[findall(in(home.id).(diseased.id))]
+        
+        poss_coords = []
+        
+        for i in 1:length(x)
+            append!(poss_coords,
+            [(x[i]-2, y[i]+2), (x[i]-1, y[i]+2), (x[i], y[i]+2), (x[i]+1, y[i]+2), (x[i]+2, y[i]+2),
+            (x[i]-2, y[i]+1), (x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1), (x[i]+2, y[i]+1),
+            (x[i]-2, y[i]), (x[i]-1, y[i]), (x[i]+1, y[i]), (x[i]+2, y[i]),
+            (x[i]-2, y[i]-1), (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1), (x[i]+2, y[i]-1),
+            (x[i]-2, y[i]-2), (x[i]-1, y[i]-2), (x[i], y[i]-2), (x[i]+1, y[i]-2), (x[i]+2, y[i]-2)])
+        end
+        
+        poss_coords = unique(poss_coords)
+
+        # Get raccoons within that home range
+        indirect_exposure = [intersect(findall(.==(poss_coords[i][1]), dat.x),findall(.==(poss_coords[i][2]), dat.y)) 
+                        for i in 1:length(poss_coords)]
+
+        indirect_exposure = sort(unique(vcat(indirect_exposure...)))
+
+        # Remove vaccinated individuals
+        indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
+         
+        # Infect with set probability
+        infections = rand(Bernoulli(0.01), length(indirect_exposure))
+        indirect_exposure = indirect_exposure[infections .== 1]
+
+        dat.incubation[indirect_exposure] .= 1
     end
 end
 

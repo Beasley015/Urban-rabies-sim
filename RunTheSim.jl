@@ -40,7 +40,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
 
-    for year in 1:years
+    for year in 4:years#1:years
         for step in 1:time_steps
             # Initialize disease at year 4, when population stabilizes
             if year == 4 && step == 1
@@ -52,7 +52,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
-            spread_disease(dat=lil_guys)
+            spread_disease(dat=lil_guys, home=home_coords)
 
             # Lots of death
             dont_fear_the_reaper(lil_guys, home_coords, 2)

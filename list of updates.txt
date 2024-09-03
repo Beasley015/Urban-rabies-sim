@@ -4,10 +4,15 @@ X Figure out correct timing for birth, juvenile dispersal, and ORV
 X Add proportionally higher juvenile mortality when carrying capacity is reached
 X Immigrants skew young
 X Split movement and disease functions
-- Add lower infection rate to raccoons in home range, but not in current cell
+X Add lower infection rate to raccoons in home range, but not in current cell
 X Remove landscape barriers
 - Pivot to immigration questions
 X Decrease carrying capacity slightly
 X Change ORV function so landscape buffer has vaccination rate of 60%
 X Fix immigration so they can't be both vaccinated and infected
 X Fix issue where immigrants can immediately leave the landscape
+
+
+Parameter sensitivity analyses:
+- Crowding mortality rates (sans rabies)
+- Disease transmission rates
