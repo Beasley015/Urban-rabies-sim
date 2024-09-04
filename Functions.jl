@@ -528,7 +528,7 @@ end
 # Immigration function
 function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule")
     if type == "wave"
-        immigration_rate = immigration_rate*20
+        immigration_rate = immigration_rate*26
     end
 
     # get number of immigrants

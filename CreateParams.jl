@@ -4,12 +4,12 @@ using DataAPI
 
 # Write csv of parameters
 serovals = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-barrier_vals = [0,1,2,3,4]
+imm_rate = [1, 5, 10, 20, 35]
 imm_disease = [0, 0.05, 0.1, 0.15, 0.2]
 imm_type = ["propagule","wave"]
 
 
-param_frame = DataAPI.allcombinations(DataFrame, "seros"=>serovals, "barrier"=>barrier_vals, "imm_disease"=>imm_disease,
+param_frame = DataAPI.allcombinations(DataFrame, "seros"=>serovals, "imm_rate"=>imm_rate, "imm_disease"=>imm_disease,
                                                 "imm_type"=>imm_type)
 
 CSV.write("params.csv", param_frame)
