@@ -6,13 +6,18 @@ X Immigrants skew young
 X Split movement and disease functions
 X Add lower infection rate to raccoons in home range, but not in current cell
 X Remove landscape barriers
-- Pivot to immigration questions
+X Pivot to immigration questions
 X Decrease carrying capacity slightly
 X Change ORV function so landscape buffer has vaccination rate of 60%
 X Fix immigration so they can't be both vaccinated and infected
 X Fix issue where immigrants can immediately leave the landscape
+- Reduce dispersal distance?
 
 
 Parameter sensitivity analyses:
 - Crowding mortality rates (sans rabies)
 - Disease transmission rates
+
+Writing:
+- Read USDA internal report
+- Read Grimm et al. 2006 & 2010 for standard protocol to document ABMs

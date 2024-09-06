@@ -23,7 +23,7 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs)
+function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, ac_mort, jc_mort)
     # Define weeks per year
     time_steps = 52
 
@@ -40,22 +40,24 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
 
-    for year in 4:years#1:years
+    for year in 1:years
         for step in 1:time_steps
             # Initialize disease at year 4, when population stabilizes
+            #=
             if year == 4 && step == 1
                 initialize_disease(lil_guys)
             end
+            =#
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords)
+            #spread_disease(dat=lil_guys, home=home_coords)
 
             # Lots of death
-            dont_fear_the_reaper(lil_guys, home_coords, 2)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords, time=2, ac_mort=ac_mort, jc_mort=jc_mort)
 
             # Immigration can be a propagule rain (steady rate) or a wave (bursts of high immigration)
             if immigration_type == "propagule"
@@ -70,7 +72,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
 
             # Juveniles reaching independence disperse
             if size(filter(x -> 20<=x<=75, lil_guys.age),1) > 0 # can change to desired dispersal age
-                if step == 45
+                if step == 43
                     juvies_leave(lil_guys, home_coords, land_size)
                 end
             end
@@ -100,7 +102,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
 
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1)]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), ac_mort, jc_mort]
             push!(outputs, row)
             
         end
@@ -109,19 +111,27 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]], 
+                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero","ac_mort","jc_mort"])
 
-reps = 1
+reps = 5
+
+ac_mort = [0.001,0.005, 0.01]
+jc_mort = [0.005, 0.01, 0.15]
 
 for rep in 1:reps
-    the_mega_loop(years=5, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
+    for i in 1:length(ac_mort)
+        for j in 1:length(jc_mort)
+            the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
+                            ac_mort = ac_mort[i], jc_mort = jc_mort[j])
+        end
+    end
 end
 
 # Create filename
-filename = string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
-                                        "im_type",string(Params[!,4][1]),".csv")
+filename = "carrying_capacity_mortality.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+                                        #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)

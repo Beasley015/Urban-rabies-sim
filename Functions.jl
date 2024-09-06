@@ -349,7 +349,7 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(dat, home, time=2)
+function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
     # disease mortality set at 2 weeks, which results in 1 infectious time step
     # due to the order in which functions are executed in the loop
     
@@ -388,7 +388,7 @@ function dont_fear_the_reaper(dat, home, time=2)
     indices = [findall(==(x), new_location) for x in many_guys]
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 10) #can adjust this number
+    too_many_guys = findall(length.(indices) .> 5) #can adjust this number
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -403,8 +403,8 @@ function dont_fear_the_reaper(dat, home, time=2)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.01), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(ac_mort), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(jc_mort), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
     
@@ -466,7 +466,7 @@ function juvies_leave(dat, home, land_size)
                         downleft, down, downright], size(juvies,1))
 
         # Get dispersal distance
-        distances = rand(Poisson(5), size(juvies,1))
+        distances = rand(Poisson(1), size(juvies,1))
 
         # RUN!
         coords = Vector(undef, size(juvies,1))
@@ -504,7 +504,7 @@ function juvies_leave(dat, home, land_size)
         indices = [findall(==(x), new_location) for x in many_guys]
     
         # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 8) #can adjust this number
+        enough_guys = findall(length.(indices) .<= 5) #can adjust this number
     
         good_spots = many_guys[enough_guys]
     
@@ -524,7 +524,6 @@ function juvies_leave(dat, home, land_size)
     end
 end
 
-# Immigration function
 # Immigration function
 function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule")
     if type == "wave"
@@ -588,7 +587,7 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     end
 
     # Get dispersal distance
-    distances = rand(Poisson(10), size(immigrants,1))
+    distances = rand(Poisson(2), size(immigrants,1))
 
     # RUN!
     coords = Vector(undef, size(immigrants,1))
