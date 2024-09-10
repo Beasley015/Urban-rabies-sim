@@ -88,7 +88,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             end 
         
             # Function where some infected guys become symptomatic
-            begin_symptoms(lil_guys)
+            #begin_symptoms(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -104,8 +104,9 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
                     sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), ac_mort, jc_mort]
             push!(outputs, row)
-            
+        
         end
+        print(year)
     end
 end
 
@@ -119,12 +120,14 @@ reps = 5
 ac_mort = [0.001,0.005, 0.01]
 jc_mort = [0.005, 0.01, 0.15]
 
-for rep in 1:reps
-    for i in 1:length(ac_mort)
-        for j in 1:length(jc_mort)
+for rep in 1#:reps
+    for i in 1#:length(ac_mort)
+        for j in 1#:length(jc_mort)
             the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                             immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
                             ac_mort = ac_mort[i], jc_mort = jc_mort[j])
+
+            println("Rep = ", rep, "i = ", i, "j = ", j)
         end
     end
 end

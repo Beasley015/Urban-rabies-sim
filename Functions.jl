@@ -237,6 +237,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
 
     dat.x[kids] = deepcopy(x_coords)
     dat.y[kids] = deepcopy(y_coords)
+
 end
 
 # Disease transmission
@@ -445,6 +446,7 @@ function ORV(;dat, land_size, land=nothing, sero_prob)
     dat.vaccinated[novax] = vax
 
     return dat
+
 end
 
 # Juvenile distribution
@@ -518,7 +520,7 @@ function juvies_leave(dat, home, land_size)
         # Start the cycle again
         juvies = deepcopy(new_juvies)
 
-        if niter > 5
+        if niter > 3
             break
         end
     end
@@ -587,7 +589,7 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     end
 
     # Get dispersal distance
-    distances = rand(Poisson(2), size(immigrants,1))
+    distances = rand(Poisson(5), size(immigrants,1))
 
     # RUN!
     coords = Vector(undef, size(immigrants,1))
