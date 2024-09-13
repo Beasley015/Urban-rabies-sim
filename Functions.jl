@@ -144,11 +144,7 @@ function initialize_disease(dat)
     unvax = findall(dat.vaccinated .== 0)
 
     # Choose raccoons to infect
-    if length(unvax) > 30
-        new_diseases = sample(unvax, 30, replace = false)
-    else
-        new_diseases = unvax
-    end
+    new_diseases = ifelse(length(unvax) > 30, sample(unvax, 30, replace = false), unvax)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1
@@ -224,30 +220,24 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
     # kids follow mom
     kids = findall(dat.age .< 30)
 
-    # Sometimes mom died, so need to filter orphans out to murder later
-    poss_indices = [findall(dat.id .== dat.mom[kids][i]) for i in 1:length(kids)]
-    blanks = findall(isempty.(poss_indices) .== 1)
-    deleteat!(kids, blanks)
+    # Get indices of moms
+    mom_indices = [findall(dat.id .== dat.mom[kids][i]) for i in 1:length(kids)]
+    deleteat!(kids, findall(isempty.(mom_indices) .== 1)) # filter out orphans
     
-    indices = vcat(poss_indices...)
+    mom_indices = vcat(mom_indices...)
 
     # New kid coords
-    x_coords = deepcopy(dat.x[indices])
-    y_coords = deepcopy(dat.y[indices])
-
-    dat.x[kids] = deepcopy(x_coords)
-    dat.y[kids] = deepcopy(y_coords)
+    dat.x[kids] = deepcopy(dat.x[mom_indices])
+    dat.y[kids] = deepcopy(dat.y[mom_indices])
 
 end
 
 # Disease transmission
 function spread_disease(;dat, home)
     # Find all infected guys
-    diseased = filter(:infectious => x -> x .== 1, dat)
-    diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:nrow(diseased)]
+    diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:nrow(filter(:infectious => x -> x .== 1, dat))]
 
     # Infect raccoons that share cell with diseased guy
-        
     if length(diseased_coords) != 0
         # Get all guys with shared coords
         direct_exposure = [intersect(findall(.==(diseased_coords[i][1]), dat.x),findall(.==(diseased_coords[i][2]), dat.y)) 
@@ -258,8 +248,7 @@ function spread_disease(;dat, home)
         direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        infections = rand(Bernoulli(0.04), length(direct_exposure))
-        direct_exposure = direct_exposure[infections .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(0.04), length(direct_exposure)) .== 1]
 
         dat.incubation[direct_exposure] .= 1
     end
@@ -315,33 +304,25 @@ end
 function reproduce(dat, home)
     # Get females of reproductive age
     females = filter([:sex, :age] => (x,y) -> x == 1 && y >= 52, dat)
-    #females = filter([:sex, :age] => (x, y) -> x == 1 && y >= 75, dat)
     
     # Choose females that actually reproduce
-    reproducing = females[randsubseq(1:size(females,1), 0.9),:]
+    females = females[randsubseq(1:size(females,1), 0.85),:]
 
     # Assign number of offspring to each reproducing female
-    noffspring = rand(Poisson(4), size(reproducing,1))
+    noffspring = rand(Poisson(4), size(females,1))
 
     # Create offspring at location of mother
     devil_spawn = DataFrame(x = Int[], y = Int[], mom = String[])
     for i in 1:length(noffspring)
         for j in 1:noffspring[i]
-            push!(devil_spawn, (reproducing.x[i], reproducing.y[i], reproducing.id[i]), promote = true)
+            push!(devil_spawn, (females.x[i], females.y[i], females.id[i]), promote = true)
         end
     end
 
     # Fill in missing cols
-    devil_spawn.incubation .= 0
-    devil_spawn.time_since_inf .= 0
-    devil_spawn.infectious .= 0
-    devil_spawn.time_since_disease .= 0
-    devil_spawn.sex .= Int.(rand(Bernoulli(0.5), size(devil_spawn,1)))
-    devil_spawn.vaccinated .= 0
-    devil_spawn.age .= 0
-
-    id_vector = collect((maximum(parse.(Int64,dat.id))+1):(maximum(parse.(Int64,dat.id))+size(devil_spawn,1)))
-    devil_spawn.id = string.(id_vector)
+    insertcols!(devil_spawn, :incubation => 0, :time_since_inf => 0, :infectious => 0, :time_since_disease => 0, :vaccinated => 0, 
+                    :age => 0, :sex => Int.(rand(Bernoulli(0.5), size(devil_spawn,1))),
+                    :id => string.(collect((maximum(parse.(Int64,dat.id))+1):(maximum(parse.(Int64,dat.id))+size(devil_spawn,1)))))
 
     # Append to main dataset
     append!(dat, devil_spawn, promote = true)
@@ -360,23 +341,18 @@ function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
     deleteat!(home, findall(rand_deaths==1))
 
     # disease mortality
-    deleteat!(home, findall(x -> x > time, dat.time_since_disease))
+    deleteat!(home, findall(.>(time), dat.time_since_disease))
     filter!(:time_since_disease => <=(time), dat)
 
     # old age mortality
-    deleteat!(home, findall(x -> x >= (52*8), dat.age))
-    if length(findall(x-> x>=(52*8), dat.age)) > 0
-        filter!(:age => <(52*8), dat)
-    end
-    
+    deleteat!(home, findall(.>=(52*8), dat.age))
+    deleteat!(dat, findall(.>=(52*8), dat.age))
 
     # orphan mortality
-    kids = findall(dat.age .< 30)
-
-    no_mom = findall(x -> !(x in dat.id), dat.mom[kids])
+    no_mom = findall(x -> !(x in dat.id), dat.mom[findall(dat.age .< 30)])
 
     deleteat!(home, no_mom)
-    filter!(:mom => !in(dat.mom[kids][no_mom]), dat)
+    filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
 
     # Density-related mortality
     # get coordinates where there are multiple guys
@@ -398,16 +374,12 @@ function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
         crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end
 
-    # Split juveniles and adults for differential mortality
     crowded_indices = sort(unique(vcat(crowded_indices...)))
-    crowded_adults = intersect(crowded_indices, findall(x -> x > 52, dat.age))
-    crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(ac_mort), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(jc_mort), length(crowded_juvies))
+    dead_guys = ifelse.(dat.age[crowded_indices] .>= 52, rand(Bernoulli(ac_mort)), rand(Bernoulli(jc_mort)))
 
-    dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
+    dead_guys = sort(vcat(crowded_indices[dead_guys .== 1]))
     
     if length(dead_guys) > 0
         deleteat!(dat, dead_guys)
@@ -416,18 +388,7 @@ function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
 end
 
 # Vaccination function
-function ORV(;dat, land_size, land=nothing, sero_prob)
-    if land==nothing 
-        # Create array of vaccination probabilities
-        land = fill(sero_prob, (land_size,land_size))
-
-        # Fill in buffer zone
-        land[1:5,:] .= 0.6
-        land[56:60,:] .= 0.6
-        land[:,1:5] .= 0.6
-        land[:,56:60] .= 0.6
-    end
-
+function ORV(;dat, land, sero_prob)
     # Get probs of vaccination at guys' locations
     vaxprob = land[CartesianIndex.(dat.x, dat.y)]
 
@@ -440,7 +401,7 @@ function ORV(;dat, land_size, land=nothing, sero_prob)
     newvax = vaxprob[novax]
 
     # Generate vaccine outcomes
-    vax = Int.(rand.(Bernoulli.(newvax)))
+    vax = @. Int(rand(Bernoulli(newvax)))
 
     # Update data
     dat.vaccinated[novax] = vax
@@ -480,21 +441,26 @@ function juvies_leave(dat, home, land_size)
             end
         end
 
-        # Remove juveniles that left the landscape
-        new_juvies = juvies[all.(x-> 0<x<land_size, coords),:]
-        gone_juvies = juvies[all.(x-> x<0 || x > land_size, coords),:]
+        juvies.x = [x[1] for x in coords]
+        juvies.y = [x[2] for x in coords]
+
+        # Get indices of juvies that left the landscape
+        gone_indices = sort(unique(vcat([findall(x-> x<0 || x > land_size, juvies.x),findall(x-> x<0 || x > land_size, juvies.y)]...)))
+
+        # Remove juvies that left the landscape
+        gone_id = juvies.id[gone_indices]
+        deleteat!(juvies, gone_indices)
 
         # Update full data frame
-        indices=findall(x-> x in(new_juvies.id), dat.id)
-        gone_indices = findall(x-> x in(gone_juvies.id), dat.id)
-        dat[indices,:]=new_juvies
-        deleteat!(dat, gone_indices)
+        indices=findall(x-> x in(juvies.id), dat.id)
+        dat[indices,:] = juvies
+        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
 
         # Update home coords data frame
-        home.x[indices] = new_juvies.x
-        home.y[indices] = new_juvies.y
-        home.id[indices] = new_juvies.id
-        deleteat!(home, gone_indices)
+        home.x[indices] = juvies.x
+        home.y[indices] = juvies.y
+        home.id[indices] = juvies.id
+        deleteat!(home, findall(x-> x in(gone_id), home.id))
     
         # Find coordinates with multiple guys
         new_location = Vector(undef, size(dat,1))
@@ -512,13 +478,10 @@ function juvies_leave(dat, home, land_size)
     
         good_indices = Vector(undef, length(good_spots))
         for i in 1:length(good_spots)
-            good_indices[i] = intersect(findall(x -> x == good_spots[i][1], new_juvies.x), findall(x -> x == good_spots[i][2], new_juvies.y))
+            good_indices[i] = intersect(findall(x -> x == good_spots[i][1], juvies.x), findall(x -> x == good_spots[i][2], juvies.y))
         end    
 
-        deleteat!(new_juvies,sort(unique(vcat(good_indices...))))
-
-        # Start the cycle again
-        juvies = deepcopy(new_juvies)
+        deleteat!(juvies,sort(unique(vcat(good_indices...))))
 
         if niter > 3
             break

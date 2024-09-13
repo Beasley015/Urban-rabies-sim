@@ -23,16 +23,22 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, ac_mort, jc_mort)
-    # Define weeks per year
-    time_steps = 52
-
-    # Define seroprevalence
+function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, ac_mort, jc_mort)
+    # Define average population-level immunity
     seroprev = seros
 
     # create landscape
     land_size = 60
     landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_frame)
+
+    # Create array of vaccination probabilities
+    vaxprob = fill(seroprev, (land_size,land_size))
+
+    # Fill in buffer zone
+    vaxprob[1:5,:] .= 0.6
+    vaxprob[56:60,:] .= 0.6
+    vaxprob[:,1:5] .= 0.6
+    vaxprob[:,56:60] .= 0.6
 
     # Populate landscape
     lil_guys = populate_landscape(seros=seroprev)
@@ -71,10 +77,8 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             end
 
             # Juveniles reaching independence disperse
-            if size(filter(x -> 20<=x<=75, lil_guys.age),1) > 0 # can change to desired dispersal age
-                if step == 43
-                    juvies_leave(lil_guys, home_coords, land_size)
-                end
+            if step == 43
+                juvies_leave(lil_guys, home_coords, land_size)
             end
 
             # Reproduction occurs at specific time steps
@@ -84,8 +88,8 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
 
             # Vaccine baits are distributed at specific time steps
             if step == 35 
-                ORV(dat=lil_guys, land_size=land_size, sero_prob=seroprev)
-            end 
+                ORV(dat=lil_guys, land=vaxprob, sero_prob=seroprev)
+            end
         
             # Function where some infected guys become symptomatic
             #begin_symptoms(lil_guys)
@@ -106,7 +110,7 @@ function the_mega_loop(;years, seros, rep, immigration_type, immigration_disease
             push!(outputs, row)
         
         end
-        print(year)
+        println(year)
     end
 end
 
@@ -117,17 +121,17 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]],
 
 reps = 5
 
-ac_mort = [0.001,0.005, 0.01]
-jc_mort = [0.005, 0.01, 0.15]
+ac_mort = [0.005,0.01, 0.015]
+jc_mort = [0.025, 0.05, 0.075]
 
-for rep in 1#:reps
-    for i in 1#:length(ac_mort)
-        for j in 1#:length(jc_mort)
-            the_mega_loop(years=10, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+for rep in 1:reps
+    for i in 1:length(ac_mort)
+        for j in 1:length(jc_mort)
+            @time the_mega_loop(years=10, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                             immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
                             ac_mort = ac_mort[i], jc_mort = jc_mort[j])
 
-            println("Rep = ", rep, "i = ", i, "j = ", j)
+            println("Rep = ", rep, ", i = ", i, ", j = ", j)
         end
     end
 end
