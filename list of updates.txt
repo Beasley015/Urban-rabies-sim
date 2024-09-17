@@ -12,9 +12,7 @@ X Change ORV function so landscape buffer has vaccination rate of 60%
 X Fix immigration so they can't be both vaccinated and infected
 X Fix issue where immigrants can immediately leave the landscape
 X Reduce dispersal distance
-- Change density mortality to gamma dist. that changes with # of raccoons
 - Optimize for speed
-
 
 Parameter sensitivity analyses:
 - Crowding mortality rates (sans rabies)

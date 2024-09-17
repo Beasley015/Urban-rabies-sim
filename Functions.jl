@@ -303,10 +303,10 @@ end
 # Reproduction function
 function reproduce(dat, home)
     # Get females of reproductive age
-    females = filter([:sex, :age] => (x,y) -> x == 1 && y >= 52, dat)
+    females = filter([:sex, :age] => (x,y) -> x == 1 && y > 52, dat)
     
     # Choose females that actually reproduce
-    females = females[randsubseq(1:size(females,1), 0.85),:]
+    females = females[randsubseq(1:size(females,1), 0.9),:]
 
     # Assign number of offspring to each reproducing female
     noffspring = rand(Poisson(4), size(females,1))
