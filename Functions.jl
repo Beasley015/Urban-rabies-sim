@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;land_size = 60, guy_density = 2.75, seros)
+function populate_landscape(;land_size = 60, guy_density = 1.5, seros)
     # Define main area of simulation
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
@@ -331,18 +331,17 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
-    # disease mortality set at 2 weeks, which results in 1 infectious time step
-    # due to the order in which functions are executed in the loop
-    
+function dont_fear_the_reaper(;dat, home, ac_mort, jc_mort)
     # random mortality
-    rand_deaths = rand(Bernoulli(0.0005),size(dat,1))
-    deleteat!(dat, findall(rand_deaths==1))
-    deleteat!(home, findall(rand_deaths==1))
+    rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
+    deleteat!(dat, findall(rand_deaths .== 1))
+    deleteat!(home, findall(rand_deaths .== 1))
 
     # disease mortality
-    deleteat!(home, findall(.>(time), dat.time_since_disease))
-    filter!(:time_since_disease => <=(time), dat)
+    #=
+    deleteat!(home, findall(.>=(2), dat.time_since_disease))
+    filter!(:time_since_disease => <=(2), dat)
+    =#
 
     # old age mortality
     deleteat!(home, findall(.>=(52*8), dat.age))
@@ -353,8 +352,8 @@ function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
 
     deleteat!(home, no_mom)
     filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
-
-    # Density-related mortality
+    
+    # Density-related mortality: ISSUE IS SOMEWHERE IN HERE
     # get coordinates where there are multiple guys
     new_location = Vector(undef, size(dat,1))
     for i in 1:size(dat,1)
@@ -365,22 +364,26 @@ function dont_fear_the_reaper(;dat, home, time=2, ac_mort, jc_mort)
     indices = [findall(==(x), new_location) for x in many_guys]
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 5) #can adjust this number
+    too_many_guys = findall(length.(indices) .> 6) #can adjust this number
 
     crowded_spots = many_guys[too_many_guys]
 
     crowded_indices = Vector(undef, length(crowded_spots))
     for i in 1:length(crowded_spots)
-        crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
+        crowded_indices[i] = crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end
 
+    # Split juveniles and adults for differential mortality
     crowded_indices = sort(unique(vcat(crowded_indices...)))
+    crowded_adults = intersect(crowded_indices, findall(x -> x > 52, dat.age))
+    crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_guys = ifelse.(dat.age[crowded_indices] .>= 52, rand(Bernoulli(ac_mort)), rand(Bernoulli(jc_mort)))
+    dead_adults = rand(Bernoulli(ac_mort), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(jc_mort), length(crowded_juvies))
 
-    dead_guys = sort(vcat(crowded_indices[dead_guys .== 1]))
-    
+    dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
+
     if length(dead_guys) > 0
         deleteat!(dat, dead_guys)
         deleteat!(home, dead_guys)
@@ -413,7 +416,7 @@ end
 # Juvenile distribution
 function juvies_leave(dat, home, land_size)
     # Get Juveniles
-    juvies = dat[findall(x -> 20<x<75, dat.age),:]
+    juvies = deepcopy(dat[findall(x -> 20<x<75, dat.age),:])
 
     # Create break point so it doesn't get stuck
     niter = 0
@@ -429,7 +432,7 @@ function juvies_leave(dat, home, land_size)
                         downleft, down, downright], size(juvies,1))
 
         # Get dispersal distance
-        distances = rand(Poisson(1), size(juvies,1))
+        distances = rand(Poisson(2), size(juvies,1))
 
         # RUN!
         coords = Vector(undef, size(juvies,1))
@@ -445,21 +448,21 @@ function juvies_leave(dat, home, land_size)
         juvies.y = [x[2] for x in coords]
 
         # Get indices of juvies that left the landscape
-        gone_indices = sort(unique(vcat([findall(x-> x<0 || x > land_size, juvies.x),findall(x-> x<0 || x > land_size, juvies.y)]...)))
+        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, juvies.x),findall(x-> x .< 0 || x .> land_size, juvies.y)]...)))
 
         # Remove juvies that left the landscape
         gone_id = juvies.id[gone_indices]
         deleteat!(juvies, gone_indices)
 
         # Update full data frame
-        indices=findall(x-> x in(juvies.id), dat.id)
-        dat[indices,:] = juvies
+        juvies_indices=findall(x-> x in(juvies.id), dat.id)
+        dat[juvies_indices,:] = juvies
         deleteat!(dat, findall(x-> x in(gone_id), dat.id))
 
         # Update home coords data frame
-        home.x[indices] = juvies.x
-        home.y[indices] = juvies.y
-        home.id[indices] = juvies.id
+        home.x[juvies_indices] = juvies.x
+        home.y[juvies_indices] = juvies.y
+        home.id[juvies_indices] = juvies.id
         deleteat!(home, findall(x-> x in(gone_id), home.id))
     
         # Find coordinates with multiple guys
@@ -483,7 +486,7 @@ function juvies_leave(dat, home, land_size)
 
         deleteat!(juvies,sort(unique(vcat(good_indices...))))
 
-        if niter > 3
+        if niter > 2
             break
         end
     end

@@ -63,7 +63,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             #spread_disease(dat=lil_guys, home=home_coords)
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords, time=2, ac_mort=ac_mort, jc_mort=jc_mort)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords, ac_mort=ac_mort, jc_mort=jc_mort)
 
             # Immigration can be a propagule rain (steady rate) or a wave (bursts of high immigration)
             if immigration_type == "propagule"
@@ -82,7 +82,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
 
             # Reproduction occurs at specific time steps
-            if step == 20 
+            if step == 18
                 reproduce(lil_guys, home_coords)
             end
 
@@ -99,7 +99,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Update time since infection & disease
             lil_guys.time_since_inf[lil_guys.incubation .== 1] = lil_guys.time_since_inf[lil_guys.incubation.==1] .+ 1
-            lil_guys.time_since_disease[lil_guys.infectious.==1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
+            lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
             # Filter out buffer zone
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
@@ -121,8 +121,8 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]],
 
 reps = 5
 
-ac_mort = [0.005,0.01, 0.015]
-jc_mort = [0.025, 0.05, 0.075]
+ac_mort = [0.005, 0.01, 0.015]
+jc_mort = [0.02, 0.025, 0.03]
 
 for rep in 1:reps
     for i in 1:length(ac_mort)
@@ -137,7 +137,7 @@ for rep in 1:reps
 end
 
 # Create filename
-filename = "carrying_capacity_mortality.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/carrying_capacity_mortality.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
