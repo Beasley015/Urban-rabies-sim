@@ -23,7 +23,7 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, ac_mort, jc_mort)
+function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs)
     # Define average population-level immunity
     seroprev = seros
 
@@ -48,22 +48,20 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
     for year in 1:years
         for step in 1:time_steps
-            # Initialize disease at year 4, when population stabilizes
-            #=
-            if year == 4 && step == 1
+            # Initialize disease at year 5, when population stabilizes
+            if year == 5 && step == 1
                 initialize_disease(lil_guys)
             end
-            =#
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
-            #spread_disease(dat=lil_guys, home=home_coords)
+            spread_disease(dat=lil_guys, home=home_coords)
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords, ac_mort=ac_mort, jc_mort=jc_mort)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
 
             # Immigration can be a propagule rain (steady rate) or a wave (bursts of high immigration)
             if immigration_type == "propagule"
@@ -92,7 +90,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
         
             # Function where some infected guys become symptomatic
-            #begin_symptoms(lil_guys)
+            begin_symptoms(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -106,7 +104,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), ac_mort, jc_mort]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1)]
             push!(outputs, row)
         
         end
@@ -116,28 +114,20 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero","ac_mort","jc_mort"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
+                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
 
 reps = 5
 
-ac_mort = [0.005, 0.01, 0.015]
-jc_mort = [0.02, 0.025, 0.03]
+for rep in 1#:reps
+            @time the_mega_loop(years=15, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 
-for rep in 1:reps
-    for i in 1:length(ac_mort)
-        for j in 1:length(jc_mort)
-            @time the_mega_loop(years=10, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
-                            ac_mort = ac_mort[i], jc_mort = jc_mort[j])
-
-            println("Rep = ", rep, ", i = ", i, ", j = ", j)
-        end
-    end
+            #println("Rep = ", rep, ", i = ", i, ", j = ", j)
 end
 
 # Create filename
-filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/carrying_capacity_mortality.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_test.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results

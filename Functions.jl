@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;land_size = 60, guy_density = 1.5, seros)
+function populate_landscape(;land_size = 60, guy_density = 1, seros)
     # Define main area of simulation
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
@@ -235,7 +235,8 @@ end
 # Disease transmission
 function spread_disease(;dat, home)
     # Find all infected guys
-    diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:nrow(filter(:infectious => x -> x .== 1, dat))]
+    diseased = filter(:infectious => x -> x .== 1, dat)
+    diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
 
     # Infect raccoons that share cell with diseased guy
     if length(diseased_coords) != 0
@@ -254,7 +255,7 @@ function spread_disease(;dat, home)
     end
 
     # Infect raccoons in diseased guy's home range
-    if size(diseased,1) != 0
+    if size(diseased_coords,1) != 0
         # Define diseased guys' home ranges
         x = home.x[findall(in(home.id).(diseased.id))] # Bounds error here? ################ 
         y = home.y[findall(in(home.id).(diseased.id))]
@@ -306,7 +307,7 @@ function reproduce(dat, home)
     females = filter([:sex, :age] => (x,y) -> x == 1 && y > 52, dat)
     
     # Choose females that actually reproduce
-    females = females[randsubseq(1:size(females,1), 0.9),:]
+    females = females[randsubseq(1:size(females,1), 0.95),:]
 
     # Assign number of offspring to each reproducing female
     noffspring = rand(Poisson(4), size(females,1))
@@ -331,17 +332,15 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home, ac_mort, jc_mort)
+function dont_fear_the_reaper(;dat, home)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
     deleteat!(home, findall(rand_deaths .== 1))
 
     # disease mortality
-    #=
     deleteat!(home, findall(.>=(2), dat.time_since_disease))
     filter!(:time_since_disease => <=(2), dat)
-    =#
 
     # old age mortality
     deleteat!(home, findall(.>=(52*8), dat.age))
@@ -353,7 +352,7 @@ function dont_fear_the_reaper(;dat, home, ac_mort, jc_mort)
     deleteat!(home, no_mom)
     filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
     
-    # Density-related mortality: ISSUE IS SOMEWHERE IN HERE
+    # Density-related mortality
     # get coordinates where there are multiple guys
     new_location = Vector(undef, size(dat,1))
     for i in 1:size(dat,1)
@@ -364,7 +363,7 @@ function dont_fear_the_reaper(;dat, home, ac_mort, jc_mort)
     indices = [findall(==(x), new_location) for x in many_guys]
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 6) #can adjust this number
+    too_many_guys = findall(length.(indices) .> 8) #can adjust this number
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -379,8 +378,8 @@ function dont_fear_the_reaper(;dat, home, ac_mort, jc_mort)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(ac_mort), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(jc_mort), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 

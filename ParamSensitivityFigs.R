@@ -16,7 +16,7 @@ ggplot(data=dat, aes(x = nweek, y = total_pop, color = factor(rep)))+
   theme_bw()+
   theme(panel.grid = element_blank())
 
-# ggsave("full_cc_birthrate85.jpeg", width=10, height=9, units = "in")
+# ggsave("full_cc_birthrate95.jpeg", width=10, height=9, units = "in")
 
 jmort_only <- dat %>%
   filter(ac_mort == 0.005) %>%
@@ -30,4 +30,4 @@ ggplot(data=jmort_only, aes(x = nweek, y = mean_pop,
   theme_bw()+
   theme(panel.grid = element_blank())
 
-# ggsave("cc_adult005_birthrate85.jpeg", width=5, height=3, units = "in")
+# ggsave("cc_adult005_birthrate95.jpeg", width=5, height=3, units = "in")
