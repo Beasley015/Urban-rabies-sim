@@ -53,6 +53,9 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 initialize_disease(lil_guys)
             end
 
+            # Lots of death
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
+
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
@@ -60,10 +63,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # Spread disease
             spread_disease(dat=lil_guys, home=home_coords)
 
-            # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
-
-            # Immigration can be a propagule rain (steady rate) or a wave (bursts of high immigration)
+            # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
                                 sero_rate=0.6, immigration_rate=immigration_rate)

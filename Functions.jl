@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;land_size = 60, guy_density = 1, seros)
+function populate_landscape(;guy_density = 1, seros)
     # Define main area of simulation
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
@@ -253,12 +253,12 @@ function spread_disease(;dat, home)
 
         dat.incubation[direct_exposure] .= 1
     end
-
+    
     # Infect raccoons in diseased guy's home range
-    if size(diseased_coords,1) != 0
+    if length(diseased_coords) != 0
         # Define diseased guys' home ranges
-        x = home.x[findall(in(home.id).(diseased.id))] # Bounds error here? ################ 
-        y = home.y[findall(in(home.id).(diseased.id))]
+        x = deepcopy(home.x[findall(dat.infectious .== 1)])
+        y = deepcopy(home.y[findall(dat.infectious .== 1)])
         
         poss_coords = []
         
@@ -271,8 +271,6 @@ function spread_disease(;dat, home)
             (x[i]-2, y[i]-2), (x[i]-1, y[i]-2), (x[i], y[i]-2), (x[i]+1, y[i]-2), (x[i]+2, y[i]-2)])
         end
         
-        poss_coords = unique(poss_coords)
-
         # Get raccoons within that home range
         indirect_exposure = [intersect(findall(.==(poss_coords[i][1]), dat.x),findall(.==(poss_coords[i][2]), dat.y)) 
                         for i in 1:length(poss_coords)]
@@ -281,13 +279,15 @@ function spread_disease(;dat, home)
 
         # Remove vaccinated individuals
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
-         
+    
         # Infect with set probability
         infections = rand(Bernoulli(0.01), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
     end
+
+    return dat
 end
 
 # Transition from incubation period to infectious period
@@ -340,7 +340,7 @@ function dont_fear_the_reaper(;dat, home)
 
     # disease mortality
     deleteat!(home, findall(.>=(2), dat.time_since_disease))
-    filter!(:time_since_disease => <=(2), dat)
+    filter!(:time_since_disease => <(2), dat)
 
     # old age mortality
     deleteat!(home, findall(.>=(52*8), dat.age))
