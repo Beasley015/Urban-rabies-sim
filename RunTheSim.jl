@@ -23,7 +23,7 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs)
+function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, direct_prob, indir_prob)
     # Define average population-level immunity
     seroprev = seros
 
@@ -61,7 +61,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords)
+            spread_disease(dat=lil_guys, home=home_coords, direct_prob=direct_prob, indir_prob=indir_prob)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             if immigration_type == "propagule"
@@ -104,7 +104,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1)]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), direct_prob, indir_prob]
             push!(outputs, row)
         
         end
@@ -114,16 +114,24 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]], 
+                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero",
+                    "direct_prob", "indirect_prob"])
 
 reps = 5
+direct = [0.03, 0.035, 0.04, 0.045, 0.05]
+indirect = [0.005, 0.01, 0.015, 0.02]
 
-for rep in 1#:reps
+for i in 1:length(direct)
+    for j in 1:length(indirect)
+        for rep in 1:reps
             @time the_mega_loop(years=15, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
+                            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
+                            direct_prob = direct, indir_prob = indirect)
 
-            #println("Rep = ", rep, ", i = ", i, ", j = ", j)
+            println("Rep = ", rep, ", i = ", i, ", j = ", j)
+        end
+    end
 end
 
 # Create filename
