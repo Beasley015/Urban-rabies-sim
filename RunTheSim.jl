@@ -5,6 +5,7 @@ using Random
 using NeutralLandscapes 
 using PkgCite
 using CSV
+using PProf
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.29950784172189776, 0.22446136010674367, 0.2523743902705777, 0.1341207865782969, 0.06295251219458844, 
@@ -46,7 +47,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
 
-    for year in 1:years
+    for year in 5#1:years
         for step in 1:time_steps
             # Initialize disease at year 5, when population stabilizes
             if year == 5 && step == 1
@@ -58,7 +59,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.05)
+            @pprof move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
             spread_disease(dat=lil_guys, home=home_coords, direct_prob=direct_prob, indir_prob=indir_prob)
@@ -74,7 +75,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 end
             end
 
-            # Juveniles reaching independence disperse
+            # Juveniles disperse
             if step == 43
                 juvies_leave(lil_guys, home_coords, land_size)
             end
@@ -99,12 +100,14 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             lil_guys.time_since_inf[lil_guys.incubation .== 1] = lil_guys.time_since_inf[lil_guys.incubation.==1] .+ 1
             lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
+            elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
+
             # Filter out buffer zone
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
 
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), direct_prob, indir_prob]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), elimination, direct_prob, indir_prob]
             push!(outputs, row)
         
         end
@@ -114,20 +117,20 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero",
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]], 
+                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim",
                     "direct_prob", "indirect_prob"])
 
 reps = 5
 direct = [0.03, 0.035, 0.04, 0.045, 0.05]
-indirect = [0.005, 0.01, 0.015, 0.02]
+indirect = [0.001, 0.005, 0.01, 0.015]
 
-for i in 1:length(direct)
-    for j in 1:length(indirect)
-        for rep in 1:reps
-            @time the_mega_loop(years=15, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+for i in 1#:length(direct)
+    for j in 1#:length(indirect)
+        for rep in 1#:reps
+            the_mega_loop(years=1, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                             immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
-                            direct_prob = direct, indir_prob = indirect)
+                            direct_prob = direct[i], indir_prob = indirect[j])
 
             println("Rep = ", rep, ", i = ", i, ", j = ", j)
         end
@@ -135,8 +138,8 @@ for i in 1:length(direct)
 end
 
 # Create filename
-filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_test.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+#filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_test.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
-CSV.write(filename, outputs)
+#CSV.write(filename, outputs)

@@ -15,8 +15,8 @@ X Reduce dispersal distance
 - Optimize for speed
 
 Parameter sensitivity analyses:
-- Crowding mortality rates (sans rabies)
-- Disease transmission rates
+X Crowding mortality rates (sans rabies)
+X Disease transmission rates
 
 Writing:
 X Read USDA internal report

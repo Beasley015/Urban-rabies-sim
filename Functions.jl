@@ -197,6 +197,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
     dist_weights = Vector(undef, length(coords))
     for i in 1:length(coords)
         home_loc = (home.x[i], home.y[i]) 
+        # Potential slowdown:
         distances[i] = ((([x[1] for x in coords[i]].-home_loc[1]).^2 .+ ([x[2] for x in coords[i]].-home_loc[2]).^2)*reso)/100
         dist_weights[i] = exp.(rate .* distances[i])
     end
@@ -221,7 +222,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
     kids = findall(dat.age .< 30)
 
     # Get indices of moms
-    mom_indices = [findall(dat.id .== dat.mom[kids][i]) for i in 1:length(kids)]
+    mom_indices = [findall(dat.id .== dat.mom[kids][i]) for i in 1:length(kids)] # Potential slowdown
     deleteat!(kids, findall(isempty.(mom_indices) .== 1)) # filter out orphans
     
     mom_indices = vcat(mom_indices...)
@@ -360,7 +361,7 @@ function dont_fear_the_reaper(;dat, home)
     end
 
     many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
-    indices = [findall(==(x), new_location) for x in many_guys]
+    indices = [findall(==(x), new_location) for x in many_guys] # This is a major slowdown
 
     # Find cells with max number of guys or greater
     too_many_guys = findall(length.(indices) .> 8) #can adjust this number
@@ -369,6 +370,7 @@ function dont_fear_the_reaper(;dat, home)
 
     crowded_indices = Vector(undef, length(crowded_spots))
     for i in 1:length(crowded_spots)
+        # Another large slowdown:
         crowded_indices[i] = crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end
 
