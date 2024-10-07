@@ -3,6 +3,74 @@ library(viridis)
 
 setwd("./ParamSensitivity")
 
+# Population size ---------------------
+pop <- read.csv("popsize.csv") %>%
+  select(rep, year, week, total_pop) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+ggplot(data=pop, aes(x = nweek, y = total_pop, 
+                     color = factor(rep)))+
+  geom_line()+
+  scale_color_viridis_d(name = "Rep", end = 0.9)+
+  labs(x = "Week", y = "Population Size")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+# ggsave("maxcc_12.jpeg", width = 5, height = 4, units = "in")
+
+# Land cover test ---------------
+# Do raccoons aggregate in favorable habitat?
+
+for(i in 1:5){
+  # Read in land cover data
+  land <- read.csv(paste("land", i, ".csv", sep = ""), header = F)
+  land <- land[-c(1:5, 56:60), -c(1:5, 56:60)]
+
+  # Tabulate land cover types 
+  landtab <- table(factor(unlist(land), 
+                          levels = unique(unlist(land))))
+
+  # Combine last 5 habitats because they are rare
+  landtab[4] <- sum(landtab[4:length(landtab)])
+  landtab <- landtab[1:4]
+  names(landtab) <- c("forest", "developed", "pasture",
+                      "other")
+
+  # Convert to proportions
+  landtab <- landtab/sum(landtab)
+  
+  # Load raccoon data and label some columns
+  landprops <- as.data.frame(t(read.csv("raccoon_land_props.csv")))
+  colnames(landprops)[1:6] <- c("rep", "year", "week","forest",
+                              "developed", "pasture")
+
+  # Combine remaining habitats into "other" category
+  landprops <- landprops %>%
+    filter(rep == i) %>%
+    mutate("Other" = V7+V8+V9+V10+V11) %>%
+    dplyr::select(rep:pasture, Other) %>%
+    summarise_at(.vars = vars(forest:Other), .funs = mean)
+
+  # Compare with bar plots
+  land.compare <- data.frame(Habitat = colnames(landprops),
+                             Actual = as.vector(landtab),
+                             Used = as.numeric(landprops[1,])) %>%
+    pivot_longer(cols = -Habitat, names_to = "type", 
+                 values_to = "prop")
+
+  ggplot(data = land.compare, aes(x = Habitat, y = prop, 
+                                  fill = type))+
+    geom_col(position = "dodge", color = "black") +
+    scale_fill_manual(values = c("lightgray", "limegreen"), 
+                      name = "")+
+    labs(y = "Proportion")+
+    theme_bw(base_size=12)+
+    theme(legend.title = , panel.grid = element_blank())
+
+  ggsave(filename = paste("landprop", i, ".jpeg"), width = 6,
+         height = 4, units = "in")
+}
+
 # Mortality rates from carrying capacity -------------------
 # Read in simulation results
 ccmort <- read.csv("carrying_capacity_mortality.csv") %>%

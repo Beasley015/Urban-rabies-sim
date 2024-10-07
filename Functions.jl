@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;guy_density = 1, seros)
+function populate_landscape(;guy_density = 2, seros)
     # Define main area of simulation
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
@@ -193,8 +193,8 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
     end
    
     # Movement weights as a function of distance from initial coords
-    distances = Vector(undef, length(coords))
-    dist_weights = Vector(undef, length(coords))
+    distances = Vector{Vector{Float64}}(undef, length(coords))
+    dist_weights = Vector{Vector{Float64}}(undef, length(coords))
     for i in 1:length(coords)
         home_loc = (home.x[i], home.y[i]) 
         # Potential slowdown:
@@ -333,7 +333,7 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home)
+function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
@@ -355,7 +355,7 @@ function dont_fear_the_reaper(;dat, home)
     
     # Density-related mortality
     # get coordinates where there are multiple guys
-    new_location = Vector(undef, size(dat,1))
+    new_location = Vector{Tuple{Int64,Int64}}(undef, size(dat,1))
     for i in 1:size(dat,1)
         new_location[i] = (dat.x[i], dat.y[i]) 
     end
@@ -364,14 +364,14 @@ function dont_fear_the_reaper(;dat, home)
     indices = [findall(==(x), new_location) for x in many_guys] # This is a major slowdown
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 8) #can adjust this number
+    too_many_guys = findall(length.(indices) .> 10) 
 
     crowded_spots = many_guys[too_many_guys]
 
-    crowded_indices = Vector(undef, length(crowded_spots))
+    crowded_indices = Vector{Vector{Int64}}(undef, length(crowded_spots))
     for i in 1:length(crowded_spots)
-        # Another large slowdown:
-        crowded_indices[i] = crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
+        # Another slowdown
+        crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end
 
     # Split juveniles and adults for differential mortality
@@ -380,8 +380,8 @@ function dont_fear_the_reaper(;dat, home)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(a_mort), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(j_mort), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 

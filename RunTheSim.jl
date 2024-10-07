@@ -8,13 +8,13 @@ using CSV
 using PProf
 
 # Land proportions calculated from Burlington raster data
-land_proportions =  [0.29950784172189776, 0.22446136010674367, 0.2523743902705777, 0.1341207865782969, 0.06295251219458844, 
+land_proportions =  [0.22446136010674367, 0.2523743902705777, 0.1341207865782969, 0.06295251219458844, 
                         0.003442920576590765, 0.018693265087385436, 0.0023557976245160445, 0.0020911258394032853, 0.0, 0.0]
 
 # Data frame of habitat types & movement coefficients
 hab_names = ["forest", "developed", "pasture", "wetlands", "herbaceous", "cultivated", "barren", "shrub", "barrier", "buffer"]
 hab_coefs = [0.12, -0.5, -0.03, 0.57, 0, -0.5, 0, 0.4, 0, -0.5]
-hab_frame = DataFrame(type = hab_names, prop = land_proportions[2:11], coef = hab_coefs)
+hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coefs)
 
 # Load in functions
 include("Functions.jl")
@@ -24,7 +24,7 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, direct_prob, indir_prob)
+function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, outputs, adult, juvie)
     # Define average population-level immunity
     seroprev = seros
 
@@ -47,22 +47,24 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
 
-    for year in 5#1:years
+    for year in 1:years
         for step in 1:time_steps
             # Initialize disease at year 5, when population stabilizes
+            #=
             if year == 5 && step == 1
                 initialize_disease(lil_guys)
             end
+            =#
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords, a_mort = adult, j_mort = juvie)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            @pprof move(moves, lil_guys, home_coords, landscape, 500, -0.05)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, direct_prob=direct_prob, indir_prob=indir_prob)
+            #spread_disease(dat=lil_guys, home=home_coords, direct_prob=direct_prob, indir_prob=indir_prob)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             if immigration_type == "propagule"
@@ -91,7 +93,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
         
             # Function where some infected guys become symptomatic
-            begin_symptoms(lil_guys)
+            #begin_symptoms(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -104,12 +106,12 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Filter out buffer zone
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
-
+            
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), elimination, direct_prob, indir_prob]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), elimination]
             push!(outputs, row)
-        
+    
         end
         println(year)
     end
@@ -117,29 +119,28 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim",
-                    "direct_prob", "indirect_prob"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[]], 
+                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim"])
+
 
 reps = 5
-direct = [0.03, 0.035, 0.04, 0.045, 0.05]
-indirect = [0.001, 0.005, 0.01, 0.015]
+a = [0.005, 0.01, 0.015]
+j = [0.015, 0.02, 0.025]
 
-for i in 1#:length(direct)
-    for j in 1#:length(indirect)
-        for rep in 1#:reps
-            the_mega_loop(years=1, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
-                            direct_prob = direct[i], indir_prob = indirect[j])
-
-            println("Rep = ", rep, ", i = ", i, ", j = ", j)
+for rep in 1:reps
+    for i in 1:length(a)
+        for k in 1:length(j)
+            @time the_mega_loop(years=10, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
+                                    adult = a[i], juvie = j[k])
         end
     end
+    println("Rep = ", rep, "i = ", i, "j = ", j)
 end
 
 # Create filename
-#filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_test.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/carrying_capacity_mortality.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
-#CSV.write(filename, outputs)
+CSV.write(filename, output)
