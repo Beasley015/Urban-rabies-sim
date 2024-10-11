@@ -144,7 +144,7 @@ function initialize_disease(dat)
     unvax = findall(dat.vaccinated .== 0)
 
     # Choose raccoons to infect
-    new_diseases = ifelse(length(unvax) > 30, sample(unvax, 30, replace = false), unvax)
+    new_diseases = ifelse(length(unvax) > 15, sample(unvax, 15, replace = false), unvax)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1
@@ -261,7 +261,7 @@ function spread_disease(;dat, home, direct_prob, indir_prob)
         x = deepcopy(home.x[findall(dat.infectious .== 1)])
         y = deepcopy(home.y[findall(dat.infectious .== 1)])
         
-        poss_coords = []
+        poss_coords = Vector{Tuple{Int64, Int64}}()
         
         for i in 1:length(x)
             append!(poss_coords,
@@ -333,7 +333,7 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
+function dont_fear_the_reaper(;dat, home)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
@@ -364,7 +364,7 @@ function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
     indices = [findall(==(x), new_location) for x in many_guys] # This is a major slowdown
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 10) 
+    too_many_guys = findall(length.(indices) .> 12) 
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -380,8 +380,8 @@ function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(a_mort), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(j_mort), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 
