@@ -25,7 +25,7 @@ Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
 function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
-                        outputs, cell, homerange)
+                        outputs)
     # Define average population-level immunity
     seroprev = seros
 
@@ -48,7 +48,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
 
-    for year in 1:years
+    for year in years#1:years
         for step in 1:time_steps
             # Initialize disease at year 5, when population stabilizes
             if year == 5 && step == 1
@@ -63,7 +63,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             move(moves, lil_guys, home_coords, landscape, 500, -0.05)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, direct_prob=cell, indir_prob=homerange)
+            spread_disease(dat=lil_guys, home=home_coords)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             if immigration_type == "propagule"
@@ -91,8 +91,8 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 ORV(dat=lil_guys, land=vaxprob, sero_prob=seroprev)
             end
         
-            # Function where some infected guys become symptomatic
-            begin_symptoms(lil_guys)
+            # Function where some infected guys become symptomatic or recover
+            change_state(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -108,7 +108,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
-                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), elimination, cell, homerange]
+                    sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), elimination]
             push!(outputs, row)
     
         end
@@ -118,28 +118,21 @@ end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]], 
-                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim", "cell", "homerange"])
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],], 
+                    ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim"])
 
 
 reps = 5
-cell = [0.025, 0.03]
-hr = [0.001]
 
 for rep in 1:reps
-    for i in 1:length(cell)
-        for k in 1:length(hr)
-            @time the_mega_loop(years=15, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
-                                    cell = cell[i], homerange = hr[k])
+    @time the_mega_loop(years=5, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 
-            println("Rep = ", rep, ", i = ", i, ", k = ", k)
-        end
-    end
+    println("Rep = ", rep)
 end
 
 # Create filename
-filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_low_initialization.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+#filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease015.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results

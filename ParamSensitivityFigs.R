@@ -365,5 +365,31 @@ ggplot(data = start, aes(x = nweek, y = n_symptomatic,
   theme(panel.grid.major.x = element_blank(), 
         panel.grid.minor.x = element_blank())
 
-# ggsave("weekly_cases_start20.jpeg", width = 6, height = 4,
+# ggsave("weekly_cases_start15.jpeg", width = 6, height = 4,
+#        units = "in")
+
+# Low within-cell prob ------------
+dis <- read.csv("disease02.csv") %>%
+  select(rep, year, week, total_pop, n_infected, n_symptomatic, elim) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+# Compare proportion of outbreaks eliminated
+dis %>%
+  filter(year >= 5, elim == "True") %>%
+  select(rep) %>%
+  distinct() %>%
+  summarise(prop = n()/5)
+#ok none were eliminated
+
+# Check weekly # of cases
+ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
+                       color = factor(rep)))+
+  geom_line()+
+  lims(x = c((52*4)+1, 800))+
+  scale_color_viridis_d(end = 0.9, name = "Rep")+
+  theme_bw()+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+# ggsave(filename = "cellprob02.jpeg", width = 6, height = 4,
 #        units = "in")

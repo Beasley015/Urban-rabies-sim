@@ -12,11 +12,21 @@ X Change ORV function so landscape buffer has vaccination rate of 60%
 X Fix immigration so they can't be both vaccinated and infected
 X Fix issue where immigrants can immediately leave the landscape
 X Reduce dispersal distance
-- Optimize for speed
+X Optimize for speed
+X Add option to leave incubation stage and survive w/low probability
+- Check McClure habitat type designations in supplemental material
+- Make figures explaining movement and transmission, compare to Kim's method
+- add adult dispersal
+- Create figure of distance decay function & adjust accordingly
 
 Parameter sensitivity analyses:
-X Crowding mortality rates (sans rabies)
-X Disease transmission rates
+- Max carrying capacity (sans rabies, look at July & October pop size)
+- Crowding mortality rates (sans rabies)
+- Disease transmission rates
+- Gif of disease spread from year 6/7 onwards
+- Find a way to check movement based on habitat in home range center
+
+- Run it!
 
 Writing:
 X Read USDA internal report

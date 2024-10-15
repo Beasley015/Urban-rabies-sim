@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;guy_density = 2, seros)
+function populate_landscape(;guy_density = 1, seros)
     # Define main area of simulation
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
@@ -144,7 +144,7 @@ function initialize_disease(dat)
     unvax = findall(dat.vaccinated .== 0)
 
     # Choose raccoons to infect
-    new_diseases = ifelse(length(unvax) > 15, sample(unvax, 15, replace = false), unvax)
+    new_diseases = ifelse(length(unvax) > 30, sample(unvax, 30, replace = false), unvax)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1
@@ -234,7 +234,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
 end
 
 # Disease transmission
-function spread_disease(;dat, home, direct_prob, indir_prob)
+function spread_disease(;dat, home)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
@@ -250,7 +250,7 @@ function spread_disease(;dat, home, direct_prob, indir_prob)
         direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        direct_exposure = direct_exposure[rand(Bernoulli(direct_prob), length(direct_exposure)) .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(0.015), length(direct_exposure)) .== 1]
 
         dat.incubation[direct_exposure] .= 1
     end
@@ -282,7 +282,7 @@ function spread_disease(;dat, home, direct_prob, indir_prob)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(indir_prob), length(indirect_exposure))
+        infections = rand(Bernoulli(0.001), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
@@ -291,8 +291,13 @@ function spread_disease(;dat, home, direct_prob, indir_prob)
     return dat
 end
 
-# Transition from incubation period to infectious period
-function begin_symptoms(dat)
+# Transition from incubation period to infectious period or recovery
+function change_state(dat)
+    # Recovery: approx. 10% recover, reduced to weekly probability 
+    prob_recover = rand.(Bernoulli.(0.015), length(dat.incubation .== 1))
+    dat.incubation[prob_recover .== 1] .= 0
+    dat.vaccinated[prob_recover .== 1] .= 1
+
     # Probability of transition
     prob = rand.(Beta.(dat.time_since_inf[(dat.incubation .== 1) .& (dat.infectious .== 0)] .+ 0.000000000001,5))
     # If the probability is 0 it does not work; so add a miniscule number
@@ -491,6 +496,11 @@ function juvies_leave(dat, home, land_size)
             break
         end
     end
+end
+
+# Adult dispersal
+function adults_move()
+
 end
 
 # Immigration function
