@@ -481,7 +481,7 @@ function juvies_leave(dat, home, land_size)
         indices = [findall(==(x), new_location) for x in many_guys]
     
         # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 5) #can adjust this number
+        enough_guys = findall(length.(indices) .<= 12) #can adjust this number
     
         good_spots = many_guys[enough_guys]
     
@@ -499,8 +499,107 @@ function juvies_leave(dat, home, land_size)
 end
 
 # Adult dispersal
-function adults_move()
+function adults_move(dat, home, land_size)
+    # get adults
+    adults = deepcopy(dat[findall(x -> x>20, dat.age),:])
 
+     # Find coordinates with multiple guys
+     new_location = Vector{Tuple{Int64, Int64}}(undef, size(dat,1))
+     for i in 1:size(dat,1)
+         new_location[i] = (dat.x[i], dat.y[i]) 
+     end
+ 
+     many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
+     indices = [findall(==(x), new_location) for x in many_guys]
+ 
+     # Find cells with less than max number of guys
+     enough_guys = findall(length.(indices) .<= 12) #can adjust this number
+ 
+     good_spots = many_guys[enough_guys]
+ 
+     good_indices = Vector{Vector{Int64}}(undef, length(good_spots))
+     for i in 1:length(good_spots)
+         good_indices[i] = intersect(findall(x -> x == good_spots[i][1], adults.x), 
+                                        findall(x -> x == good_spots[i][2], adults.y))
+     end    
+    
+     # Adults in a non-crowded cell do not disperse
+     deleteat!(adults,sort(unique(vcat(good_indices...))))
+
+    # Create break point so it doesn't get stuck
+    niter = 0
+
+    while size(adults,1) > 0
+        niter = niter + 1
+
+        # Pick a direction from list of inline functions
+        upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
+        left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
+        downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
+        directions = rand([upleft, up, upright, left, right, 
+                        downleft, down, downright], size(adults,1))
+
+        # Get dispersal distance (shorter for adults)
+        distances = rand(Poisson(1), size(adults,1))
+
+        # RUN!
+        coords = Vector(undef, size(adults,1))
+
+        for i in 1:length(distances)
+            coords[i] = [adults.x[i], adults.y[i]]
+                for j in 1:distances[i]
+                coords[i] = directions[i](coords[i][1], coords[i][2])
+            end
+        end
+
+        adults.x = [x[1] for x in coords]
+        adults.y = [x[2] for x in coords]
+
+        # Get indices of adults that left the landscape
+        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, adults.x),
+                                        findall(x-> x .< 0 || x .> land_size, adults.y)]...)))
+
+        # Remove adults that left the landscape
+        gone_id = adults.id[gone_indices]
+        deleteat!(adults, gone_indices)
+
+        # Update full data frame
+        adults_indices=findall(x-> x in(adults.id), dat.id)
+        dat[adults_indices,:] = adults
+        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
+
+        # Update home coords data frame
+        home.x[adults_indices] = adults.x
+        home.y[adults_indices] = adults.y
+        home.id[adults_indices] = adults.id
+        deleteat!(home, findall(x-> x in(gone_id), home.id))
+    
+        # Find coordinates with multiple guys
+        new_location = Vector{Tuple{Int64, Int64}}(undef, size(dat,1))
+        for i in 1:size(dat,1)
+            new_location[i] = (dat.x[i], dat.y[i]) 
+        end
+    
+        many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
+        indices = [findall(==(x), new_location) for x in many_guys]
+    
+        # Find cells with less than max number of guys
+        enough_guys = findall(length.(indices) .<= 12) #can adjust this number
+    
+        good_spots = many_guys[enough_guys]
+    
+        good_indices = Vector{Vector{Int64}}(undef, length(good_spots))
+        for i in 1:length(good_spots)
+            good_indices[i] = intersect(findall(x -> x == good_spots[i][1], adults.x), 
+                                        findall(x -> x == good_spots[i][2], adults.y))
+        end    
+
+        deleteat!(adults,sort(unique(vcat(good_indices...))))
+
+        if niter > 2
+            break
+        end
+    end
 end
 
 # Immigration function

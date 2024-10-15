@@ -76,9 +76,13 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 end
             end
 
-            # Juveniles disperse
+            # Dispersal
             if step == 43
+                # all juveniles go through the dispersal function, but a dispersal distance of 0 is possible
                 juvies_leave(lil_guys, home_coords, land_size)
+
+                # Not all adults affected by this function, and some have a dispersal distance of 0
+                adults_move(lil_guys, home_coords, land_size)
             end
 
             # Reproduction occurs at specific time steps
@@ -122,7 +126,7 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim"])
 
 
-reps = 5
+reps = 1
 
 for rep in 1:reps
     @time the_mega_loop(years=5, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
@@ -136,4 +140,4 @@ end
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
-CSV.write(filename, outputs)
+#CSV.write(filename, outputs)
