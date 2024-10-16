@@ -8,12 +8,12 @@ using CSV
 using PProf
 
 # Land proportions calculated from Burlington raster data
-land_proportions =  [0.22446136010674367, 0.2523743902705777, 0.1341207865782969, 0.06295251219458844, 
-                        0.003442920576590765, 0.018693265087385436, 0.0023557976245160445, 0.0020911258394032853, 0.0, 0.0]
+land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
 
-# Data frame of habitat types & movement coefficients
-hab_names = ["forest", "developed", "pasture", "wetlands", "herbaceous", "cultivated", "barren", "shrub", "barrier", "buffer"]
-hab_coefs = [0.12, -0.5, -0.03, 0.57, 0, -0.5, 0, 0.4, 0, -0.5]
+# Data frame of habitat types & movement coefficients (see McClure et al. 2022)
+hab_names = ["Deciduous", "DevLo", "Pasture", "DevHi", "Wetlands", "Conifers", "Crops", "Shrub",
+                "barrier", "buffer"]
+hab_coefs = [0.124, 0, -0.044, -0.496, 0.56, -0.143, -0.556, 0.441, 0, -0.5]
 hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coefs)
 
 # Load in functions
