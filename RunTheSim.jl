@@ -60,7 +60,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.05)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.0001)
 
             # Spread disease
             spread_disease(dat=lil_guys, home=home_coords)

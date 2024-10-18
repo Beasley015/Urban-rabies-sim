@@ -8,10 +8,10 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
     # Add buffer habitat
-    landscape[1:5,:] .= 10
-    landscape[56:60,:] .= 10
-    landscape[:,1:5] .= 10
-    landscape[:,56:60] .= 10
+    #landscape[1:5,:] .= 10
+    #landscape[56:60,:] .= 10
+    #landscape[:,1:5] .= 10
+    #landscape[:,56:60] .= 10
 
     #=
     # Create barrier if one exists
@@ -100,8 +100,11 @@ end
 # Initialize raccoon populations
 function populate_landscape(;guy_density = 1, seros)
     # Define main area of simulation
-    xmin = 6; xmax = 55
-    ymin = 6; ymax = 55
+    #xmin = 6; xmax = 55
+    #ymin = 6; ymax = 55
+
+    xmin = 1; xmax = 20
+    ymin = 1; ymax = 20
     land_area = (xmax-xmin)*(ymax-ymin)
 
     # get number of guys based on landscape size & density
@@ -119,7 +122,7 @@ function populate_landscape(;guy_density = 1, seros)
     # Repeat at a low density to populate the buffer
     xpossible = vcat(1:5, 56:60)
     ypossible = vcat(1:5, 56:60)
-
+#=
     buffer_area = 100
 
     # Buffer density: typically 4 per km^2, so 1 per cell
@@ -135,7 +138,7 @@ function populate_landscape(;guy_density = 1, seros)
                 length(lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1]))
 
     lil_guys = [lil_guys; lil_guys_buffer]
-
+=#
     return lil_guys
 end
 
@@ -172,7 +175,7 @@ function look_around(x,y,land_size)
 end
 
 # Movement function
-function move(coords, dat, home, landscape, reso=500, rate=-0.5)
+function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     # Where coords = list of tuples representing possible moves,
     # dat = data frame of agents,
     # reso = width/height of grid cell in meters
@@ -202,7 +205,9 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.5)
         dist_weights[i] = exp.(rate .* distances[i])
     end
 
-    # Combine habitat and distance-decay weights
+    # Conspecific density avoidance
+
+    # Combine all weights
     weights = Vector(undef, length(dist_weights))
     for i in 1:length(dist_weights)
         weights[i] = dist_weights[i] .* hab_prefs[i]

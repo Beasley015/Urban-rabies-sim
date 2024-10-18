@@ -18,7 +18,7 @@ X Check McClure habitat type designations in supplemental material
 - Make figures explaining movement and transmission, compare to Kim's method
 - Add conspecific avoidance to movement (adults only)
 X add adult dispersal
-- Create figure of distance decay function & adjust accordingly
+X Adjust distance decay rate
 
 Parameter sensitivity analyses:
 - Max carrying capacity (sans rabies, look at July & October pop size)
