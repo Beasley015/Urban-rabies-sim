@@ -5,6 +5,12 @@ library(ggnewscale)
 
 setwd("./FunctionalityTest")
 
+# Test some distance-decay functions -----------
+x <- seq(0,3000,100)
+y <- exp(-0.0005 * (x^2)/100)
+
+plot(x,y)
+
 # Movement/distance decay test -------------
 raccoons <- read.csv("mvt.csv")
 
@@ -36,8 +42,8 @@ ggplot()+
   geom_point(data = home.coords[home.coords$id %in% guys.to.keep,],
              aes(x = x, y = y), size = 4, color = "black",
              inherit.aes = F)+
-  lims(x = c(0,20), y = c(0,20))+
+  lims(x = c(0,21), y = c(0,21))+
   theme_dark(base_size = 14)
 
-# ggsave(filename = "samplemvt.jpeg", width = 6, height=5, 
+# ggsave(filename = "samplemvt.jpeg", width = 6, height=5,
 #        units = "in")

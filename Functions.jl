@@ -206,11 +206,15 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     end
 
     # Conspecific density avoidance
+    cons = Vector{Vector{Float64}}(undef, length(coords))
+    for i in 1:length(coords)
+        cons[i] = length.([findall(dat.x .== c[1] .&& dat.y .== c[2]) for c in coords[i]])
+    end
 
     # Combine all weights
     weights = Vector(undef, length(dist_weights))
     for i in 1:length(dist_weights)
-        weights[i] = dist_weights[i] .* hab_prefs[i]
+        weights[i] = Weights(dist_weights[i]) .* Weights(hab_prefs[i]) .* (1 .- (Weights(cons[i])))
     end
 
     # Choose new location

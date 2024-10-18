@@ -3,9 +3,7 @@ using StatsBase
 using Distributions
 using Random
 using NeutralLandscapes 
-using PkgCite
 using CSV
-using PProf
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
@@ -45,7 +43,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.0001)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.5)
         
             # Function where some infected guys become symptomatic or recover
             change_state(lil_guys)
@@ -72,12 +70,10 @@ reps = 1
 for rep in 1:reps
     the_mega_loop(years=1, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                         immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
-
-    println("Rep = ", rep)
 end
 
 # Create filename
-filename = "c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/mvt.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "mvt.csv"#"c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/mvt.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
