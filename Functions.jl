@@ -228,7 +228,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     dat.y = deepcopy(new_spots.y)
 
     # kids follow mom
-    kids = findall(dat.age .< 30)
+    kids = findall(dat.age .< 20)
 
     # Get indices of moms
     mom_indices = [findall(dat.id .== dat.mom[kids][i]) for i in 1:length(kids)] # Potential slowdown
@@ -308,7 +308,7 @@ function change_state(dat)
     dat.vaccinated[prob_recover .== 1] .= 1
 
     # Probability of transition
-    prob = rand.(Beta.(dat.time_since_inf[(dat.incubation .== 1) .& (dat.infectious .== 0)] .+ 0.000000000001,5))
+    prob = rand.(Beta.(dat.time_since_inf[(dat.incubation .== 1) .& (dat.infectious .== 0)] .+ 0.000000000001,3))
     # If the probability is 0 it does not work; so add a miniscule number
 
     if length(prob) > 0
@@ -362,7 +362,7 @@ function dont_fear_the_reaper(;dat, home)
     deleteat!(dat, findall(.>=(52*8), dat.age))
 
     # orphan mortality
-    no_mom = findall(x -> !(x in dat.id), dat.mom[findall(dat.age .< 30)])
+    no_mom = findall(x -> !(x in dat.id), dat.mom[findall(dat.age .< 20)])
 
     deleteat!(home, no_mom)
     filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
@@ -509,8 +509,14 @@ end
 
 # Adult dispersal
 function adults_move(dat, home, land_size)
+    # Make home range attractor current position-
+    # Helps center the rare wandering raccoon
+    home.id = lil_guys.id
+    home.x = lil_guys.x
+    home.y = lil_guys.y
+
     # get adults
-    adults = deepcopy(dat[findall(x -> x>20, dat.age),:])
+    adults = deepcopy(dat[findall(x -> x>52, dat.age),:])
 
      # Find coordinates with multiple guys
      new_location = Vector{Tuple{Int64, Int64}}(undef, size(dat,1))

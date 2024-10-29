@@ -15,7 +15,7 @@ X Reduce dispersal distance
 X Optimize for speed
 X Add option to leave incubation stage and survive w/low probability
 X Check McClure habitat type designations in supplemental material
-- Make figures explaining movement and transmission, compare to Kim's method
+- Make figures for Nov. 12 meeting
 X Add conspecific avoidance to movement (adults only)
 X add adult dispersal
 X Adjust distance decay rate
@@ -25,7 +25,9 @@ Parameter sensitivity analyses:
 - Crowding mortality rates (sans rabies)
 - Disease transmission rates
 - Gif of disease spread from year 6/7 onwards
-- Find a way to check movement based on habitat in home range center
+- Look at home ranges based on habitat in home range center
+- Make sure latent period is where it should be
+- Make sure recovery rates are where they should be
 
 - Run it!
 
