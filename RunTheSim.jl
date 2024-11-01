@@ -6,6 +6,7 @@ using NeutralLandscapes
 using PkgCite
 using CSV
 using PProf
+using Tables
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
@@ -48,7 +49,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
 
-    for year in years#1:years
+    for year in 1:years
         for step in 1:time_steps
             # Initialize disease at year 5, when population stabilizes
             if year == 5 && step == 1
@@ -111,9 +112,22 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
             
             # Calculate summary statistics and append to data frame
+            #=
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), sum(buffer.incubation), 
                     sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), elimination]
             push!(outputs, row)
+            =#
+
+            if year == 6
+                # filter out infectious guys
+                diseased = filter([:infectious] => x -> x == 1, lil_guys)
+
+                # put it in a data frame
+                frame = DataFrame(week = step, id = diseased.id, x = diseased.x, y = diseased.y)
+
+                # Calculate summary statistics and append to data frame
+                append!(outputs, frame, promote = true)
+            end
     
         end
         println(year)
@@ -121,23 +135,27 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 end
 
 # Run it!
+#=
 # Create empty data frame
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],], 
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", "n_symptomatic","actual_sero", "elim"])
+=#
 
+outputs = DataFrame([[], [], [], []],
+                    ["week", "id", "x", "y"])
 
 reps = 1
 
 for rep in 1:reps
-    @time the_mega_loop(years=5, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+    @time the_mega_loop(years=6, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                         immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 
     println("Rep = ", rep)
 end
 
 # Create filename
-#filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease015.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/disease.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
-#CSV.write(filename, outputs)
+CSV.write(filename, outputs)

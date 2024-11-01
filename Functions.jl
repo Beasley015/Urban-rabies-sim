@@ -264,11 +264,11 @@ function spread_disease(;dat, home)
         dat.incubation[direct_exposure] .= 1
     end
     
-    # Infect raccoons in diseased guy's home range
+    # Infect raccoons within 1 km of diseased guy
     if length(diseased_coords) != 0
-        # Define diseased guys' home ranges
-        x = deepcopy(home.x[findall(dat.infectious .== 1)])
-        y = deepcopy(home.y[findall(dat.infectious .== 1)])
+        # Define diseased guys' location
+        x = deepcopy(dat.x[findall(dat.infectious .== 1)])
+        y = deepcopy(dat.y[findall(dat.infectious .== 1)])
         
         poss_coords = Vector{Tuple{Int64, Int64}}()
         
@@ -281,7 +281,7 @@ function spread_disease(;dat, home)
             (x[i]-2, y[i]-2), (x[i]-1, y[i]-2), (x[i], y[i]-2), (x[i]+1, y[i]-2), (x[i]+2, y[i]-2)])
         end
         
-        # Get raccoons within that home range
+        # Get raccoons within range
         indirect_exposure = [intersect(findall(.==(poss_coords[i][1]), dat.x),findall(.==(poss_coords[i][2]), dat.y)) 
                         for i in 1:length(poss_coords)]
 
@@ -511,9 +511,7 @@ end
 function adults_move(dat, home, land_size)
     # Make home range attractor current position-
     # Helps center the rare wandering raccoon
-    home.id = lil_guys.id
-    home.x = lil_guys.x
-    home.y = lil_guys.y
+    home = deepcopy(dat[:,[1,2,3]])
 
     # get adults
     adults = deepcopy(dat[findall(x -> x>52, dat.age),:])

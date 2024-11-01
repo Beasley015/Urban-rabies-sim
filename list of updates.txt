@@ -15,7 +15,7 @@ X Reduce dispersal distance
 X Optimize for speed
 X Add option to leave incubation stage and survive w/low probability
 X Check McClure habitat type designations in supplemental material
-- Make figures for Nov. 12 meeting
+X Make figures for Nov. 12 meeting
 X Add conspecific avoidance to movement (adults only)
 X add adult dispersal
 X Adjust distance decay rate

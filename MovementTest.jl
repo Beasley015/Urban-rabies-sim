@@ -43,7 +43,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.5)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.1)
         
             # Function where some infected guys become symptomatic or recover
             change_state(lil_guys)
@@ -51,11 +51,18 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
             
-            # put it in a data frame
-            frame = DataFrame(week = step, id = lil_guys.id, x = lil_guys.x, y = lil_guys.y)
+            if year == 3
+                # get habitat type of home range attractor 
+                homehabs = landscape[CartesianIndex.(home_coords.x, home_coords.y)]
+                habcurrent = landscape[CartesianIndex.(lil_guys.x, lil_guys.y)]
 
-            # Calculate summary statistics and append to data frame
-            append!(outputs, frame, promote = true)
+                # put it in a data frame
+                frame = DataFrame(week = step, id = lil_guys.id, x = lil_guys.x, y = lil_guys.y, 
+                                    habs = homehabs, hab_current = habcurrent)
+
+                # Calculate summary statistics and append to data frame
+                append!(outputs, frame, promote = true)
+            end
     
         end
         println(year)
@@ -63,12 +70,12 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 end
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], []], 
-                    ["week", "id", "x","y"])
+outputs = DataFrame([[], [], [], [], [], []], 
+                    ["week", "id", "x","y", "habs", "hab_current"])
 reps = 1
 
 for rep in 1:reps
-    the_mega_loop(years=1, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+    the_mega_loop(years=3, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                         immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
