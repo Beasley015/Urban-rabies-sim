@@ -52,7 +52,7 @@ habitats <- raccoons %>%
 
 ggplot(data = habitats, aes(x = factor(habs), y = count))+
   geom_boxplot(fill='lightgray')+
-  labs(x = "Habitat", y = "Home Range Size (# cells)")+
+  labs(x = "Habitat", y = "Total distance moved (# cells)")+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
@@ -116,8 +116,6 @@ for(i in 1:3){
   landscapes[,,i] <- tab
 }
 
-landscapes = array(as.character(landscapes), dim = c(60,60,3))
-
 plotlist <- list()
 
 for(i in 1:3){
@@ -126,12 +124,15 @@ for(i in 1:3){
     as.data.frame(.) %>%
     rename_with(.fn = ~as.character(1:ncol(landscapes))) %>%
     mutate(y = 1:nrow(landscapes)) %>%
-    pivot_longer(cols = -y, names_to = 'x', values_to = 'hab')
+    pivot_longer(cols = -y, names_to = 'x', values_to = 'hab') %>%
+    mutate(x = as.numeric(x)) %>%
+    mutate(hab = factor(hab))
 
   plotlist[[i]] <- ggplot(data = df, aes(x=x, y=y, fill=hab))+
     geom_tile()+
-    scale_fill_viridis_d(name = "Habitat")+
-    theme(axis.title = element_blank(), axis.text = element_blank())
+    scale_fill_viridis_d(name = "Habitat", begin = 1, end = 0)+
+    theme(axis.title = element_blank(), axis.text = element_blank(),
+          legend.key.size = unit(0.2, 'in'))
 }
 
 plotlist[[1]] + plotlist[[2]] + plotlist[[3]] +
@@ -140,3 +141,20 @@ plotlist[[1]] + plotlist[[2]] + plotlist[[3]] +
 
 ggsave(filename = "sample_landscapes.jpeg", height = 2, width = 6,
        units = "in")
+
+# Length of latent period ------------------
+dis <- read.csv("disease.csv")
+
+ggplot(data = dis, aes(x = time))+
+  geom_bar(fill = 'lightgray', color = 'black')+
+  labs(x = "Length of latent period (Weeks)", y = "Count")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+ggsave(filename = "latent_period.jpeg", height = 3, width = 4,
+       units = "in")
+
+# Recovery probability -----------
+rec <- read.csv("recovery.csv")
+
+rec2 <- apply(rec, 2, sum)/sum(rec)

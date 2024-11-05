@@ -8,10 +8,10 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
     # Add buffer habitat
-    #landscape[1:5,:] .= 10
-    #landscape[56:60,:] .= 10
-    #landscape[:,1:5] .= 10
-    #landscape[:,56:60] .= 10
+    landscape[1:5,:] .= 10
+    landscape[56:60,:] .= 10
+    landscape[:,1:5] .= 10
+    landscape[:,56:60] .= 10
 
     #=
     # Create barrier if one exists
@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;guy_density = 1, seros)
+function populate_landscape(;guy_density = 0.5, seros)
     # Define main area of simulation
     #xmin = 6; xmax = 55
     #ymin = 6; ymax = 55
@@ -303,16 +303,24 @@ end
 # Transition from incubation period to infectious period or recovery
 function change_state(dat)
     # Recovery: approx. 10% recover, reduced to weekly probability 
-    prob_recover = rand.(Bernoulli.(0.015), length(dat.incubation .== 1))
-    dat.incubation[prob_recover .== 1] .= 0
-    dat.vaccinated[prob_recover .== 1] .= 1
+    prob_recover = rand.(Bernoulli.(0.002), length(dat.incubation .== 1))
+
+    if length(prob_recover) > 0
+        dat.incubation[prob_recover .== 1] .= 0
+        dat.vaccinated[prob_recover .== 1] .= 1
+    end
 
     # Probability of transition
-    prob = rand.(Beta.(dat.time_since_inf[(dat.incubation .== 1) .& (dat.infectious .== 0)] .+ 0.000000000001,3))
+    prob = rand.(Beta.(dat.time_since_inf[(dat.incubation .== 1) .& (dat.infectious .== 0)] .+ 0.000000000001,5))
     # If the probability is 0 it does not work; so add a miniscule number
 
     if length(prob) > 0
         dat.infectious[(dat.incubation .== 1) .& (dat.infectious .== 0)] = reduce(vcat,rand.(Bernoulli.(prob), 1))
+    end
+
+    if length(prob) > 0 && length(prob_recover) > 0
+        dis_vector = [sum(prob_recover), sum(dat.infectious)]
+        push!(outputs, dis_vector)
     end
 end
 
@@ -347,7 +355,7 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home)
+function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
@@ -378,7 +386,7 @@ function dont_fear_the_reaper(;dat, home)
     indices = [findall(==(x), new_location) for x in many_guys] # This is a major slowdown
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 12) 
+    too_many_guys = findall(length.(indices) .> 10) 
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -394,8 +402,8 @@ function dont_fear_the_reaper(;dat, home)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(a_mort), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(j_mort), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 
@@ -490,7 +498,7 @@ function juvies_leave(dat, home, land_size)
         indices = [findall(==(x), new_location) for x in many_guys]
     
         # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 12) #can adjust this number
+        enough_guys = findall(length.(indices) .<= 10) #can adjust this number
     
         good_spots = many_guys[enough_guys]
     
@@ -526,7 +534,7 @@ function adults_move(dat, home, land_size)
      indices = [findall(==(x), new_location) for x in many_guys]
  
      # Find cells with less than max number of guys
-     enough_guys = findall(length.(indices) .<= 12) #can adjust this number
+     enough_guys = findall(length.(indices) .<= 10) #can adjust this number
  
      good_spots = many_guys[enough_guys]
  
@@ -597,7 +605,7 @@ function adults_move(dat, home, land_size)
         indices = [findall(==(x), new_location) for x in many_guys]
     
         # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 12) #can adjust this number
+        enough_guys = findall(length.(indices) .<= 10) #can adjust this number
     
         good_spots = many_guys[enough_guys]
     

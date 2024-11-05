@@ -25,9 +25,9 @@ Parameter sensitivity analyses:
 - Crowding mortality rates (sans rabies)
 - Disease transmission rates
 - Gif of disease spread from year 6/7 onwards
-- Look at home ranges based on habitat in home range center
-- Make sure latent period is where it should be
-- Make sure recovery rates are where they should be
+X Look at home ranges based on habitat in home range center
+X Make sure latent period is where it should be
+X Make sure recovery rates are where they should be
 
 - Run it!
 
