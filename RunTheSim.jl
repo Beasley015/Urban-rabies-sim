@@ -63,7 +63,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.0001)
+            move(moves, lil_guys, home_coords, landscape, 500)
 
             # Spread disease
             #spread_disease(dat=lil_guys, home=home_coords)
@@ -85,7 +85,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 juvies_leave(lil_guys, home_coords, land_size)
 
                 # Not all adults affected by this function, and some have a dispersal distance of 0
-                adults_move(lil_guys, home_coords, land_size)
+                adults_move(lil_guys, home_coords, land_size, year)
             end
 
             # Reproduction occurs at specific time steps
@@ -121,7 +121,6 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
         end
         println(year)
     end
-    CSV.write("example_land1.csv",  Tables.table(landscape), writeheader=false)
 end
 
 # Run it!
@@ -130,14 +129,14 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
                     "n_symptomatic","actual_sero", "elim", "a_mort", "j_mort"])
 
-a = [0.001, 0.005, 0.01]
+a = [0.005, 0.0075, 0.01]
 j = [0.015, 0.02, 0.025]
 
 reps = 5
 
 for rep in 1:reps
     for i in 1:length(a)
-        for k in i:length(j)
+        for k in 1:length(j)
             @time the_mega_loop(years=10, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                             immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
                             a_mort=a[i], j_mort=j[k])

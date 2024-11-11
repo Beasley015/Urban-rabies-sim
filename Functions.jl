@@ -98,13 +98,11 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;guy_density = 0.5, seros)
+function populate_landscape(;guy_density = 1.5, seros)
     # Define main area of simulation
-    #xmin = 6; xmax = 55
-    #ymin = 6; ymax = 55
+    xmin = 6; xmax = 55
+    ymin = 6; ymax = 55
 
-    xmin = 1; xmax = 20
-    ymin = 1; ymax = 20
     land_area = (xmax-xmin)*(ymax-ymin)
 
     # get number of guys based on landscape size & density
@@ -122,7 +120,7 @@ function populate_landscape(;guy_density = 0.5, seros)
     # Repeat at a low density to populate the buffer
     xpossible = vcat(1:5, 56:60)
     ypossible = vcat(1:5, 56:60)
-#=
+
     buffer_area = 100
 
     # Buffer density: typically 4 per km^2, so 1 per cell
@@ -138,7 +136,7 @@ function populate_landscape(;guy_density = 0.5, seros)
                 length(lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1]))
 
     lil_guys = [lil_guys; lil_guys_buffer]
-=#
+
     return lil_guys
 end
 
@@ -516,36 +514,38 @@ function juvies_leave(dat, home, land_size)
 end
 
 # Adult dispersal
-function adults_move(dat, home, land_size)
-    # Make home range attractor current position-
-    # Helps center the rare wandering raccoon
-    home = deepcopy(dat[:,[1,2,3]])
+function adults_move(dat, home, land_size, year)
+    if year < 5
+        # Place home range attractor at current position-
+        # Helps center the rare wandering raccoon while population stabilizes
+        home = deepcopy(dat[:,[1,2,3]])
+    end
 
     # get adults
     adults = deepcopy(dat[findall(x -> x>52, dat.age),:])
 
-     # Find coordinates with multiple guys
-     new_location = Vector{Tuple{Int64, Int64}}(undef, size(dat,1))
-     for i in 1:size(dat,1)
-         new_location[i] = (dat.x[i], dat.y[i]) 
-     end
+    # Find coordinates with multiple guys
+    new_location = Vector{Tuple{Int64, Int64}}(undef, size(dat,1))
+    for i in 1:size(dat,1)
+        new_location[i] = (dat.x[i], dat.y[i]) 
+    end
  
-     many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
-     indices = [findall(==(x), new_location) for x in many_guys]
+    many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
+    indices = [findall(==(x), new_location) for x in many_guys]
  
-     # Find cells with less than max number of guys
-     enough_guys = findall(length.(indices) .<= 10) #can adjust this number
+    # Find cells with less than max number of guys
+    enough_guys = findall(length.(indices) .<= 10) #can adjust this number
  
-     good_spots = many_guys[enough_guys]
+    good_spots = many_guys[enough_guys]
  
-     good_indices = Vector{Vector{Int64}}(undef, length(good_spots))
-     for i in 1:length(good_spots)
-         good_indices[i] = intersect(findall(x -> x == good_spots[i][1], adults.x), 
+    good_indices = Vector{Vector{Int64}}(undef, length(good_spots))
+    for i in 1:length(good_spots)
+        good_indices[i] = intersect(findall(x -> x == good_spots[i][1], adults.x), 
                                         findall(x -> x == good_spots[i][2], adults.y))
-     end    
+    end    
     
-     # Adults in a non-crowded cell do not disperse
-     deleteat!(adults,sort(unique(vcat(good_indices...))))
+    # Adults in a non-crowded cell do not disperse
+    deleteat!(adults,sort(unique(vcat(good_indices...))))
 
     # Create break point so it doesn't get stuck
     niter = 0
