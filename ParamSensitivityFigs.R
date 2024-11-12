@@ -9,7 +9,7 @@ pop <- read.csv("kmax10.csv") %>%
   select(rep, year, week, total_pop, a_mort, j_mort) %>%
   mutate(nweek = ((year-1)*52)+week)
 
-ggplot(data=pop[pop$a_mort != 0.001,], aes(x = nweek, y = total_pop, 
+ggplot(data=pop, aes(x = nweek, y = total_pop, 
                      color = factor(rep)))+
   geom_line()+
   scale_color_viridis_d(name = "Rep", end = 0.9)+
@@ -18,7 +18,7 @@ ggplot(data=pop[pop$a_mort != 0.001,], aes(x = nweek, y = total_pop,
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
-ggsave("maxcc_10.jpeg", width = 5, height = 4, units = "in")
+# ggsave("maxcc_10.jpeg", width = 5, height = 4, units = "in")
 
 # Land cover test ---------------
 # Do raccoons aggregate in favorable habitat?
