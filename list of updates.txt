@@ -19,6 +19,7 @@ X Make figures for Nov. 12 meeting
 X Add conspecific avoidance to movement (adults only)
 X add adult dispersal
 X Adjust distance decay rate
+- Adjust landscape clustering to create larger clusters
 
 Parameter sensitivity analyses:
 - Max carrying capacity (sans rabies, look at July & October pop size)
@@ -34,3 +35,8 @@ X Make sure recovery rates are where they should be
 Writing:
 X Read USDA internal report
 - Read Grimm et al. 2006 & 2010 for standard protocol to document ABMs
+- Add variable params to main table
+- Don't label raccoons as juvenile, etc., instead use "raccoons over x weeks old 
+	can do y"
+- Will need to be clear that I'm using population-level RSF, which removes
+	the individual variation seen in real life

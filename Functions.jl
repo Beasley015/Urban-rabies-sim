@@ -4,7 +4,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     # 5-cell buffer in outputs
 
     # Create neutral landscape based on real habitat proportions
-    clustered_land = rand(NearestNeighborCluster(0.2), (land_size, land_size))
+    clustered_land = rand(NearestNeighborCluster(0.1), (land_size, land_size))
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
     # Add buffer habitat
@@ -12,7 +12,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     landscape[56:60,:] .= 10
     landscape[:,1:5] .= 10
     landscape[:,56:60] .= 10
-
+    
     #=
     # Create barrier if one exists
     if barrier_strength != 0
@@ -241,7 +241,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
 end
 
 # Disease transmission
-function spread_disease(;dat, home)
+function spread_disease(;dat, home, lambda1, lambda2)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
@@ -257,7 +257,7 @@ function spread_disease(;dat, home)
         direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        direct_exposure = direct_exposure[rand(Bernoulli(0.015), length(direct_exposure)) .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(lambda1), length(direct_exposure)) .== 1]
 
         dat.incubation[direct_exposure] .= 1
     end
@@ -289,7 +289,7 @@ function spread_disease(;dat, home)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(0.001), length(indirect_exposure))
+        infections = rand(Bernoulli(lambda2), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
@@ -314,11 +314,6 @@ function change_state(dat)
 
     if length(prob) > 0
         dat.infectious[(dat.incubation .== 1) .& (dat.infectious .== 0)] = reduce(vcat,rand.(Bernoulli.(prob), 1))
-    end
-
-    if length(prob) > 0 && length(prob_recover) > 0
-        dis_vector = [sum(prob_recover), sum(dat.infectious)]
-        push!(outputs, dis_vector)
     end
 end
 
@@ -353,7 +348,7 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
+function dont_fear_the_reaper(;dat, home)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
@@ -400,8 +395,8 @@ function dont_fear_the_reaper(;dat, home, a_mort, j_mort)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(a_mort), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(j_mort), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 

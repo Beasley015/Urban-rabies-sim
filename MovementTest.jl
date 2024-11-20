@@ -39,7 +39,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
         for step in 1:time_steps
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords, a_mort = 0.001, j_mort=0.01)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)

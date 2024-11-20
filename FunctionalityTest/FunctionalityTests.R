@@ -45,14 +45,18 @@ ggplot(data = a.few.raccoons, aes(x = x, y = y, fill = prop,
 
 # Look at effects of habitat -----------
 # HR size based on habitat in attractor cell
+hab.vals <- data.frame(id = 1:5, vals = c("Deciduous", "DevLo",
+                                          "Pasture", "DevHi",
+                                          "Wetlands"))
 habitats <- raccoons %>%
   filter(week < 43) %>%
   group_by(id, x, y, habs) %>%
-  summarise(count = n()) 
+  summarise(count = n()) %>%
+  left_join(hab.vals, by = c("habs" = "id"))
 
-ggplot(data = habitats, aes(x = factor(habs), y = count))+
+ggplot(data = habitats, aes(x = vals, y = count))+
   geom_boxplot(fill='lightgray')+
-  labs(x = "Habitat", y = "Total distance moved (# cells)")+
+  labs(x = "Habitat", y = "Annual Home Range Size (# cells)")+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
@@ -66,9 +70,9 @@ hr_habs <- home.coords %>%
   summarise(count = n()) %>%
   mutate(Used = count/sum(count)) %>%
   mutate(Available = c(0.2585, 0.2337, 0.1915, 0.1266, 
-                       0.0899, 0.0619)) %>%
+                       0.0899)) %>%
   mutate(names = c("Deciduous", "DevLo", "Pasture", "DevHi", 
-                   "Wetlands", "Conifers")) %>%
+                   "Wetlands")) %>%
   select(-c(count, habs)) %>%
   pivot_longer(cols = -names, names_to = "var", values_to = "prop")
 
@@ -88,9 +92,9 @@ hab_total <- raccoons %>%
   summarise(count = n()) %>%
   mutate(Used = count/sum(count)) %>%
   mutate(Available = c(0.2585, 0.2337, 0.1915, 0.1266, 
-                       0.0899, 0.0619, 0.0267)) %>%
+                       0.0899)) %>%
   mutate(names = c("Deciduous", "DevLo", "Pasture", "DevHi", 
-                   "Wetlands", "Conifers", "Crops")) %>%
+                   "Wetlands")) %>%
   select(-c(count, hab_current)) %>%
   pivot_longer(cols = -names, names_to = "var", values_to = "prop")
 
@@ -139,8 +143,8 @@ plotlist[[1]] + plotlist[[2]] + plotlist[[3]] +
   plot_layout(guides = 'collect') &
   plot_annotation(tag_levels = 'a')
 
-ggsave(filename = "sample_landscapes.jpeg", height = 2, width = 6,
-       units = "in")
+# ggsave(filename = "sample_landscapes.jpeg", height = 2, width = 6,
+#        units = "in")
 
 # Length of latent period ------------------
 dis <- read.csv("disease.csv")
