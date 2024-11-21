@@ -37,28 +37,45 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
     for year in 1:years
         for step in 1:time_steps
+            # Initialize disease at year 5, when population stabilizes
+            if year == 5 && step == 1
+                initialize_disease(lil_guys)
+            end
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords, a_mort = 0.001, j_mort=0.01)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.1)
+
+            # Spread disease
+            spread_disease(dat=lil_guys, home=home_coords, lambda1=0.015, lambda2=0.0005)
+
+            # Reproduction occurs at specific time steps
+            if step == 18
+                reproduce(lil_guys, home_coords)
+            end
         
             # Function where some infected guys become symptomatic or recover
             change_state(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
+
+            # Update time since infection & disease
+            lil_guys.time_since_inf[lil_guys.incubation .== 1] = lil_guys.time_since_inf[lil_guys.incubation.==1] .+ 1
+            lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
+
+            elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
             
-            if year == 3
-                # get habitat type of home range attractor 
-                homehabs = landscape[CartesianIndex.(home_coords.x, home_coords.y)]
-                habcurrent = landscape[CartesianIndex.(lil_guys.x, lil_guys.y)]
+            if year >= 5
+                # get locations of symptomatic guys
+                infec = filter(:incubation => x -> x .== 1, lil_guys)
 
                 # put it in a data frame
-                frame = DataFrame(week = step, id = lil_guys.id, x = lil_guys.x, y = lil_guys.y, 
-                                    habs = homehabs, hab_current = habcurrent)
+                frame = DataFrame(year = year, week = step, id = infec.id, x = infec.x, y = infec.y,
+                                        inc = infec.incubation, inf = infec.infectious)
 
                 # Calculate summary statistics and append to data frame
                 append!(outputs, frame, promote = true)
@@ -70,17 +87,17 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 end
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], []], 
-                    ["week", "id", "x","y", "habs", "hab_current"])
+outputs = DataFrame([[], [], [], [], [], [], []], 
+                    ["year", "week", "id", "x","y", "inc", "inf"])
 reps = 1
 
 for rep in 1:reps
-    the_mega_loop(years=3, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+    the_mega_loop(years=8, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                         immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
 # Create filename
-filename = "mvt.csv"#"c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/mvt.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "mvt_disease.csv"#"c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/mvt.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results

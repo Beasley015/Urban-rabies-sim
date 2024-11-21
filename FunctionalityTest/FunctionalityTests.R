@@ -3,6 +3,8 @@
 library(tidyverse)
 library(ggnewscale)
 library(patchwork)
+library(gifski)
+library(gganimate)
 
 setwd("./FunctionalityTest")
 
@@ -162,3 +164,59 @@ ggsave(filename = "latent_period.jpeg", height = 3, width = 4,
 rec <- read.csv("recovery.csv")
 
 rec2 <- apply(rec, 2, sum)/sum(rec)
+
+# Disease spread gif and figs ------------
+# Set up data
+dis <- read.csv("mvt_disease.csv") %>%
+  mutate(nweek = ((year-1)*52)+ week) %>%
+  group_by(nweek, x, y) %>%
+  summarise(inc = n(), inf = sum(inf)) %>%
+  mutate(inf = case_when(inf == 0 ~ NA,
+                         TRUE ~ inf))
+
+# Create gif
+trans.fig <- ggplot(data = dis, aes(x = x, y = y, fill = inf, 
+                                    colour = inc))+
+  geom_tile(aes(width = 1, height = 1), linewidth = 1)+
+  scale_color_viridis_c(name = "Incubating")+
+  scale_fill_continuous(name = "Infectious")+
+  lims(x = c(0, 21), y = c(0, 21))+
+  theme(axis.title = element_blank(), title = element_text(size = 16))
+
+animation_test <- 
+  trans.fig + 
+  transition_states(nweek)+
+  labs(subtitle = "Week: {closest_state}") 
+
+trans.animate <- animate(animation_test, nframes = 45, fps = 2)
+trans.animate
+
+# anim_save(filename="trans_animation.gif", animation = trans.animate)
+
+# Create stationary figures
+dis_subset <- filter(dis, nweek <= min(nweek)+3)
+sub.figs <- list()
+
+for(i in 1:length(unique(dis_subset$nweek))){
+  sub.figs[[i]] <- ggplot(data = dis_subset[dis_subset$nweek == 
+                                       unique(dis_subset$nweek)[i],],
+                          aes(x = x, y = y, fill = inf, 
+                              colour = inc))+
+    geom_tile(aes(width = 0.8, height = 0.8), linewidth = 1)+
+    scale_color_viridis_c(name = "Incubating", 
+                          ,limits = c(0, max(dis_subset$inc)))+
+    scale_fill_continuous(name = "Infectious",
+                          limits = c(0, max(dis_subset$inf)))+
+    lims(x = c(0, 17), y = c(6, 21))+
+    labs(title = paste("Week = ", unique(dis_subset$nweek)[i],
+                       sep = ""))+
+    theme(axis.title = element_blank(), 
+          title = element_text(size = 12))
+}
+
+(sub.figs[[1]] + sub.figs[[2]] + sub.figs[[3]])+
+  plot_layout(guides = 'collect')+
+  plot_annotation(tag_levels = 'a')
+
+# ggsave(filename = "fixed_trans_fig.jpeg", width = 12, height = 4,
+#        units = "in")

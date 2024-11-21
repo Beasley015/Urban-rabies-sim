@@ -7,12 +7,12 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     clustered_land = rand(NearestNeighborCluster(0.1), (land_size, land_size))
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
-    # Add buffer habitat
+    # Add buffer habitat (comment out for functionality tests)
     landscape[1:5,:] .= 10
     landscape[56:60,:] .= 10
     landscape[:,1:5] .= 10
     landscape[:,56:60] .= 10
-    
+
     #=
     # Create barrier if one exists
     if barrier_strength != 0
@@ -102,6 +102,12 @@ function populate_landscape(;guy_density = 1.5, seros)
     # Define main area of simulation
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
+
+    # Use these values and remove buffer for functionality tests:
+    #=
+    xmin = 1; xmax = 20
+    ymin = 1; ymax = 20
+    =#
 
     land_area = (xmax-xmin)*(ymax-ymin)
 

@@ -128,7 +128,7 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
                     "n_symptomatic","actual_sero", "elim", "l1", "l2"])
 
-l1 = [0.015, 0.02, 0.025]
+l1 = [0.01, 0.015, 0.02]
 l2 = [0.0001, 0.0005, 0.0015, 0.002]
 
 reps = 5

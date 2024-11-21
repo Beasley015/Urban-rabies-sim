@@ -117,13 +117,11 @@ ggplot(data = time_to_elim, aes(x = l1, y = l2,
 # ggsave(filename = "transmissionheatmap.jpeg", width = 5, height = 4,
 #        units = "in")
 
-# Lower home range transmission = outbreaks last longer
-# Do sims with high transmission just burn out?
-
 # Check with cases per week
 ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
                        color = factor(rep)))+
   geom_line()+
+  geom_hline(yintercept = 50, linetype = "dashed")+
   facet_grid(rows = vars(l1), cols = vars(l2))+
   scale_color_viridis_d(end = 0.9, name = "Rep")+
   xlim(c((52*4)+1, 800))+
@@ -133,17 +131,14 @@ ggplot(data = dis, aes(x = nweek, y = n_symptomatic,
 # ggsave(filename = "facet_disease.jpeg", width = 10, height = 9,
 #        units = "in")
 
-# looks like home range transmission influences initial peak
-# Check mean & max number of weekly cases
-
 mean_cases <- dis %>%
   filter(nweek >=250) %>%
-  group_by(rep, homerange, cell) %>%
+  group_by(rep, l2, l1) %>%
   summarise(mean.cases = mean(n_symptomatic)) %>%
-  mutate(cell = factor(cell), 
-         homerange = factor(homerange))
+  mutate(l1 = factor(l1), 
+         l2 = factor(l2))
 
-ggplot(data=mean_cases, aes(x = cell, y = homerange,
+ggplot(data=mean_cases, aes(x = l1, y = l2,
                            fill = mean.cases))+
   geom_tile()+
   scale_fill_viridis(name = "Mean Weekly Cases")+
@@ -153,99 +148,17 @@ ggplot(data=mean_cases, aes(x = cell, y = homerange,
 # ggsave(filename = "meancases_heatmap.jpeg", width = 5, height = 4,
 #        units = "in")
 
-# Zoom in on best parameter combos
-smol03 <- dis %>%
-  filter(cell == 0.03 & homerange == 0.001)
-
-smol025 <- dis %>%
-  filter(cell == 0.025 & homerange == 0.001)
-
-ggplot(data=smol025, aes(x = nweek, y = n_symptomatic, 
-                        color = factor(rep)))+
-  geom_line()+
-  scale_color_viridis_d(end = 0.9, name = "Rep")+
-  xlim(c((52*4)+1, 800))+
-  labs(x = "Week", y = "Symptomatic Cases")+
-  theme_bw(base_size = 14)+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "cell025_weekly.jpeg", width = 6, height = 4, 
-#        units = "in")
-
-# Demonstrate that a smaller peak can lead to more realistic cases
-ggplot(data = filter(smol025, rep == 5), 
-       aes(x = nweek, y = n_symptomatic))+
-  geom_line()+
-  xlim(c((52*4)+1, 800))+
-  labs(x = "Week", y = "Symptomatic Cases")+
-  theme_bw(base_size = 14)+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "small_peak.jpeg", width = 6, height = 4,
-#        units = "in")
-
-ggplot(data=mean_cases, aes(x = cell, y = mean.cases))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Within-cell transmission", y = "Mean Weekly Cases")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "meancases_cell_box.jpeg", width = 5, height = 4,
-#        units = "in")
-
-ggplot(data=mean_cases, aes(x = homerange, y = mean.cases))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Home range transmission", y = "Mean Weekly Cases")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "meancases_hr_box.jpeg", width = 5, height = 4,
-#        units = "in")
-
-max_cases <- dis %>%
-  group_by(rep, homerange, cell) %>%
-  summarise(max.cases = max(n_symptomatic)) %>%
-  mutate(cell = factor(cell), 
-         homerange = factor(homerange))
-
-ggplot(data=max_cases, aes(x = cell, y = max.cases))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Within-cell transmission", y = "Max Weekly Cases")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "maxcases_cell_box.jpeg", width = 5, height = 4,
-#        units = "in")
-
-ggplot(data=max_cases, aes(x = homerange, y = max.cases))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Home range transmission", y = "Max Weekly Cases")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "maxcases_hr_box.jpeg", width = 5, height = 4,
-#        units = "in")
-
-ggplot(data=max_cases, aes(x = cell, y = homerange,
-                           fill = max.cases))+
-  geom_tile()+
-  scale_fill_viridis(name = "Max Weekly Cases")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
-  theme_bw()
-
-# ggsave(filename = "maxcases_heatmap.jpeg", width = 5, height = 4,
-#        units = "in")
-
+# Population sizes with disease ------------------
 dis_pop <- dis %>%
-  group_by(cell, homerange, nweek) %>%
+  group_by(l1, l2, nweek) %>%
   summarise(mean_pop = mean(total_pop))
 
 ggplot(data = dis_pop, aes (x = nweek, y = mean_pop, 
-                        color = factor(cell)))+
+                        color = factor(l1)))+
   geom_line()+
   scale_color_viridis_d(name = "Within-cell transmission",
                         end = 0.9)+
-  facet_grid(rows = vars(homerange))+
+  facet_grid(rows = vars(l2))+
   theme_bw()+
   theme(panel.grid.minor = element_blank())
 
@@ -319,3 +232,4 @@ ggplot(data = dis, aes(x = nweek, y = n_symptomatic,
 
 # ggsave(filename = "cellprob02.jpeg", width = 6, height = 4,
 #        units = "in")
+
