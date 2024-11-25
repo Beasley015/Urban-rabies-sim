@@ -128,10 +128,10 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
                     "n_symptomatic","actual_sero", "elim", "l1", "l2"])
 
-l1 = [0.01, 0.015, 0.02]
-l2 = [0.0001, 0.0005, 0.0015, 0.002]
+l1 = [0.01, 0.015]
+l2 = [0.0001, 0.0005]
 
-reps = 5
+reps = 20
 
 for rep in 1:reps
     for i in 1:length(l1)
@@ -146,7 +146,7 @@ for rep in 1:reps
 end
 
 # Create filename
-filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_test.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = "c:/users/beasl/documents/urban-rabies-sim/ParamSensitivity/disease_test_smol.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results

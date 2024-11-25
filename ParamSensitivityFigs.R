@@ -95,8 +95,8 @@ ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
   theme_bw()+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "celltransmissionbox.jpeg", width = 5, height = 4,
-#        units = "in")
+# ggsave(filename = "celltransmissionbox.jpeg", width = 5, 
+#        height = 4, units = "in")
 
 ggplot(data = time_to_elim, aes(x = l2, y = nweek))+
   geom_boxplot(fill = "lightgray")+
@@ -114,8 +114,8 @@ ggplot(data = time_to_elim, aes(x = l1, y = l2,
   labs(x = "Within-cell transmission", y = "Home range transmission")+
   theme_bw()
 
-# ggsave(filename = "transmissionheatmap.jpeg", width = 5, height = 4,
-#        units = "in")
+# ggsave(filename = "transmissionheatmap.jpeg", width = 5, 
+#        height = 4, units = "in")
 
 # Check with cases per week
 ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
@@ -156,6 +156,7 @@ dis_pop <- dis %>%
 ggplot(data = dis_pop, aes (x = nweek, y = mean_pop, 
                         color = factor(l1)))+
   geom_line()+
+  geom_vline(xintercept = (52*4)+1, linetype = 'dashed')+
   scale_color_viridis_d(name = "Within-cell transmission",
                         end = 0.9)+
   facet_grid(rows = vars(l2))+
@@ -166,70 +167,14 @@ ggplot(data = dis_pop, aes (x = nweek, y = mean_pop,
 #        units = "in")
 
 ggplot(data = dis_pop, aes (x = nweek, y = mean_pop, 
-                            color = factor(homerange)))+
+                            color = factor(l2)))+
   geom_line()+
+  geom_vline(xintercept = (52*4)+1, linetype = 'dashed')+
   scale_color_viridis_d(name = "Home range transmission",
                         end = 0.9)+
-  facet_grid(rows = vars(cell))+
+  facet_grid(rows = vars(l1))+
   theme_bw()+
   theme(panel.grid.minor = element_blank())
 
 # ggsave(filename = "pop_indirect.jpeg", width = 8, height = 6,
 #        units = "in")
-
-# Messing with # of starting cases --------------
-start <- read.csv("disease_low_initialization.csv") %>%
-  select(rep, year, week, total_pop, n_infected, n_symptomatic, elim,
-         cell, homerange) %>%
-  mutate(nweek = ((year-1)*52)+week)
-
-# Proportion of outbreaks eliminated
-prop_elim <- start %>%
-  filter(year >= 5, elim == "True") %>%
-  select(rep, cell, homerange) %>%
-  group_by(cell, homerange) %>%
-  distinct() %>%
-  summarise(prop = n()/5)
-
-unique(prop_elim$prop) #still good
-
-# Weekly cases
-ggplot(data = start, aes(x = nweek, y = n_symptomatic,
-                             color = factor(rep)))+
-  geom_line()+
-  facet_grid(cols = vars(cell))+
-  scale_color_viridis_d(end = 0.9, name = "Rep")+
-  xlim(c((52*4)+1), 800)+
-  theme_bw()+
-  theme(panel.grid.major.x = element_blank(), 
-        panel.grid.minor.x = element_blank())
-
-# ggsave("weekly_cases_start15.jpeg", width = 6, height = 4,
-#        units = "in")
-
-# Low within-cell prob ------------
-dis <- read.csv("disease02.csv") %>%
-  select(rep, year, week, total_pop, n_infected, n_symptomatic, elim) %>%
-  mutate(nweek = ((year-1)*52)+week)
-
-# Compare proportion of outbreaks eliminated
-dis %>%
-  filter(year >= 5, elim == "True") %>%
-  select(rep) %>%
-  distinct() %>%
-  summarise(prop = n()/5)
-#ok none were eliminated
-
-# Check weekly # of cases
-ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
-                       color = factor(rep)))+
-  geom_line()+
-  lims(x = c((52*4)+1, 800))+
-  scale_color_viridis_d(end = 0.9, name = "Rep")+
-  theme_bw()+
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank())
-
-# ggsave(filename = "cellprob02.jpeg", width = 6, height = 4,
-#        units = "in")
-
