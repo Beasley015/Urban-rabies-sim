@@ -178,3 +178,106 @@ ggplot(data = dis_pop, aes (x = nweek, y = mean_pop,
 
 # ggsave(filename = "pop_indirect.jpeg", width = 8, height = 6,
 #        units = "in")
+
+# Disease: fewer params, more reps per param -----------
+dis <- read.csv("disease_test_smol.csv") %>%
+  select(rep, year, week, total_pop, n_infected, n_symptomatic, elim,
+         l1, l2) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+# Compare proportion of outbreaks eliminated
+prop_eliminated <- dis %>%
+  filter(year >= 5, elim == "True") %>%
+  select(rep, l1, l2) %>%
+  group_by(l1, l2) %>%
+  distinct() %>%
+  summarise(prop = n()/20)
+
+unique(prop_eliminated$prop) #ok not bad
+
+prop_eliminated <- prop_eliminated %>%
+  right_join(combos, by = c("l1", "l2")) %>%
+  distinct() %>%
+  mutate(prop = case_when(is.na(prop) == T ~ 0,
+                          TRUE ~ prop))
+
+# Proportion eliminated: figs
+ggplot(prop_eliminated, aes(x = factor(l1), 
+                            y = factor(l2),
+                            fill = factor(prop)))+
+  geom_tile()+
+  scale_fill_viridis_d(name = "Proportion eliminated")+
+  labs(x = "Within-cell transmission", y = "Home range transmission")+
+  theme_bw()
+
+# ggsave(filename = "propelimheat_smol.jpeg", width = 5, height = 4,
+#        units = "in")
+
+# Weeks to elimination
+time_to_elim <- dis %>%
+  group_by(l1, l2) %>%
+  filter(year >= 5, elim == "True") %>%
+  filter(nweek == min(nweek)) %>%
+  right_join(combos, by = c("l1", "l2")) %>%
+  distinct() %>%
+  mutate(l1 = factor(l1), 
+         l2 = factor(l2))
+
+ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
+  geom_boxplot(fill = "lightgray")+
+  labs(x = "Within-cell transmission", y = "Week")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "celltransmissionbox_smol.jpeg", width = 5,
+#        height = 4, units = "in")
+
+ggplot(data = time_to_elim, aes(x = l2, y = nweek))+
+  geom_boxplot(fill = "lightgray")+
+  labs(x = "Home Range Transmission", y = "Week")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "hrtransmissionbox_smol.jpeg", width = 5, 
+#        height = 4,units = "in")
+
+ggplot(data = time_to_elim, aes(x = l1, y = l2,
+                                fill = nweek))+
+  geom_tile()+
+  scale_fill_viridis_c(name = "Week")+
+  labs(x = "Within-cell transmission", y = "Home range transmission")+
+  theme_bw()
+
+# ggsave(filename = "transmissionheatmap_smol.jpeg", width = 5,
+#        height = 4, units = "in")
+
+# Check with cases per week
+ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
+                       color = factor(rep)))+
+  geom_line()+
+  geom_hline(yintercept = 50, linetype = "dashed")+
+  facet_grid(rows = vars(l1), cols = vars(l2))+
+  scale_color_viridis_d(end = 0.9, name = "Rep")+
+  xlim(c((52*4)+1, 800))+
+  theme_bw()+
+  theme(panel.grid=element_blank())
+
+# ggsave(filename = "facet_disease.jpeg", width = 10, height = 9,
+#        units = "in")
+
+mean_cases <- dis %>%
+  filter(nweek >=250, elim == "False") %>%
+  group_by(rep, l2, l1) %>%
+  summarise(mean.cases = mean(n_symptomatic)) %>%
+  mutate(l1 = factor(l1), 
+         l2 = factor(l2))
+
+ggplot(data=mean_cases, aes(x = l1, y = l2,
+                            fill = mean.cases))+
+  geom_tile()+
+  scale_fill_viridis(name = "Mean Weekly Cases")+
+  labs(x = "Within-cell transmission", y = "Home range transmission")+
+  theme_bw()
+
+# ggsave(filename = "meancases_heatmap_smol.jpeg", width = 5, 
+#        height = 4,units = "in")
