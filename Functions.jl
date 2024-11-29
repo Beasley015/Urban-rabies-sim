@@ -151,7 +151,7 @@ function initialize_disease(dat)
     unvax = findall(dat.vaccinated .== 0)
 
     # Choose raccoons to infect
-    new_diseases = ifelse(length(unvax) > 30, sample(unvax, 30, replace = false), unvax)
+    new_diseases = ifelse(length(unvax) > 40, sample(unvax, 40, replace = false), unvax)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1
@@ -186,7 +186,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     # rate = rate of distance-decay. Based on trial and error so raccoons typically stay ~1km from home
 
     # Create blank array
-    habs = Vector(undef, length(coords))
+    habs = Vector{Int64}(undef, length(coords))
 
     # Get habitat type to create weights
     for i in 1:length(coords)
@@ -247,7 +247,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
 end
 
 # Disease transmission
-function spread_disease(;dat, home, lambda1, lambda2)
+function spread_disease(;dat, home)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
@@ -263,7 +263,7 @@ function spread_disease(;dat, home, lambda1, lambda2)
         direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        direct_exposure = direct_exposure[rand(Bernoulli(lambda1), length(direct_exposure)) .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(0.01), length(direct_exposure)) .== 1]
 
         dat.incubation[direct_exposure] .= 1
     end
@@ -295,7 +295,7 @@ function spread_disease(;dat, home, lambda1, lambda2)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(lambda2), length(indirect_exposure))
+        infections = rand(Bernoulli(0.0001), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
@@ -402,7 +402,7 @@ function dont_fear_the_reaper(;dat, home)
 
     # Decide who dies
     dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
+    dead_juvies = rand(Bernoulli(0.025), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 
