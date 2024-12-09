@@ -4,10 +4,8 @@ using Distributions
 using Random
 using NeutralLandscapes 
 using CSV
-using Dates
-using PProf
-
-#println(Dates.format(now(), "HH:MM"))
+#using Dates
+#using PProf
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
@@ -22,7 +20,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions.jl")
 
 # Load in parameters
-job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -117,9 +115,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
                     elimination]
             push!(outputs, row)
-            
         end
-        println(year)
     end
 end
 
@@ -129,20 +125,16 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
                     "n_symptomatic","actual_sero", "elim"])
 
-reps = 1
+reps = 50
 
 for rep in 1:reps
-   @time the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+   the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
             immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
-#println(Dates.format(now(), "HH:MM"))
-
 # Create filename
-#=
 filename = string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                     "im_type",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)
-=#

@@ -4,7 +4,7 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     # 5-cell buffer in outputs
 
     # Create neutral landscape based on real habitat proportions
-    clustered_land = rand(NearestNeighborCluster(0.1), (land_size, land_size))
+    clustered_land = rand(NeutralLandscapes.MidpointDisplacement(0.815), (land_size, land_size))
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
     # Add buffer habitat (comment out for functionality tests)
@@ -185,38 +185,29 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     # reso = width/height of grid cell in meters
     # rate = rate of distance-decay. Based on trial and error so raccoons typically stay ~1km from home
 
-    # Create blank array
-    habs = Vector{Int64}(undef, length(coords))
-
-    # Get habitat type to create weights
-    for i in 1:length(coords)
-        habs[i] = landscape[CartesianIndex.([x[1] for x in coords[i]], [x[2] for x in coords[i]])]
-    end
-
-    # Match habitats to McClure coefficients
-    hab_prefs = Vector(undef, length(coords))
-    for i in 1:length(coords)
-        hab_prefs[i] = hab_frame.coef[convert.(Int64, habs[i])]
-    end
-   
-    # Movement weights as a function of distance from initial coords
-    distances = Vector{Vector{Float64}}(undef, length(coords))
+    # Create blank arrays
+    hab_prefs = Vector{Vector{Float64}}(undef, length(coords))
     dist_weights = Vector{Vector{Float64}}(undef, length(coords))
-    for i in 1:length(coords)
-        home_loc = (home.x[i], home.y[i]) 
-        # Potential slowdown:
-        distances[i] = ((([x[1] for x in coords[i]].-home_loc[1]).^2 .+ ([x[2] for x in coords[i]].-home_loc[2]).^2)*reso)/100
-        dist_weights[i] = exp.(rate .* distances[i])
-    end
-
-    # Conspecific density avoidance
     cons = Vector{Vector{Float64}}(undef, length(coords))
+
     for i in 1:length(coords)
+        # Get habitat type to create weights
+        habs = landscape[CartesianIndex.([x[1] for x in coords[i]], [x[2] for x in coords[i]])]
+    
+        # Match habitats to McClure coefficients
+        hab_prefs[i] = hab_frame.coef[convert.(Int64, habs)]
+
+        # Movement weights as a function of distance from initial coords
+        home_loc = (home.x[i], home.y[i]) 
+        distances = ((([x[1] for x in coords[i]].-home_loc[1]).^2 .+ ([x[2] for x in coords[i]].-home_loc[2]).^2)*reso)/100
+        dist_weights[i] = exp.(rate .* distances)
+
+        # Conspecific density avoidance
         cons[i] = length.([findall(dat.x .== c[1] .&& dat.y .== c[2]) for c in coords[i]])
     end
 
     # Combine all weights
-    weights = Vector(undef, length(dist_weights))
+    weights = Vector{Vector{Float64}}(undef, length(dist_weights))
     for i in 1:length(dist_weights)
         weights[i] = Weights(dist_weights[i]) .* Weights(hab_prefs[i]) .* (1 .- (Weights(cons[i])))
     end
@@ -235,10 +226,12 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     kids = findall(dat.age .< 20)
 
     # Get indices of moms
-    mom_indices = [findall(dat.id .== dat.mom[kids][i]) for i in 1:length(kids)] # Potential slowdown
-    deleteat!(kids, findall(isempty.(mom_indices) .== 1)) # filter out orphans
+    mom_indices = indexin(dat.mom[kids], dat.id)
+    # Remove orphans
+    deleteat!(kids, findall(x -> isnothing(x), mom_indices))
     
-    mom_indices = vcat(mom_indices...)
+    # Filter out missing values from moms 
+    filter!(x -> !isnothing(x), mom_indices)
 
     # New kid coords
     dat.x[kids] = deepcopy(dat.x[mom_indices])

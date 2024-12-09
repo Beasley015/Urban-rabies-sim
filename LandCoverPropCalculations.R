@@ -3,6 +3,8 @@
 # And I am too lazy to troubleshoot
 
 library(raster)
+library(terra)
+library(landscapemetrics)
 
 # load raster
 land <- raster('BurlingtonLandCover2016.grd')
@@ -50,3 +52,11 @@ names(amounts)[9] <- "Wetlands"
 
 # Get proportions
 props <- amounts/sum(amounts)
+
+# Reclassify land cover -------------
+land <- reclassify(land, rcl = matrix(data = c(11,22,24,43,71,95,
+                                             NA,21,23,41,52,90),
+                                    byrow = F))
+
+# Calculate aggregation index ---------
+lsm_l_ai(land)
