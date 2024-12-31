@@ -50,7 +50,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
     for year in 1:years
         for step in 1:time_steps
-            # Initialize disease at year 5, when population stabilizes
+            # Initialize disease when population stabilizes
             if year == 2 && step == 1
                 initialize_disease(lil_guys)
             end
@@ -68,11 +68,11 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                sero_rate=0.6, immigration_rate=immigration_rate)
+                                sero_rate=0.3, immigration_rate=immigration_rate)
             elseif immigration_type == "wave"
                 if 40 < step < 50
                     immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                type="wave", sero_rate=0.6, immigration_rate=immigration_rate)
+                                type="wave", sero_rate=0.3, immigration_rate=immigration_rate)
                 end
             end
 
@@ -128,8 +128,8 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[]],
 reps = 50
 
 for rep in 1:reps
-   the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-            immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
+    the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
 # Create filename

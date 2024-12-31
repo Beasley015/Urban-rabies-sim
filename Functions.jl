@@ -256,7 +256,7 @@ function spread_disease(;dat, home)
         direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        direct_exposure = direct_exposure[rand(Bernoulli(0.01), length(direct_exposure)) .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(0.03), length(direct_exposure)) .== 1]
 
         dat.incubation[direct_exposure] .= 1
     end
@@ -288,7 +288,7 @@ function spread_disease(;dat, home)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(0.0001), length(indirect_exposure))
+        infections = rand(Bernoulli(0.002), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
@@ -395,7 +395,7 @@ function dont_fear_the_reaper(;dat, home)
 
     # Decide who dies
     dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.025), length(crowded_juvies))
+    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 

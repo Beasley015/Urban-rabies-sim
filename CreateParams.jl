@@ -18,7 +18,7 @@ CSV.write("params.csv", param_frame)
 job_file = """
 #! /bin/bash
 #SBATCH --array=1-$(size(param_frame, 1))
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot
 #SBATCH --output=$(joinpath("slurm", "%x-%a.out")) 

@@ -14,7 +14,7 @@ library(viridis)
 library(agricolae)
 
 options(dplyr.summarise.inform = FALSE)
-dir <- "./outs" 
+dir <- "./outputs" 
 
 # Function: Calculate proportion of outbreaks eliminated ----------
 prop_elim <- function(){
@@ -31,17 +31,13 @@ prop_elim <- function(){
                                str_replace(dir, ".", ""), "/",
                                filenames[i],sep = ""))
     
-    # pull immigration type from file name
-    type <- str_match(filenames[i], "type(.*?)\\.")[2]
-    
     # Calculate time in weeks & get time to first elimination
     prop_elim <- testfile %>%
-      mutate(type = type) %>%
-      group_by(sero, rate, barrier, type) %>%
+      filter(elim == "True") %>%
+      group_by(sero, type, disease, rate) %>%
       # rate=disease rate of immigrants
-      filter(year >= 4) %>%
-      filter(n_infected == 0 & n_symptomatic == 0) %>%
-      select(rep,sero,rate,barrier,type) %>%
+      filter(year >= 2) %>%
+      select(rep,sero,type,disease,rate) %>%
       distinct() %>%
       summarise(prop = n()/50)
     
@@ -68,64 +64,7 @@ ggplot(data=prop_elim, aes(x=factor(sero), y = prop))+
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
-# ggsave(filename = "./full_Figs/prop_elim_full.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
-
-# Interaction: seroprevalence and barriers
-prop_bar_interac <- prop_elim %>%
-  mutate(sero=factor(sero), barrier=factor(barrier)) %>%
-  group_by(sero, barrier) %>%
-  summarise(median_prop = median(prop))
-
-ggplot(data=prop_bar_interac, aes(x = sero, y = barrier,
-                                  fill=median_prop))+
-  geom_tile()+
-  labs(x = "Seroprevalence", y = "Barrier Strength")+
-  scale_fill_viridis_c(name="Proportion Eliminated")+
-  theme_bw()
-
-# ggsave(filename = "./full_Figs/prop_elim_barrier.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
-
-# Interaction: seroprevalence and immigration disease
-prop_dis_interac <- prop_elim %>%
-  mutate(sero=factor(sero), im_disease=factor(rate)) %>%
-  group_by(sero, im_disease) %>%
-  summarise(median_prop = median(prop))
-
-ggplot(data=prop_dis_interac, aes(x = sero, y = im_disease,
-                                  fill=median_prop))+
-  geom_tile()+
-  labs(x = "Seroprevalence", 
-       y = "Proportion of Infected Immigrants")+
-  scale_fill_viridis_c(name="Proportion Eliminated")+
-  theme_bw()
-
-# Interaction: seroprevalence and immigration type
-prop_type_interac <- prop_elim %>%
-  mutate(sero=factor(sero)) %>%
-  group_by(sero, type) %>%
-  summarise(median_prop = median(prop))
-
-ggplot(data=prop_type_interac, aes(x = sero, y = type,
-                                  fill=median_prop))+
-  geom_tile()+
-  labs(x = "Seroprevalence", 
-       y = "Immigration Type")+
-  scale_fill_viridis_c(name="Proportion Eliminated")+
-  theme_bw()
-
-# any interaction between immigrant prevalence & type?
-im_interac <- prop_elim %>%
-  mutate(rate=factor(rate)) %>%
-  group_by(sero, rate, type) %>%
-  summarise(median_prop = median(prop))
-
-ggplot(data=im_interac[im_interac$sero==0,], 
-       aes(x = rate, y = type, fill=median_prop))+
-  geom_tile()+
-  scale_fill_viridis_c()
-# weird...
+# Interesting...
 
 # Function for calculating time to first elimination --------
 first_elim <- function(){
@@ -141,18 +80,12 @@ first_elim <- function(){
     testfile <- read.csv(paste(getwd(), 
                                str_replace(dir, ".", ""), "/",
                                filenames[i],sep = ""))
-    
-    # pull immigration type from file name
-    type <- str_match(filenames[i], "type(.*?)\\.")[2]
 
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
-      mutate(type = type) %>%
-      group_by(rep, sero, rate, barrier, type) %>%
-      # rate=disease rate of immigrants
-      filter(year >= 4) %>%
-      filter(n_infected == 0 & n_symptomatic == 0) %>%
-      mutate(nweek = ((year-1)*52) + week) %>%
+      filter(elim == "True", year >= 2) %>%
+      group_by(rep, sero, rate, type, disease) %>%
+      mutate(nweek = ((year-2)*52) + week) %>%
       filter(nweek == min(nweek))
     
     if(i==1){
@@ -170,9 +103,7 @@ first_elim_full <- first_elim()
 
 # Time to elimination: figs ------------------
 elim_sansbar <- first_elim_full %>%
-  # filter(barrier == 0) %>%
-  mutate(sero = factor(sero)) %>%
-  mutate(nweek=nweek-((3*52)))
+  mutate(sero = factor(sero))
 
 sero_nweek <- aov(elim_sansbar, formula=nweek~sero)
 sero_nweek_HSD <- HSD.test(sero_nweek, 
@@ -184,7 +115,7 @@ elim_sansbar <- elim_sansbar %>%
   left_join(sero_nweek_HSD, by = "sero")
   
 ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
-  geom_boxplot(fill='lightgray')+
+  geom_violin(fill='lightgray')+
   # geom_text(aes(y = 350, label = groups))+
   labs(x = "Seroprevalence", y = "Time to Elimination (Weeks)")+
   theme_bw()+
@@ -193,33 +124,33 @@ ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
 # ggsave(filename = "./full_Figs/sero_elim_full.jpeg", width=6,
 #        height=4, dpi=600, units="in")
 
-bar_interac <- first_elim_full %>%
-  group_by(sero, barrier) %>%
+imm_rate_elim <- first_elim_full %>%
+  group_by(sero, rate) %>%
   summarise(center = median(nweek))
 
 # dev.new(width = 80, height = 60, unit = "mm", res=600,
 #         noRStudioGD=TRUE)
 
-ggplot(data = bar_interac, aes(x = factor(sero), y = barrier,
-                               fill=center))+
+ggplot(data = imm_rate_elim, aes(x = factor(sero), 
+                                 y = factor(rate),fill=center))+
   geom_tile()+
   scale_fill_viridis(name = "Weeks to Elimination",
                        option="B")+
-  labs(x = "Seroprevalence", y = "Barrier Strength")+
+  labs(x = "Vaccination Rate", y = "Immigration Rate")+
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
 # interaction: proportion diseased immigrants
 rate_interac <- first_elim_full %>%
-  mutate(rate = factor(rate), sero=factor(sero)) %>%
-  group_by(sero, rate) %>%
+  mutate(disease = factor(disease), sero=factor(sero)) %>%
+  group_by(sero, disease) %>%
   summarise(center = median(nweek))
 
-ggplot(data = rate_interac, aes(x = sero, y = rate, 
+ggplot(data = rate_interac, aes(x = sero, y = disease, 
                                 fill = center))+
   geom_tile()+
   scale_fill_viridis(name = "Weeks to Elimination", option="B")+
-  labs(x ="Seroprevalence", y="Immigrant Infection Rate")+
+  labs(x ="Vaccination Rate", y="Immigrant Infection Rate")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
 
@@ -232,18 +163,18 @@ ggplot(data = type_interac, aes(x = factor(sero), y = type,
                                 fill=center))+
   geom_tile()+
   scale_fill_viridis(name="Weeks to Elimination", option="B")+
-  labs(x = "Seroprevalence", y="Immigration Type")+
+  labs(x = "Vaccination Rate", y="Immigration Type")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
 
 # any interaction between immigrant prevalence & type?
 im_interac <- first_elim_full %>%
-  mutate(rate=factor(rate)) %>%
-  group_by(sero, rate, type) %>%
+  mutate(disease=factor(disease)) %>%
+  group_by(sero, disease, type) %>%
   summarise(center = median(nweek))
 
 ggplot(data=im_interac[im_interac$sero==0.2,], 
-       aes(x = rate, y = type, fill=center))+
+       aes(x = disease, y = type, fill=center))+
   geom_tile()+
   scale_fill_viridis_c()
 
@@ -262,19 +193,15 @@ first_elim_prob <- function(){
                                str_replace(dir, ".", ""), "/",
                                filenames[i],sep = ""))
     
-    # pull immigration type from file name
-    type <- str_match(filenames[i], "type(.*?)\\.")[2]
-    
     colnames=logical(length=10)
-    for(yr in 1:14){colnames[yr]=paste("yr",yr,sep="")}
+    for(yr in 1:11){colnames[yr]=paste("yr",yr,sep="")}
 
     # Calculate time in weeks & get time to first elimination
     time_to_elim <- testfile %>%
-      mutate(type = type) %>%
-      group_by(rep, sero, rate, barrier, type) %>%
+      group_by(rep, sero, type, rate, disease) %>%
       # rate=disease rate of immigrants
-      filter(year >= 4) %>%
-      filter(n_infected == 0 & n_symptomatic == 0) %>%
+      filter(year >= 2) %>%
+      filter(elim == "True") %>%
       mutate(nweek = ((year-1)*52) + week) %>%
       filter(nweek == min(nweek)) %>%
       ungroup()
@@ -284,17 +211,17 @@ first_elim_prob <- function(){
                               length(unique(time_to_elim$rep))))}))
     
     time_to_elim <- cbind(time_to_elim, yrvec)
-    colnames(time_to_elim)[13:26] <- colnames
+    colnames(time_to_elim)[14:24] <- colnames
     
     time_to_elim <- time_to_elim %>%
-      mutate(across(yr1:yr14, 
+      mutate(across(yr1:yr11, 
                     .fns = function(x) length(which(nweek<x)),
                     .names = "{.col}_elim")) %>%
-      select(-(yr1:yr14)) %>%
+      select(-(yr1:yr11)) %>%
       select(-(rep:week)) %>%
       select(-(total_pop:actual_sero),-nweek) %>%
       distinct() %>%
-      mutate(across(yr1_elim:yr14_elim, function(x) x/50))
+      mutate(across(yr1_elim:yr11_elim, function(x) x/50))
     
     if(i==1){
       first_elim_frame <- time_to_elim
@@ -311,11 +238,11 @@ elim_prob_t <- first_elim_prob()
 
 # Prob elim w/in time figs ------------
 elim_prob_smol <- elim_prob_t %>%
-  pivot_longer(cols = yr4_elim:yr14_elim, names_to = "year", 
+  pivot_longer(cols = yr2_elim:yr11_elim, names_to = "year", 
                values_to = "prob") %>%
   mutate(year = as.numeric(str_extract(year, "(\\d)+"))) %>%
-  mutate(year = year-4) %>%
   group_by(year, sero) %>%
+  mutate(year = year-1) %>%
   summarise(mean_prob = mean(prob))
 
 # dev.new(width = 80, height = 60, unit = "mm", res = 600,
