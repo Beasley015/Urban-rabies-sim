@@ -431,7 +431,7 @@ end
 # Juvenile distribution
 function juvies_leave(dat, home, land_size)
     # Get Juveniles
-    juvies = deepcopy(dat[findall(x -> 20<x<75, dat.age),:])
+    juvies = dat[findall(x -> x<52, dat.age),:]
 
     # Create break point so it doesn't get stuck
     niter = 0
@@ -462,22 +462,24 @@ function juvies_leave(dat, home, land_size)
         juvies.x = [x[1] for x in coords]
         juvies.y = [x[2] for x in coords]
 
-        # Get indices of juvies that left the landscape
-        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, juvies.x),findall(x-> x .< 0 || x .> land_size, juvies.y)]...)))
-
-        # Remove juvies that left the landscape
-        gone_id = juvies.id[gone_indices]
-        deleteat!(juvies, gone_indices)
-
-        # Update full data frame
-        juvies_indices=findall(x-> x in(juvies.id), dat.id)
+        # Update full data frame 
+        juvies_indices=findall(x -> x in(juvies.id), dat.id)
+        
         dat[juvies_indices,:] = juvies
-        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
 
         # Update home coords data frame
         home.x[juvies_indices] = juvies.x
         home.y[juvies_indices] = juvies.y
         home.id[juvies_indices] = juvies.id
+
+        # Get indices of juvies that left the landscape
+        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .>= land_size, juvies.x),findall(x-> x .< 0 || x .>= land_size, juvies.y)]...)))
+
+        # Remove juvies that left the landscape
+        gone_id = juvies.id[gone_indices]
+
+        deleteat!(juvies, gone_indices)
+        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
         deleteat!(home, findall(x-> x in(gone_id), home.id))
     
         # Find coordinates with multiple guys
@@ -618,7 +620,7 @@ function adults_move(dat, home, land_size, year)
 end
 
 # Immigration function
-function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule")
+function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule", year)
     if type == "wave"
         immigration_rate = immigration_rate*26
     end
@@ -627,13 +629,15 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     n_new = rand(Poisson(immigration_rate))
 
     # Data frame of immigrants
-    immigrants = DataFrame(id = string.(collect(range(start=maximum(parse.(Int, dat.id)),stop=maximum(parse.(Int, dat.id))+(n_new-1),step=1))), 
+    immigrants = DataFrame(id = string.(collect((maximum(parse.(Int64,dat.id))+1):(maximum(parse.(Int64,dat.id))+n_new))), 
                         x = 0, y = 0, incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, 
                         sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), n_new))
 
     # Initialize disease
-    immigrants.incubation = rand(Bernoulli(disease_rate), n_new)
-    immigrants.time_since_inf = ifelse.(immigrants.incubation .== 1, 1, immigrants.time_since_inf)
+    if year > 1
+        immigrants.incubation = Int.(rand(Bernoulli(disease_rate), n_new))
+        immigrants.time_since_inf = ifelse.(immigrants.incubation .== 1, 1, immigrants.time_since_inf)
+    end
 
     # Initialize immunity
     immigrants.vaccinated[immigrants.incubation .!= 1] = rand(Bernoulli(sero_rate), length(immigrants.vaccinated[immigrants.incubation .!= 1]))
@@ -698,6 +702,11 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     filter!([:x, :y] => (x,y) -> 0 < x <= land_size && 0 < y <= land_size, immigrants)
 
     # Append immigrants to main dataset & home coords
-    dat = [dat;immigrants]
-    home = [home;DataFrame(id = immigrants.id, x = immigrants.x, y = immigrants.y)]
+    append!(dat, immigrants, promote = true)
+    append!(home, DataFrame(id = immigrants.id, x = immigrants.x, y = immigrants.y), promote = true)
+
+    if year > 1
+        print(sum(immigrants.incubation))
+    end
+
 end

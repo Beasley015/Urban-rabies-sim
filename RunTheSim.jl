@@ -20,7 +20,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions.jl")
 
 # Load in parameters
-job = 212#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -68,11 +68,11 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                sero_rate=0.3, immigration_rate=immigration_rate)
+                                sero_rate=0.3, immigration_rate=immigration_rate, year=year)
             elseif immigration_type == "wave"
                 if 40 < step < 50
                     immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                type="wave", sero_rate=0.3, immigration_rate=immigration_rate)
+                                type="wave", sero_rate=0.3, immigration_rate=immigration_rate, year=year)
                 end
             end
 
@@ -80,7 +80,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             if step == 43
                 # all juveniles go through the dispersal function, but a dispersal distance of 0 is possible
                 juvies_leave(lil_guys, home_coords, land_size)
-
+            
                 # Not all adults affected by this function, and some have a dispersal distance of 0
                 adults_move(lil_guys, home_coords, land_size, year)
             end
@@ -116,7 +116,6 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                     elimination]
             push!(outputs, row)
         end
-        println(year)
     end
 end
 
