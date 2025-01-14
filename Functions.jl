@@ -4,10 +4,10 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     # 5-cell buffer in outputs
 
     # Create neutral landscape based on real habitat proportions
-    clustered_land = rand(NeutralLandscapes.MidpointDisplacement(0.815), (land_size, land_size))
+    clustered_land = rand(NeutralLandscapes.MidpointDisplacement(0.836), (land_size, land_size))
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
-    # Add buffer habitat (comment out for functionality tests)
+    # Add buffer habitat (comment out for movement functionality tests)
     landscape[1:5,:] .= 10
     landscape[56:60,:] .= 10
     landscape[:,1:5] .= 10
@@ -186,7 +186,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     # rate = rate of distance-decay. Based on trial and error so raccoons typically stay ~1km from home
 
     # Create blank arrays
-    hab_prefs = Vector{Vector{Float64}}(undef, length(coords))
+    hab_prefs = Vector{Vector{Float64}}(undef, length(coords)) # ERROR HERE
     dist_weights = Vector{Vector{Float64}}(undef, length(coords))
     cons = Vector{Vector{Float64}}(undef, length(coords))
 
@@ -198,7 +198,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
         hab_prefs[i] = hab_frame.coef[convert.(Int64, habs)]
 
         # Movement weights as a function of distance from initial coords
-        home_loc = (home.x[i], home.y[i]) 
+        home_loc = (home.x[i], home.y[i])  # ERROR HERE TOO
         distances = ((([x[1] for x in coords[i]].-home_loc[1]).^2 .+ ([x[2] for x in coords[i]].-home_loc[2]).^2)*reso)/100
         dist_weights[i] = exp.(rate .* distances)
 
@@ -462,24 +462,23 @@ function juvies_leave(dat, home, land_size)
         juvies.x = [x[1] for x in coords]
         juvies.y = [x[2] for x in coords]
 
-        # Update full data frame 
-        juvies_indices=findall(x -> x in(juvies.id), dat.id)
-        
+        # Get indices of agents that left the landscape
+        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, juvies.x),
+                                        findall(x-> x .< 0 || x .> land_size, juvies.y)]...)))
+
+        # Remove adults that left the landscape
+        gone_id = juvies.id[gone_indices]
+        deleteat!(juvies, gone_indices)
+
+        # Update full data frame
+        juvies_indices=findall(x-> x in(juvies.id), dat.id)
         dat[juvies_indices,:] = juvies
+        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
 
         # Update home coords data frame
         home.x[juvies_indices] = juvies.x
         home.y[juvies_indices] = juvies.y
         home.id[juvies_indices] = juvies.id
-
-        # Get indices of juvies that left the landscape
-        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .>= land_size, juvies.x),findall(x-> x .< 0 || x .>= land_size, juvies.y)]...)))
-
-        # Remove juvies that left the landscape
-        gone_id = juvies.id[gone_indices]
-
-        deleteat!(juvies, gone_indices)
-        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
         deleteat!(home, findall(x-> x in(gone_id), home.id))
     
         # Find coordinates with multiple guys
@@ -622,7 +621,7 @@ end
 # Immigration function
 function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, disease_rate=0.3, type="propagule", year)
     if type == "wave"
-        immigration_rate = immigration_rate*26
+        immigration_rate = immigration_rate*5
     end
 
     # get number of immigrants

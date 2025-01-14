@@ -112,40 +112,29 @@ ggplot(data = hab_total, aes(x = names, y = prop, fill = var))+
 
 # Look at land cover-------------
 # Load in data
-landscapes <- array(0, dim = c(60,60,3))
+landscape <- read.csv(file='ExampleLand.csv', header = F)
 
-for(i in 1:3){
-  tab <- as.matrix(read.csv(file= paste('example_land', 
-                                               i, '.csv', sep = ""),
-                              header = F))
-  
-  landscapes[,,i] <- tab
-}
-
-plotlist <- list()
-
-for(i in 1:3){
 # Convert to long format
-  df <- landscapes[,,i] %>%
-    as.data.frame(.) %>%
-    rename_with(.fn = ~as.character(1:ncol(landscapes))) %>%
-    mutate(y = 1:nrow(landscapes)) %>%
-    pivot_longer(cols = -y, names_to = 'x', values_to = 'hab') %>%
-    mutate(x = as.numeric(x)) %>%
-    mutate(hab = factor(hab))
+df <- landscape %>%
+  as.data.frame(.) %>%
+  mutate(y = 1:nrow(landscape)) %>%
+  pivot_longer(cols = -y, names_to = 'x', values_to = 'hab') %>%
+  mutate(x = rep(1:ncol(landscape), nrow(landscape))) %>%
+  mutate(hab = as.character(hab)) %>%
+  mutate(hab = factor(hab, levels = c(1:7, 10)))
 
-  plotlist[[i]] <- ggplot(data = df, aes(x=x, y=y, fill=hab))+
-    geom_tile()+
-    scale_fill_viridis_d(name = "Habitat", begin = 1, end = 0)+
-    theme(axis.title = element_blank(), axis.text = element_blank(),
-          legend.key.size = unit(0.2, 'in'))
-}
+levels(df$hab) = c("Deciduous", "DevLo", "Pasture",
+                                 "DevHi", "Wetlands", "Conifers",
+                                 "Crops", "Buffer")
 
-plotlist[[1]] + plotlist[[2]] + plotlist[[3]] +
-  plot_layout(guides = 'collect') &
-  plot_annotation(tag_levels = 'a')
+ggplot(data = df, aes(x=x, y=y, fill=hab))+
+  geom_tile()+
+  scale_fill_viridis_d(name = "Habitat", begin = 1, end = 0)+
+  theme(axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "None")
+        #legend.key.size = unit(0.2, 'in'))
 
-# ggsave(filename = "sample_landscapes.jpeg", height = 2, width = 6,
+# ggsave(filename = "sample_landscape.jpeg", height = 2, width = 4,
 #        units = "in")
 
 # Length of latent period ------------------

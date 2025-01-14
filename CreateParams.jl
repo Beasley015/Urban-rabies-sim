@@ -4,8 +4,8 @@ using DataAPI
 
 # Write csv of parameters
 serovals = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-imm_rate = [1, 5, 10, 15, 20]
-imm_disease = [0, 0.025, 0.05, 0.075, 0.1]
+imm_rate = [1, 2.5, 5, 7.5, 10]
+imm_disease = [0, 0.015, 0.03, 0.045, 0.06]
 imm_type = ["propagule","wave"]
 
 
@@ -18,7 +18,7 @@ CSV.write("params.csv", param_frame)
 job_file = """
 #! /bin/bash
 #SBATCH --array=1-$(size(param_frame, 1))
-#SBATCH --time=12:00:00
+#SBATCH --time=28:00:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot
 #SBATCH --output=$(joinpath("slurm", "%x-%a.out")) 

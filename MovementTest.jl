@@ -22,13 +22,13 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
-                        outputs)
+function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate)#, 
+                        #outputs)
 
     # create landscape
-    land_size = 20
+    land_size = 60
     landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_frame)
-
+#=
     # Populate landscape
     lil_guys = populate_landscape(seros=0, guy_density=0.5)
 
@@ -84,21 +84,26 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
         end
         println(year)
     end
+    =#
+    CSV.write("ExampleLand.csv",  Tables.table(landscape), writeheader=false)
 end
+#=
 # Run it!
 # Create empty data frame
 outputs = DataFrame([[], [], [], [], [], [], []], 
                     ["year", "week", "id", "x","y", "inc", "inf"])
+=#
 reps = 1
 
 for rep in 1:reps
     the_mega_loop(years=8, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
+                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1])#, outputs = outputs)
 end
-
+#=
 # Create filename
 filename = "mvt_disease.csv"#"c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/mvt.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                                         #"im_type",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)
+=#

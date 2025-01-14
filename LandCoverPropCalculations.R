@@ -5,6 +5,8 @@
 library(raster)
 library(terra)
 library(landscapemetrics)
+library(tidyverse)
+library(patchwork)
 
 # load raster
 land <- raster('BurlingtonLandCover2016.grd')
@@ -54,9 +56,59 @@ names(amounts)[9] <- "Wetlands"
 props <- amounts/sum(amounts)
 
 # Reclassify land cover -------------
-land <- reclassify(land, rcl = matrix(data = c(11,22,24,43,71,95,
-                                             NA,21,23,41,52,90),
-                                    byrow = F))
+land <- reclassify(land, rcl = matrix(data = c(11,21,22,23,24,41,
+                                               43,52,71,90,95,
+                                             NA,21,21,23,23,41,41,
+                                             52,52,90,90),
+                                    byrow = F, ncol = 2))
 
 # Calculate aggregation index ---------
 lsm_l_ai(land)
+
+# Plot initial raster ------------
+land_spdf <- as(land, "SpatialPixelsDataFrame")
+land_df <- as.data.frame(land_spdf)
+colnames(land_df) <- c("value", "x", "y")
+
+land_df <- land_df %>%
+  mutate(value = factor(value))
+
+levels(land_df$value) <- c("DevLow", "DevHigh", "Other", 
+                           "Deciduous", "Conifers", "Shrub",
+                           "Pasture", "Crops", "Wetlands")
+
+burly_smallcell <- ggplot(data = land_df, 
+                          aes(x = x, y = y, fill = value))+
+  geom_tile()+
+  scale_fill_viridis_d(name = "Cover Type", end = 0.9)+
+  theme(axis.text = element_blank(), axis.title = element_blank())
+
+# Increase cell size ----------------
+land_agg <- aggregate(land, fact=(500/30), fun = modal)
+
+agg_spdf <- as(land_agg, "SpatialPixelsDataFrame")
+agg_df <- as.data.frame(agg_spdf)
+colnames(agg_df) <- c("value", "x", "y")
+
+agg_df <- agg_df %>%
+  mutate(value = factor(value))
+
+levels(agg_df$value) <- c("DevLow", "DevHigh", "Other", 
+                           "Deciduous", "Conifers", "Shrub",
+                           "Pasture", "Crops", "Wetlands")
+
+# Plot rasters -------------------
+
+burly_bigcell <- ggplot(data = agg_df, 
+                          aes(x = x, y = y, fill = value))+
+  geom_tile()+
+  scale_fill_viridis_d(name = "Cover Type", end = 0.9)+
+  theme(axis.text = element_blank(), axis.title = element_blank())
+
+(burly_smallcell + burly_bigcell)+
+  plot_layout(guides = 'collect')+
+  plot_annotation(tag_levels = 'a')
+
+ggsave(filename = "Burly_and_pixels.jpeg", width = 10, height = 5,
+       units = "in")
+
