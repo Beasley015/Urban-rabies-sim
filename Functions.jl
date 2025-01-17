@@ -395,7 +395,7 @@ function dont_fear_the_reaper(;dat, home)
 
     # Decide who dies
     dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
+    dead_juvies = rand(Bernoulli(0.025), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 
@@ -703,9 +703,4 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     # Append immigrants to main dataset & home coords
     append!(dat, immigrants, promote = true)
     append!(home, DataFrame(id = immigrants.id, x = immigrants.x, y = immigrants.y), promote = true)
-
-    if year > 1
-        print(sum(immigrants.incubation))
-    end
-
 end
