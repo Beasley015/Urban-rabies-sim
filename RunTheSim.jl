@@ -20,7 +20,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions.jl")
 
 # Load in parameters
-job = 200#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job = 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -115,11 +115,10 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
                     elimination]
             push!(outputs, row)
-
-            println(string("Week =", step))
         end
         println(string("Year =", year))
     end
+    println(string("Rep = ", rep))
 end
 
 # Run it!
@@ -128,10 +127,10 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
                     "n_symptomatic","actual_sero", "elim"])
 
-reps = 1#50
+reps = 50
 
 for rep in 1:reps
-    the_mega_loop(years=3, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+    the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                     immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
