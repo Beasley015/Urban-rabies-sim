@@ -703,9 +703,4 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     # Append immigrants to main dataset & home coords
     append!(dat, immigrants, promote = true)
     append!(home, DataFrame(id = immigrants.id, x = immigrants.x, y = immigrants.y), promote = true)
-
-    if year > 1
-        print(sum(immigrants.incubation))
-    end
-
 end
