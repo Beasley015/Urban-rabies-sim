@@ -395,7 +395,7 @@ function dont_fear_the_reaper(;dat, home)
 
     # Decide who dies
     dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
+    dead_juvies = rand(Bernoulli(0.025), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 
