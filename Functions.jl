@@ -627,80 +627,82 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
     # get number of immigrants
     n_new = rand(Poisson(immigration_rate))
 
-    # Data frame of immigrants
-    immigrants = DataFrame(id = string.(collect((maximum(parse.(Int64,dat.id))+1):(maximum(parse.(Int64,dat.id))+n_new))), 
-                        x = 0, y = 0, incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, 
-                        sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), n_new))
+    if n_new > 0
+        # Data frame of immigrants
+        immigrants = DataFrame(id = string.(collect((maximum(parse.(Int64,dat.id))+1):(maximum(parse.(Int64,dat.id))+n_new))), 
+                            x = 0, y = 0, incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, 
+                            sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), n_new))
 
-    # Initialize disease
-    if year > 1
-        immigrants.incubation = Int.(rand(Bernoulli(disease_rate), n_new))
-        immigrants.time_since_inf = ifelse.(immigrants.incubation .== 1, 1, immigrants.time_since_inf)
-    end
+        # Initialize disease
+        if year > 1
+            immigrants.incubation = Int.(rand(Bernoulli(disease_rate), n_new))
+            immigrants.time_since_inf = ifelse.(immigrants.incubation .== 1, 1, immigrants.time_since_inf)
+        end
 
-    # Initialize immunity
-    immigrants.vaccinated[immigrants.incubation .!= 1] = rand(Bernoulli(sero_rate), length(immigrants.vaccinated[immigrants.incubation .!= 1]))
+        # Initialize immunity
+        immigrants.vaccinated[immigrants.incubation .!= 1] = rand(Bernoulli(sero_rate), length(immigrants.vaccinated[immigrants.incubation .!= 1]))
 
-    # Define movement directions
-    upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
-    left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
-    downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
+        # Define movement directions
+        upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
+        left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
+        downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
 
-    # Create vector of directions
-    directions = Any[]
+        # Create vector of directions
+        directions = Any[]
     
-    # Get starting edges
-    edges = ["north", "east", "south", "west"]
+        # Get starting edges
+        edges = ["north", "east", "south", "west"]
 
-    immigrant_edges = sample(edges, n_new)
+        immigrant_edges = sample(edges, n_new)
 
-    for i in 1:length(immigrant_edges)
-        if immigrant_edges[i] == "north"
-            immigrants.x[i] = rand(1:land_size)
-            immigrants.y[i] = land_size
+        for i in 1:length(immigrant_edges)
+            if immigrant_edges[i] == "north"
+                immigrants.x[i] = rand(1:land_size)
+                immigrants.y[i] = land_size
 
-            append!(directions, rand([left, right, downleft, down, downright],1))
+                append!(directions, rand([left, right, downleft, down, downright],1))
 
-        elseif immigrant_edges[i] == "east"
-            immigrants.x[i] = land_size
-            immigrants.y[i] = rand(1:land_size)
+            elseif immigrant_edges[i] == "east"
+                immigrants.x[i] = land_size
+                immigrants.y[i] = rand(1:land_size)
 
-            append!(directions, rand([upleft, up, left, downleft, down],1))
+                append!(directions, rand([upleft, up, left, downleft, down],1))
 
-        elseif immigrant_edges[i] == "south"
-            immigrants.x[i] = rand(1:land_size)
-            immigrants.y[i] = 1
+            elseif immigrant_edges[i] == "south"
+                immigrants.x[i] = rand(1:land_size)
+                immigrants.y[i] = 1
 
-            append!(directions, rand([upleft, up, upright, left, right],1))
+                append!(directions, rand([upleft, up, upright, left, right],1))
 
-        else 
-            immigrants.x[i] = 1
-            immigrants.y[i] = rand(1:land_size)
+            else 
+                immigrants.x[i] = 1
+                immigrants.y[i] = rand(1:land_size)
 
-            append!(directions, rand([up, upright, right, down, downright],1))
+                append!(directions, rand([up, upright, right, down, downright],1))
 
+            end
         end
-    end
 
-    # Get dispersal distance
-    distances = rand(Poisson(5), size(immigrants,1))
+        # Get dispersal distance
+        distances = rand(Poisson(5), size(immigrants,1))
 
-    # RUN!
-    coords = Vector(undef, size(immigrants,1))
+        # RUN!
+        coords = Vector(undef, size(immigrants,1))
 
-    for i in 1:length(distances)
-        coords[i] = [immigrants.x[i], immigrants.y[i]]
-        for j in 1:distances[i]
-            coords[i] = directions[i](coords[i][1], coords[i][2])
+        for i in 1:length(distances)
+            coords[i] = [immigrants.x[i], immigrants.y[i]]
+            for j in 1:distances[i]
+                coords[i] = directions[i](coords[i][1], coords[i][2])
+            end
         end
+
+        # Keep immigrants that stayed in the landscape
+        immigrants.x = [coords[i][1] for i in 1:length(coords)]
+        immigrants.y = [coords[i][2] for i in 1:length(coords)]
+        filter!([:x, :y] => (x,y) -> 0 < x <= land_size && 0 < y <= land_size, immigrants)
+
+        # Append immigrants to main dataset & home coords
+        append!(dat, immigrants, promote = true)
+        append!(home, DataFrame(id = immigrants.id, x = immigrants.x, y = immigrants.y), promote = true)
     end
-
-    # Keep immigrants that stayed in the landscape
-    immigrants.x = [coords[i][1] for i in 1:length(coords)]
-    immigrants.y = [coords[i][2] for i in 1:length(coords)]
-    filter!([:x, :y] => (x,y) -> 0 < x <= land_size && 0 < y <= land_size, immigrants)
-
-    # Append immigrants to main dataset & home coords
-    append!(dat, immigrants, promote = true)
-    append!(home, DataFrame(id = immigrants.id, x = immigrants.x, y = immigrants.y), promote = true)
 end
