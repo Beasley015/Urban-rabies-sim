@@ -15,7 +15,7 @@ hab_coefs = [0.124, 0, -0.044, -0.496, 0.56, -0.143, -0.556, 0.441, 0, -0.5]
 hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coefs)
 
 # Load in functions
-include("Functions.jl")
+include("Functions_smol.jl")
 
 # Load in parameters
 job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
@@ -26,9 +26,9 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                         #outputs)
 
     # create landscape
-    land_size = 60
+    land_size = 20
     landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_frame)
-#=
+
     # Populate landscape
     lil_guys = populate_landscape(seros=0, guy_density=0.5)
 
@@ -38,27 +38,38 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
     for year in 1:years
         for step in 1:time_steps
             # Initialize disease at year 5, when population stabilizes
+            #=
             if year == 5 && step == 1
                 initialize_disease(lil_guys)
             end
+            =#
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
+            #dont_fear_the_reaper(dat=lil_guys, home=home_coords)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.1)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, lambda1=0.015, lambda2=0.0005)
+            #spread_disease(dat=lil_guys, home=home_coords, lambda1=0.015, lambda2=0.0005)
 
             # Reproduction occurs at specific time steps
             if step == 18
                 reproduce(lil_guys, home_coords)
             end
         
+            # Dispersal
+            if step == 43
+                # all juveniles go through the dispersal function, but a dispersal distance of 0 is possible
+                juvies_leave(lil_guys, home_coords, land_size)
+                        
+                # Not all adults affected by this function, and some have a dispersal distance of 0
+                adults_move(lil_guys, home_coords, land_size, year)
+            end
+
             # Function where some infected guys become symptomatic or recover
-            change_state(lil_guys)
+            #change_state(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -67,8 +78,17 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             lil_guys.time_since_inf[lil_guys.incubation .== 1] = lil_guys.time_since_inf[lil_guys.incubation.==1] .+ 1
             lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
-            elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
+            #elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
+
+            # Code for testing movement:
+            if year > 1 && step < 43
+                df_step = DataFrame(rep=rep, year=year, week=step, id=lil_guys.id, x=lil_guys.x, y=lil_guys.y, 
+                                        hab=landscape[CartesianIndex.(lil_guys.x, lil_guys.y)])
+                append!(outputs, df_step, promote = true)
+            end
             
+            # Code for testing disease transmission:
+            #=
             if year >= 5
                 # get locations of symptomatic guys
                 infec = filter(:incubation => x -> x .== 1, lil_guys)
@@ -80,30 +100,28 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 # Calculate summary statistics and append to data frame
                 append!(outputs, frame, promote = true)
             end
-    
+            =#
         end
-        println(year)
+        #println(year)
     end
-    =#
-    CSV.write("ExampleLand.csv",  Tables.table(landscape), writeheader=false)
+    # Include this line to save the landscape:
+    #CSV.write("ExampleLand.csv",  Tables.table(landscape), writeheader=false)
+    println(string("Rep = ", rep))
 end
-#=
+
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [], []], 
-                    ["year", "week", "id", "x","y", "inc", "inf"])
-=#
-reps = 1
+outputs = DataFrame([[], [], [], [], [], [], []],#, [], []], 
+                    ["rep", "year", "week", "id", "x", "y", "hab"])#, "inc", "inf"])
+
+reps = 5
 
 for rep in 1:reps
-    the_mega_loop(years=8, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+    the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
                         immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1])#, outputs = outputs)
 end
-#=
-# Create filename
-filename = "mvt_disease.csv"#"c:/users/beasl/documents/urban-rabies-sim/FunctionalityTest/mvt.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
-                                        #"im_type",string(Params[!,4][1]),".csv")
 
+# Create filename
+filename = "mvt_test.csv"
 # Save results
 CSV.write(filename, outputs)
-=#

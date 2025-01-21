@@ -310,10 +310,13 @@ rabies_free <- function(){
 time_rabies_free <- rabies_free()
 
 # Figures: Time rabies-free --------------
+time_rabies_free <- time_rabies_free %>%
+  filter(n_rabies_free > 0)
+
 # Seroprevalence boxplot
 ggplot(data = time_rabies_free, aes(x = factor(sero),
                                     y=n_rabies_free))+
-  geom_boxplot(fill="lightgray")+
+  geom_jitter(fill="lightgray")+
   # geom_text(aes(label=groups, y=525))+
   labs(x="Seroprevalence", y="Weeks with 0 Cases")+
   theme_bw(base_size=12)+
@@ -364,6 +367,7 @@ reinfection <- function(){
     if(nrow(reinf_frame)==0){next}
     
     reinf_frame <- reinf_frame %>%
+      mutate(reinf_start = min(week)) %>%
       mutate(reinf_length = n()) %>%
       filter(nweek==max(nweek)) %>%
       ungroup() %>%
@@ -398,11 +402,12 @@ reinf_outs <- reinf_outs %>%
   # mutate(TimePeriod = case_when(between(week,19,41) ~
   #                                 "Juveniles w/Mom",
   #        TRUE ~ "Juveniles Independent"))
-  mutate(TimePeriod = case_when(week < 18 | week > 43 ~ 
+  mutate(TimePeriod = case_when(reinf_start < 18 | 
+                                  reinf_start > 43 ~ 
                                   "Post-dispersal",
-                                between(week,18,28) ~
+                                between(reinf_start,18,28) ~
                                   "Juveniles w/Mom",
-                                between(week,29,42) ~ 
+                                between(reinf_start,29,42) ~ 
                                   "Independent Juveniles"))
 
 ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob,
@@ -486,7 +491,7 @@ ggplot(data=dis_inter_rlen, aes(x=sero,y=disease,
   geom_tile()+
   scale_fill_viridis(name="Disease Rate",
                      option = "B")+
-  labs(x="Seroprevalence", y="Barrier Strength")+
+  labs(x="Seroprevalence", y="Immigrant Disease Rate")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -500,7 +505,7 @@ ggplot(data=dis_inter_rlen, aes(x=TimePeriod,y=disease,
   geom_tile()+
   scale_fill_viridis(name="Disease Rate",
                      option = "B")+
-  labs(x="Seroprevalence", y="Barrier Strength")+
+  labs(x="Seroprevalence", y="Immigrant Disease Rate")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -533,27 +538,6 @@ ggplot(data=type_inter_rinf, aes(x=sero,y=type,
   labs(x="Seroprevalence", y="Immigration Type")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
-
-# Weeks until reinfection (what was I doing here?)----------------------
-ggplot(data=reinf_outs, aes(x=factor(sero),y=time_to_reinf))+
-  geom_boxplot(fill='lightgray')+
-  labs(x = "Seroprevalence", y = "Time to Reinfection (Weeks)")+
-  theme_bw(base_size=12)+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "./full_Figs/time_to_reinf.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
-
-ggplot(data = reinf_outs, aes(x=elim, y = time_to_reinf))+
-  geom_point(aes(color=factor(sero)))+
-  scale_color_viridis_d()+
-  labs(x="Time of Elimination (Weeks)", 
-       y="Time to Reinfection (Weeks)")+
-  theme_bw()+
-  theme(panel.grid=element_blank())
-
-# ggsave(filename = "./full_Figs/time_by_elim.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
 
 # Reinfection by time -----------------
 
@@ -770,6 +754,9 @@ cases_per_week <- function(metric){
     }else if(metric == "max"){
       cases_frame <- cases_frame %>%
         summarise(max_cases = max(n_symptomatic))
+    }else if(metric == 'median'){
+      cases_frame <- cases_frame %>%
+        summarise(median_cases = median(n_symptomatic))
     }
     
     if(i==1){
@@ -784,7 +771,7 @@ cases_per_week <- function(metric){
 }
 
 # Mean cases per week ----------------
-meancase <- cases_per_week(metric="mean")
+meancase <- cases_per_week(metric="median")
 
 meancase_seros <- meancase %>%
   filter(nweek > 52) %>%
@@ -793,13 +780,13 @@ meancase_seros <- meancase %>%
 # dev.new(width = 80, height = 60, unit = "mm", res=600,
 #         noRStudioGD=TRUE)
 
-ggplot(data=meancase_seros, aes(x=nweek, y=mean_cases, 
+ggplot(data=meancase_seros, aes(x=nweek, y=median_cases, 
                                 color = factor(sero)))+
   geom_line()+
-  geom_vline(xintercept=c(52*3+20, 52*4+20, 52*5+20, 52*6+20),
-             linetype="dashed", size = 1)+
+  # geom_vline(xintercept=c(52*3+20, 52*4+20, 52*5+20, 52*6+20),
+  #            linetype="dashed", size = 1)+
   scale_color_viridis_d(end = 0.9, name="Seroprevalence")+
-  labs(x = "Week", y = "Mean Cases")+
+  labs(x = "Week", y = "Median Cases")+
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 

@@ -10,18 +10,19 @@ setwd("./FunctionalityTest")
 
 # Test some distance-decay functions -----------
 x <- seq(0,3000,100)
-y <- exp(-0.0005 * (x^2)/100)
+y <- exp(-0.001 * (x^2)/100)
 
 plot(x,y)
 
 # Movement/distance decay test -------------
-raccoons <- read.csv("mvt.csv")
+raccoons <- read.csv("mvt_test.csv") %>%
+  filter(rep == sample(1:max(rep), 1))
 
-guys.to.keep <- sample(raccoons$id, 5)
+guys.to.keep <- sample(raccoons$id[which(raccoons$week==1)], 5)
 
 a.few.raccoons <- raccoons %>%
   filter(id %in% guys.to.keep, week < 43) %>%
-  group_by(id, x, y, habs) %>%
+  group_by(rep, id, x, y, hab) %>%
   summarise(count = n()) %>%
   ungroup() %>%
   group_by(id) %>%
