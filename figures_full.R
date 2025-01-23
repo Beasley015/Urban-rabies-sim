@@ -59,7 +59,7 @@ prop_elim <- prop_elim()
 ggplot(data=prop_elim, aes(x=factor(sero), y = prop))+
   geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
-  labs(x = "Seroprevalence", 
+  labs(x = "Adult Vaccination Rate", 
        y = "Proportion Reaching Elimination")+
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
