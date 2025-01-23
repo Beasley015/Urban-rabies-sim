@@ -57,7 +57,8 @@ prop_elim <- prop_elim()
 # Figs: Proportion of outbreaks eliminated ---------
 # All sims
 ggplot(data=prop_elim, aes(x=factor(sero), y = prop))+
-  geom_boxplot(fill="lightgray")+
+  geom_point()+
+  #geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
        y = "Proportion Reaching Elimination")+
@@ -118,7 +119,9 @@ elim_sansbar <- elim_sansbar %>%
 ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
   geom_boxplot(fill = 'lightgray')+
   # geom_text(aes(y = 350, label = groups))+
-  labs(x = "Seroprevalence", y = "Time to Elimination (Weeks)")+
+  # geom_jitter()+
+  labs(x = "Adult Vaccination Rate", 
+       y = "Time to Elimination (Weeks)")+
   theme_bw()+
   theme(panel.grid=element_blank())
 
@@ -258,7 +261,7 @@ ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
                                 color = factor(sero)))+
   geom_line(linewidth = 1)+
   geom_hline(yintercept = 0.95, linetype="dashed")+
-  scale_color_viridis_d(end = 0.9, name = "Seroprevalence")+
+  scale_color_viridis_d(end = 0.9, name = "Vaccination Rate")+
   lims(x = c(1, 10))+
   labs(x = "Year", y = "Probability of 0 Cases")+
   theme_bw(base_size=16)+
@@ -318,7 +321,7 @@ ggplot(data = time_rabies_free, aes(x = factor(sero),
                                     y=n_rabies_free))+
   geom_jitter(fill="lightgray")+
   # geom_text(aes(label=groups, y=525))+
-  labs(x="Seroprevalence", y="Weeks with 0 Cases")+
+  labs(x="Adult Vaccination Rate", y="Weeks with 0 Cases")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -332,10 +335,6 @@ ggplot(data = time_rabies_free, aes(x = factor(sero),
 reinfection <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
-  
-  # Progress bar
-  pb = progressBar(min = 1, max = length(filenames), initial = 1,
-                   style = "ETA") 
   
   for(i in 1:length(filenames)){
     # Read 'em in
@@ -362,35 +361,41 @@ reinfection <- function(){
       filter(nweek > first_elim) %>%
       filter(elim == "False") 
     
-    setTxtProgressBar(pb,i)
+    if(nrow(reinf_frame)==0){
+      reinf_frame <- data.frame(rep = 0, week = 0, 
+                                sero = unique(testfile$sero),
+                                disease = unique(testfile$disease),
+                                rate = unique(testfile$rate),
+                                type = unique(testfile$type),
+                                elim = 0, first_elim = 0,
+                                nweek = 0, reinf_start = 0, 
+                                reinf_length = 0, reinf_prob = 0,
+                                time_to_reinf=0)
+    }else{
     
-    if(nrow(reinf_frame)==0){next}
-    
-    reinf_frame <- reinf_frame %>%
-      mutate(reinf_start = min(week)) %>%
-      mutate(reinf_length = n()) %>%
-      filter(nweek==max(nweek)) %>%
-      ungroup() %>%
-      group_by(rep, sero, disease, rate, type) %>%
-      select(-c(n_infected, n_symptomatic,total_pop,actual_sero,
-                year)) %>%
-      filter(reinf_length == max(reinf_length)) %>%
-      filter(reinf_length > 5) %>%
-      ungroup() %>%
-      mutate(reinf_prob = length(unique(rep))/nrow(first.elim),
+      reinf_frame <- reinf_frame %>%
+        mutate(reinf_start = min(nweek)) %>%
+        mutate(reinf_length = n()) %>%
+        filter(nweek==max(nweek)) %>%
+        ungroup() %>%
+        group_by(rep, sero, disease, rate, type) %>%
+        select(-c(n_infected, n_symptomatic,total_pop,actual_sero,
+                  year)) %>%
+        filter(reinf_length == max(reinf_length)) %>%
+        filter(reinf_length > 5) %>%
+        ungroup() %>%
+        mutate(reinf_prob = length(unique(rep))/nrow(first.elim),
              time_to_reinf = nweek-first_elim)
+    }
     
     if(exists("reinf_frame_full")==F){
       reinf_frame_full <- reinf_frame
     } else{
       reinf_frame_full <- rbind(reinf_frame_full, reinf_frame)
     }
+    setTxtProgressBar(pb,i)
   }
-  if(exists("reinf_frame_full")==F){
-    print("No reinfections")
-  } else{
-    return(reinf_frame_full)
-  }
+  return(reinf_frame_full)
 }
 
 reinf_outs <- reinfection()
@@ -410,8 +415,7 @@ reinf_outs <- reinf_outs %>%
                                 between(reinf_start,29,42) ~ 
                                   "Independent Juveniles"))
 
-ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob,
-                            fill=TimePeriod))+
+ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob))+
   geom_boxplot()+
   # scale_fill_manual(values = c("lightgray", "limegreen"))+
   scale_fill_viridis_d(end=0.9)+
@@ -463,17 +467,41 @@ ggplot(data=type_inter_rinf, aes(x=sero,y=type,
   geom_tile()+
   scale_fill_viridis(name="Recolonization Probability",
                      option = "B")+
-  labs(x="Seroprevalence", y="Immigration Type")+
+  labs(x="Adult Vaccination Rate", y="Immigration Type")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
+# Reinfection timing --------------------
+reinf_timing <- reinf_outs %>%
+  mutate(WeekPerPeriod = 
+           case_when(TimePeriod == "Post-dispersal" ~ (54-42)+17,
+                     TimePeriod == "Independent Juveniles" ~ 42-29,
+                     TRUE ~ 20)) %>%
+  group_by(TimePeriod, WeekPerPeriod) %>%
+  summarise(ProbPerPeriod = (n()/nrow(.))) %>%
+  distinct() %>%
+  mutate(PropPerPeriod = ProbPerPeriod/WeekPerPeriod)
+
+ggplot(data = reinf_timing, aes(x = TimePeriod, 
+                                y = PropPerPeriod))+
+  geom_col(fill = 'lightgray', color = 'black') +
+  labs(x = "Time Period", y = "Probability of Reinvasion")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_figs/reinf_by_time.jpeg", height = 5,
+#        width = 8, units = "in", dpi = 600)
+
 # Reinfection length ------------------
+reinf_outs <- filter(reinf_outs, reinf_prob > 0)
+
 ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_length,
                             fill = TimePeriod))+
   geom_boxplot()+
-  # scale_fill_manual(values = c("lightgray", "limegreen"))+
+  # geom_jitter()+
   scale_fill_viridis_d(name = "Time Period", end = 0.9)+
-  labs(x = "Seroprevalence", y = "Reinfection Length (Weeks)")+
+  labs(x = "Adult Vaccination Rate", 
+       y = "Reinfection Length (Weeks)")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -539,9 +567,6 @@ ggplot(data=type_inter_rinf, aes(x=sero,y=type,
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
-# Reinfection by time -----------------
-
-  
 # Total cases -----------------------
 cases <- function(){
   # Get names of files
@@ -785,7 +810,7 @@ ggplot(data=meancase_seros, aes(x=nweek, y=median_cases,
   geom_line()+
   # geom_vline(xintercept=c(52*3+20, 52*4+20, 52*5+20, 52*6+20),
   #            linetype="dashed", size = 1)+
-  scale_color_viridis_d(end = 0.9, name="Seroprevalence")+
+  scale_color_viridis_d(end = 0.9, name="Vaccination Rate")+
   labs(x = "Week", y = "Median Cases")+
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
@@ -809,15 +834,24 @@ prev <- function(metric){
 
     cases_frame <- testfile %>%
       mutate(nweek = ((year-1)*52) + week) %>%
-      group_by(sero, rate, type, disease, nweek) %>%
+      group_by(rep, sero, rate, type, disease, nweek) %>%
       summarise(prev = n_infected/total_pop) 
     
     if(metric=="mean"){
       cases_frame <- cases_frame %>%
+        ungroup() %>%
+        group_by(sero, rate, type, disease, nweek) %>%
         summarise(mean_prev = mean(prev))
     }else if(metric == "max"){
       cases_frame <- cases_frame %>%
+        ungroup() %>%
+        group_by(sero, rate, type, disease, nweek) %>%
         summarise(max_prev = max(prev))
+    }else if(metric == "median"){
+      cases_frame <- cases_frame %>%
+        ungroup() %>%
+        group_by(sero, rate, type, disease, nweek) %>%
+        summarise(median_prev = median(prev))
     }
 
     if(i==1){
@@ -831,7 +865,7 @@ prev <- function(metric){
   return(cases_frame_full)
 }
 
-prev.mean <- prev(metric = "mean")
+prev.mean <- prev(metric = "median")
 
 # Prevalence figs -------------------
 prev.sero <- prev.mean %>%
@@ -839,10 +873,10 @@ prev.sero <- prev.mean %>%
   filter(disease == 0)
 
 # Sero only
-ggplot(data=prev.sero, aes(x=nweek, y=mean_prev, 
+ggplot(data=prev.sero, aes(x=nweek, y=median_prev, 
                                color = factor(sero)))+
   geom_line()+
-  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  scale_color_viridis_d(end=0.9, name = "Vaccination Rate")+
   labs(x = "Weeks", y = "Rabies Prevalence")+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
@@ -884,14 +918,15 @@ weekly_pop <- get_weekly_pop()
 
 # Population figs -------------------------
 pop.sero <- weekly_pop %>%
-  filter(disease == 0, rate == 5)
+  # filter(disease == 0, rate == 5)
+  filter(disease == 0.015)
 
 # Sero only, full sim
 ggplot(data=pop.sero, aes(x=nweek, y=mean_pop, 
                            color = factor(sero)))+
   geom_line()+
-  geom_vline(xintercept=52*3+1, linetype="dashed")+
-  scale_color_viridis_d(end=0.9, name = "Seroprevalence")+
+  geom_vline(xintercept=53, linetype="dashed")+
+  scale_color_viridis_d(end=0.9, name = "Vaccination Rate")+
   labs(x = "Weeks", y = "Population Size")+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
