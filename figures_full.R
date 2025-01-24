@@ -1,7 +1,6 @@
 ###########################################
 # Figures for urban rabies simulation     # 
-# Full model: seroprevalence, immigration,#
-# and landscape barriers                  #
+# Full model: seroprevalence, immigration # 
 # Model written in Julia                  #
 # E.M. Beasley                            #
 # Fall 2023                               #

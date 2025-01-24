@@ -37,22 +37,20 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
     for year in 1:years
         for step in 1:time_steps
-            # Initialize disease at year 5, when population stabilizes
-            #=
-            if year == 5 && step == 1
+            # Initialize disease at year 2, when population stabilizes
+            if year == 2 && step == 1
                 initialize_disease(lil_guys)
             end
-            =#
 
             # Lots of death
-            #dont_fear_the_reaper(dat=lil_guys, home=home_coords)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
-            #spread_disease(dat=lil_guys, home=home_coords, lambda1=0.015, lambda2=0.0005)
+            spread_disease(dat=lil_guys, home=home_coords)
 
             # Reproduction occurs at specific time steps
             if step == 18
@@ -69,7 +67,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
 
             # Function where some infected guys become symptomatic or recover
-            #change_state(lil_guys)
+            change_state(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -81,15 +79,16 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             #elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
 
             # Code for testing movement:
+            #=
             if year > 1 && step < 43
                 df_step = DataFrame(rep=rep, year=year, week=step, id=lil_guys.id, x=lil_guys.x, y=lil_guys.y, 
                                         hab=landscape[CartesianIndex.(lil_guys.x, lil_guys.y)])
                 append!(outputs, df_step, promote = true)
             end
+            =#
             
             # Code for testing disease transmission:
-            #=
-            if year >= 5
+            if year >= 2
                 # get locations of symptomatic guys
                 infec = filter(:incubation => x -> x .== 1, lil_guys)
 
@@ -100,21 +99,21 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 # Calculate summary statistics and append to data frame
                 append!(outputs, frame, promote = true)
             end
-            =#
         end
         #println(year)
     end
     # Include this line to save the landscape:
     #CSV.write("ExampleLand.csv",  Tables.table(landscape), writeheader=false)
-    println(string("Rep = ", rep))
+    
+    #println(string("Rep = ", rep))
 end
 
 # Run it!
 # Create empty data frame
-outputs = DataFrame([[], [], [], [], [], [], []],#, [], []], 
-                    ["rep", "year", "week", "id", "x", "y", "hab"])#, "inc", "inf"])
+outputs = DataFrame([[], [], [], [], [], [], []], 
+                    ["year", "week", "id", "x", "y", "inc", "inf"])
 
-reps = 5
+reps = 1
 
 for rep in 1:reps
     the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
@@ -122,6 +121,6 @@ for rep in 1:reps
 end
 
 # Create filename
-filename = "mvt_test.csv"
+filename = "mvt_disease_test.csv"
 # Save results
 CSV.write(filename, outputs)

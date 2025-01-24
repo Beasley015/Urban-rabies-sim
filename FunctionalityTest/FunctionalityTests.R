@@ -18,6 +18,26 @@ plot(x,y)
 raccoons <- read.csv("mvt_test.csv") %>%
   filter(rep == sample(1:max(rep), 1))
 
+hr_props <- raccoons %>%
+  group_by(rep, id, x, y, hab) %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  group_by(id) %>%
+  mutate(prop = count/sum(count)) %>%
+  filter(prop > 0.05) %>%
+  ungroup()
+  
+hr_sizes <-hr_props %>%
+  dplyr::select(id, x, y) %>%
+  group_by(id) %>%
+  summarise(ncoords = n()) %>%
+  mutate(size = ncoords*0.25) %>%
+  ungroup()
+
+summarise(hr_sizes, mean.size = mean(size), 
+          median.size = median(size), min.size = min(size),
+          max.size = max(size))
+
 guys.to.keep <- sample(raccoons$id[which(raccoons$week==1)], 5)
 
 a.few.raccoons <- raccoons %>%
@@ -31,15 +51,22 @@ a.few.raccoons <- raccoons %>%
 home.coords <- raccoons %>%
   filter(week == 1)
 
+few.raccoons.sp <- dplyr::select(a.few.raccoons, id, x, y) %>%
+  filter(id %in% c(348, 62))
+coordinates(few.raccoons.sp) <- c("x", "y")
+
+raccoon.mcp <- mcp(few.raccoons.sp, percent = 95)
+
 ggplot(data = a.few.raccoons, aes(x = x, y = y, fill = prop,
                                   color = factor(id)))+
   geom_tile(size = 1)+
+  # geom_polygon(data = raccoon.mcp, aes(long,lat, group = id))
   scale_fill_gradient(low = 'white', high = 'forestgreen',
                       name = "Proportion")+
   scale_color_viridis_d(name = "ID")+
-  geom_point(data = home.coords[home.coords$id %in% guys.to.keep,],
-             aes(x = x, y = y), size = 4, color = "black",
-             inherit.aes = F)+
+  # geom_point(data = home.coords[home.coords$id %in% guys.to.keep,],
+  #            aes(x = x, y = y), size = 4, color = "black",
+  #            inherit.aes = F)+
   lims(x = c(0,21), y = c(0,21))+
   theme_dark(base_size = 14)
 
@@ -157,21 +184,23 @@ rec2 <- apply(rec, 2, sum)/sum(rec)
 
 # Disease spread gif and figs ------------
 # Set up data
-dis <- read.csv("mvt_disease.csv") %>%
+dis <- read.csv("mvt_disease_test.csv") %>%
   mutate(nweek = ((year-1)*52)+ week) %>%
   group_by(nweek, x, y) %>%
   summarise(inc = n(), inf = sum(inf)) %>%
-  mutate(inf = case_when(inf == 0 ~ NA,
-                         TRUE ~ inf))
+  mutate(inf = case_when(inf == 0 ~ '0',
+                         TRUE ~ '1'))
 
 # Create gif
-trans.fig <- ggplot(data = dis, aes(x = x, y = y, fill = inf, 
-                                    colour = inc))+
+trans.fig <- ggplot(data = dis, aes(x = x, y = y, fill = inc))+
   geom_tile(aes(width = 1, height = 1), linewidth = 1)+
-  scale_color_viridis_c(name = "Incubating")+
-  scale_fill_continuous(name = "Infectious")+
+  geom_point(aes(x = x, y = y, alpha = inf), size = 2,
+             color = 'white')+
+  scale_fill_viridis_c(name = "Exposed")+
+  scale_alpha_discrete(range = c(0, 1), name = "Infectious")+
   lims(x = c(0, 21), y = c(0, 21))+
-  theme(axis.title = element_blank(), title = element_text(size = 16))
+  theme(axis.title = element_blank(), 
+        title = element_text(size = 16))
 
 animation_test <- 
   trans.fig + 
@@ -181,27 +210,27 @@ animation_test <-
 trans.animate <- animate(animation_test, nframes = 45, fps = 2)
 trans.animate
 
-# anim_save(filename="trans_animation.gif", animation = trans.animate)
+# anim_save(filename="trans_animation.gif", 
+#           animation = trans.animate)
 
 # Create stationary figures
 dis_subset <- filter(dis, nweek <= min(nweek)+3)
 sub.figs <- list()
 
 for(i in 1:length(unique(dis_subset$nweek))){
-  sub.figs[[i]] <- ggplot(data = dis_subset[dis_subset$nweek == 
-                                       unique(dis_subset$nweek)[i],],
-                          aes(x = x, y = y, fill = inf, 
-                              colour = inc))+
-    geom_tile(aes(width = 0.8, height = 0.8), linewidth = 1)+
-    scale_color_viridis_c(name = "Incubating", 
-                          ,limits = c(0, max(dis_subset$inc)))+
-    scale_fill_continuous(name = "Infectious",
-                          limits = c(0, max(dis_subset$inf)))+
-    lims(x = c(0, 17), y = c(6, 21))+
-    labs(title = paste("Week = ", unique(dis_subset$nweek)[i],
-                       sep = ""))+
+  sub.figs[[i]] <- ggplot(data = dis_subset[dis_subset$nweek==unique(dis_subset$nweek)[i],], aes(x = x, y = y, fill = inc))+
+    geom_tile(aes(width = 1, height = 1), linewidth = 1)+
+    geom_point(aes(x = x, y = y, alpha = inf), size = 2,
+               color = 'white')+
+    scale_fill_viridis_c(name = "Infected", limits = c(0,max(dis_subset$inc)))+
+    scale_alpha_discrete(range = c(0, 1), name = "Infectious",
+                         guide = "none")+
+    lims(x = c(0, 21), y = c(0, 21))+
+    labs(title = paste("Week", unique(dis_subset$nweek)[i], 
+                       sep = " "))+
+    theme_bw()
     theme(axis.title = element_blank(), 
-          title = element_text(size = 12))
+          title = element_text(size = 18))
 }
 
 (sub.figs[[1]] + sub.figs[[2]] + sub.figs[[3]])+
