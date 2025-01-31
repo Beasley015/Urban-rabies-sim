@@ -55,7 +55,8 @@ prop_elim <- prop_elim()
 
 # Figs: Proportion of outbreaks eliminated ---------
 # All sims
-ggplot(data=prop_elim, aes(x=factor(sero), y = prop))+
+ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
+                           color = factor(rate)))+
   geom_point()+
   #geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
@@ -335,6 +336,10 @@ reinfection <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
   
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
   for(i in 1:length(filenames)){
     # Read 'em in
     testfile <- read.csv(paste(getwd(), 
@@ -381,7 +386,7 @@ reinfection <- function(){
         select(-c(n_infected, n_symptomatic,total_pop,actual_sero,
                   year)) %>%
         filter(reinf_length == max(reinf_length)) %>%
-        filter(reinf_length > 5) %>%
+        filter(reinf_length > 10) %>%
         ungroup() %>%
         mutate(reinf_prob = length(unique(rep))/nrow(first.elim),
              time_to_reinf = nweek-first_elim)

@@ -22,8 +22,8 @@ job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
-function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate)#, 
-                        #outputs)
+function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
+                        outputs)
 
     # create landscape
     land_size = 20
@@ -43,7 +43,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords, step=step)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
@@ -88,6 +88,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             =#
             
             # Code for testing disease transmission:
+            #=
             if year >= 2
                 # get locations of symptomatic guys
                 infec = filter(:incubation => x -> x .== 1, lil_guys)
@@ -99,6 +100,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 # Calculate summary statistics and append to data frame
                 append!(outputs, frame, promote = true)
             end
+            =#
         end
         #println(year)
     end
@@ -110,17 +112,23 @@ end
 
 # Run it!
 # Create empty data frame
+#=
 outputs = DataFrame([[], [], [], [], [], [], []], 
                     ["year", "week", "id", "x", "y", "inc", "inf"])
+                    =#
+
+# use this for mortality tests
+dead_bois = DataFrame([[], [], [], [], [], [],[]], 
+            ["step", "n_random_mort", "n_dis_mort", "orphan_mort", "juvie_cc_mort", "adult_cc_mort", "pop_size"])
 
 reps = 1
 
 for rep in 1:reps
     the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1])#, outputs = outputs)
+                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = dead_bois)
 end
 
 # Create filename
-filename = "mvt_disease_test.csv"
+filename = "mvt_mortality_test.csv"
 # Save results
-CSV.write(filename, outputs)
+CSV.write(filename, dead_bois)

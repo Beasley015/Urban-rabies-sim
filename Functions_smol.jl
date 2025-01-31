@@ -351,17 +351,23 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home)
+function dont_fear_the_reaper(;dat, home, step)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
     deleteat!(home, findall(rand_deaths .== 1))
 
+    n_random_mort = length(rand_deaths[rand_deaths .== 1])
+
     # disease mortality
+    n_dis_mort = length(findall(.>=(2), dat.time_since_disease))
+
     deleteat!(home, findall(.>=(2), dat.time_since_disease))
-    filter!(:time_since_disease => <(2), dat)
+    filter!(:time_since_disease => <(2), dat) 
 
     # old age mortality
+    n_old_mort = length(findall(.>=(52*8), dat.age))
+
     deleteat!(home, findall(.>=(52*8), dat.age))
     deleteat!(dat, findall(.>=(52*8), dat.age))
 
@@ -370,6 +376,8 @@ function dont_fear_the_reaper(;dat, home)
 
     deleteat!(home, no_mom)
     filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
+
+    orphan_mort = length(no_mom)
     
     # Density-related mortality
     # get coordinates where there are multiple guys
@@ -407,6 +415,12 @@ function dont_fear_the_reaper(;dat, home)
         deleteat!(dat, dead_guys)
         deleteat!(home, dead_guys)
     end  
+
+    juvie_cc_mort = length(dead_juvies[dead_juvies .== 1])
+    adult_cc_mort = length(dead_adults[dead_adults .== 1])
+
+    deadvec = [step, n_random_mort, n_dis_mort, orphan_mort, juvie_cc_mort, adult_cc_mort, size(dat,1)]
+    push!(dead_bois, deadvec)
 end
 
 # Vaccination function

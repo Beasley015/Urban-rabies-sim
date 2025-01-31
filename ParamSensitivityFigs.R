@@ -74,7 +74,7 @@ ggplot(prop_eliminated, aes(x = factor(l1),
                             fill = factor(prop)))+
   geom_tile()+
   scale_fill_viridis_d(name = "Proportion eliminated")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
+  labs(x = "Within-cell transmission", y = "Between-cell transmission")+
   theme_bw()
 
 # ggsave(filename = "propelimheat.jpeg", width = 5, height = 4,
@@ -171,8 +171,9 @@ ggplot(data = dis_pop, aes (x = nweek, y = mean_pop,
                             color = factor(l2)))+
   geom_line()+
   geom_vline(xintercept = 53, linetype = 'dashed')+
-  scale_color_viridis_d(name = "Home range transmission",
+  scale_color_viridis_d(name = "Between-cell transmission",
                         end = 0.9)+
+  labs(x = "Week", y = "Mean Population Size")+
   facet_grid(rows = vars(l1))+
   theme_bw()+
   theme(panel.grid.minor = element_blank())
@@ -211,7 +212,7 @@ ggplot(prop_eliminated, aes(x = factor(l1),
   labs(x = "Within-cell transmission", y = "Home range transmission")+
   theme_bw()
 
-# ggsave(filename = "propelimheat_smol.jpeg", width = 5, 
+# ggsave(filename = "propelimheat_smol.jpeg", width = 5,
 #        height = 4, units = "in")
 
 # Weeks to elimination
@@ -282,3 +283,37 @@ ggplot(data=mean_cases, aes(x = l1, y = l2,
 
 # ggsave(filename = "meancases_heatmap_smol.jpeg", width = 5,
 #        height = 4,units = "in")
+
+# Birth pulse ---------
+births <- pop %>%
+  filter(week %in% c(17,18))
+
+end.year <- pop %>%
+  filter(week == 52) %>%
+  group_by(rep, a_mort, j_mort) %>%
+  mutate(diff = total_pop - lag(total_pop, 
+                                default = first(total_pop),
+                                order_by=year)) %>%
+  summarize(mean_growth = mean(diff/total_pop)) %>%
+  filter(a_mort == 0.005 & j_mort == 0.02)
+
+summary(end.year$mean_growth)
+
+# R-naught -------------------
+dis <- read.csv("disease_test.csv") %>%
+  select(rep, year, week, total_pop, n_infected, n_symptomatic,
+         elim, l1, l2) %>%
+  mutate(nweek = ((year-1)*52)+week) %>%
+  filter(l1 == 0.03 & l2 == 0.002) %>%
+  filter(year > 1)
+
+r0.list <- list()
+for(i in 1:length(unique(dis$rep))){
+  test <- filter(dis, rep==i)  
+
+  r0.list[[i]] <- estimate.R(epid = test$n_symptomatic, 
+             GT=generation.time("gamma", c(4.5, 1)),
+             pop.size = test$total_pop,
+             methods = c('ML', 'EG'))
+}
+print(r0.list)
