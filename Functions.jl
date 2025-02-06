@@ -240,7 +240,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.001)
 end
 
 # Disease transmission
-function spread_disease(;dat, home)
+function spread_disease(;dat, home, lambda1, lambda2)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
@@ -256,7 +256,7 @@ function spread_disease(;dat, home)
         direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        direct_exposure = direct_exposure[rand(Bernoulli(0.03), length(direct_exposure)) .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(lambda1), length(direct_exposure)) .== 1]
 
         dat.incubation[direct_exposure] .= 1
     end
@@ -272,7 +272,7 @@ function spread_disease(;dat, home)
         for i in 1:length(x)
             append!(poss_coords,
             [(x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1),
-            (x[i]-1, y[i]), (x[i]+1, y[i]),,
+            (x[i]-1, y[i]), (x[i]+1, y[i]),
             (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1)])
         end
         
@@ -286,7 +286,7 @@ function spread_disease(;dat, home)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(0.002), length(indirect_exposure))
+        infections = rand(Bernoulli(lambda2), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1

@@ -6,14 +6,14 @@ setwd("./ParamSensitivity")
 
 # Population size ---------------------
 pop <- read.csv("kmax10.csv") %>%
-  select(rep, year, week, total_pop, a_mort, j_mort) %>%
+  select(rep, year, week, total_pop, amort, jmort) %>%
   mutate(nweek = ((year-1)*52)+week)
 
 ggplot(data=pop, aes(x = nweek, y = total_pop, 
                      color = factor(rep)))+
   geom_line()+
   scale_color_viridis_d(name = "Rep", end = 0.9)+
-  facet_grid(rows = vars(a_mort), cols=vars(j_mort))+
+  facet_grid(rows = vars(amort), cols=vars(jmort))+
   labs(x = "Week", y = "Population Size", title = "Max K = 40")+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
@@ -27,18 +27,18 @@ seasonal <- pop %>%
                             TRUE ~ "Fall"))
 
 seasonal.summary <- seasonal %>%
-  group_by(a_mort, j_mort, season) %>%
+  group_by(amort, jmort, season) %>%
   summarise(mean = mean(total_pop), min = min(total_pop),
             max = max(total_pop))
 
 ggplot(data = seasonal, aes(x = season, y = total_pop))+
   geom_boxplot(fill = 'lightgray')+
-  facet_grid(rows = vars(a_mort), cols = vars(j_mort))+
+  facet_grid(rows = vars(amort), cols = vars(jmort))+
   labs(x = "Season", y = "Carrying Capacity", title = "Max K = 40")+
   theme_bw()+
   theme(panel.grid = element_blank())
 
-# ggsave("seasonal_pop_10.jpeg", width = 5, height = 4, 
+# ggsave("seasonal_pop_10.jpeg", width = 5, height = 4,
 #        units = "in")
 
 # Transmission Rates -----------------------
@@ -290,12 +290,12 @@ births <- pop %>%
 
 end.year <- pop %>%
   filter(week == 52) %>%
-  group_by(rep, a_mort, j_mort) %>%
+  group_by(rep, amort, jmort) %>%
   mutate(diff = total_pop - lag(total_pop, 
                                 default = first(total_pop),
                                 order_by=year)) %>%
   summarize(mean_growth = mean(diff/total_pop)) %>%
-  filter(a_mort == 0.005 & j_mort == 0.02)
+  filter(amort == 0.005 & jmort == 0.02)
 
 summary(end.year$mean_growth)
 
