@@ -5,6 +5,7 @@ library(ggnewscale)
 library(patchwork)
 library(gifski)
 library(gganimate)
+library(sf)
 
 setwd("./FunctionalityTest")
 
@@ -19,24 +20,27 @@ raccoons <- read.csv("mvt_test.csv") %>%
   filter(rep == sample(1:max(rep), 1))
 
 hr_props <- raccoons %>%
-  group_by(rep, id, x, y, hab) %>%
+  filter(week >= 27 & week <= 40) %>%
+  group_by(id, x, y, hab) %>%
   summarise(count = n()) %>%
   ungroup() %>%
   group_by(id) %>%
   mutate(prop = count/sum(count)) %>%
-  filter(prop > 0.05) %>%
+  filter(prop > 0.1) %>%
   ungroup()
   
 hr_sizes <-hr_props %>%
   dplyr::select(id, x, y) %>%
+  group_by(id, x, y) %>%
+  distinct() %>%
+  st_as_sf(coords = c("y", "x")) %>%
+  ungroup() %>%
   group_by(id) %>%
-  summarise(ncoords = n()) %>%
-  mutate(size = ncoords*0.25) %>%
-  ungroup()
-
-summarise(hr_sizes, mean.size = mean(size), 
-          median.size = median(size), min.size = min(size),
-          max.size = max(size))
+  summarize(geometry = st_union(geometry)) %>%
+  st_buffer(dist = 0.5) %>%
+  st_concave_hull(ratio = 0.3, allow_holes = F)
+  
+summary(st_area(hr_sizes))
 
 guys.to.keep <- sample(raccoons$id[which(raccoons$week==1)], 5)
 

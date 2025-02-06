@@ -57,7 +57,7 @@ prop_elim <- prop_elim()
 # All sims
 ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
                            color = factor(rate)))+
-  geom_point()+
+  geom_jitter()+
   #geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
@@ -106,19 +106,9 @@ first_elim_full <- first_elim()
 # Time to elimination: figs ------------------
 elim_sansbar <- first_elim_full %>%
   mutate(sero = factor(sero))
-
-sero_nweek <- aov(elim_sansbar, formula=nweek~sero)
-sero_nweek_HSD <- HSD.test(sero_nweek, 
-                           trt = "sero")$groups %>%
-  mutate(sero = rownames(.)) %>%
-  select(-nweek)
-
-elim_sansbar <- elim_sansbar %>%
-  left_join(sero_nweek_HSD, by = "sero")
   
 ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
   geom_boxplot(fill = 'lightgray')+
-  # geom_text(aes(y = 350, label = groups))+
   # geom_jitter()+
   labs(x = "Adult Vaccination Rate", 
        y = "Time to Elimination (Weeks)")+
@@ -147,7 +137,8 @@ ggplot(data = imm_rate_elim, aes(x = factor(sero),
 
 # interaction: proportion diseased immigrants
 rate_interac <- first_elim_full %>%
-  mutate(disease = factor(disease, levels = c("0","0.015")),
+  mutate(disease = factor(disease, levels = c("0","0.015", 
+                                              "0.03", "0.045")),
                           sero=factor(sero)) %>%
   group_by(sero, disease) %>%
   summarise(center = median(nweek))
@@ -200,42 +191,52 @@ first_elim_prob <- function(){
     # Read 'em in
     testfile <- read.csv(paste(getwd(), 
                                str_replace(dir, ".", ""), "/",
-                               filenames[i],sep = ""))
-    
-    colnames=logical(length=10)
-    for(yr in 1:11){colnames[yr]=paste("yr",yr,sep="")}
-
-    # Calculate time in weeks & get time to first elimination
-    time_to_elim <- testfile %>%
-      group_by(rep, sero, type, rate, disease) %>%
-      # rate=disease rate of immigrants
+                               filenames[i],sep = "")) %>%
       filter(year >= 2) %>%
-      filter(elim == "True") %>%
-      mutate(nweek = ((year-1)*52) + week) %>%
-      filter(nweek == min(nweek)) %>%
-      ungroup()
+      mutate(nweek = ((year-2)*52) + week)
     
-    yrvec <- do.call(cbind,imap(colnames, 
-                    .f=function(x,i){df = data.frame(x=rep(i*52,
-                              length(unique(time_to_elim$rep))))}))
+    recols <- testfile %>%
+      group_by(rep, sero, rate, type, disease) %>%
+      filter(elim == "False" & lag(elim) == "True")
     
-    time_to_elim <- cbind(time_to_elim, yrvec)
-    colnames(time_to_elim)[14:24] <- colnames
+    elims <- testfile %>%
+      group_by(rep, sero, rate, type, disease) %>%
+      filter(elim == "True" & lag(elim) == "False")
     
-    time_to_elim <- time_to_elim %>%
-      mutate(across(yr1:yr11, 
-                    .fns = function(x) length(which(nweek<x)),
-                    .names = "{.col}_elim")) %>%
-      select(-(yr1:yr11)) %>%
-      select(-(rep:week)) %>%
-      select(-(total_pop:actual_sero),-nweek) %>%
-      distinct() %>%
-      mutate(across(yr1_elim:yr11_elim, function(x) x/50))
+    recol.time <- rbind(elims, recols) %>%
+      arrange(rep, nweek) %>%
+      mutate(time = case_when(elim == "True" ~ nweek-lag(nweek),
+                              TRUE ~ NA)) %>%
+      filter(is.na(time) == F) %>%
+      filter(time < 9)
+    
+    testfile <- suppressMessages(full_join(testfile, recol.time))
+    
+    testfile <- testfile %>%
+      mutate(outbreak = case_when(elim=="True"~0,
+                                  TRUE~1)) 
+    
+    indices <- which(is.na(testfile$time)==F)
+    
+    if(length(indices) > 0){
+      for(j in 1:length(indices)){
+        testfile$outbreak[(indices[j]-testfile$time[indices[j]]):(indices[j]-1)] <- 0
+      }
+    
+    prop_nocases <- testfile %>%
+      group_by(sero, rate, disease, type, nweek) %>%
+      summarise(prop = (n()-sum(outbreak))/n())
+  
+    } else{
+      prop_nocases <- testfile %>%
+        group_by(sero, rate, disease, type, nweek) %>%
+        summarise(prop = (n()-sum(outbreak))/n())
+    }
     
     if(i==1){
-      first_elim_frame <- time_to_elim
+      first_elim_frame <- prop_nocases
     } else{
-      first_elim_frame <- rbind(first_elim_frame, time_to_elim)
+      first_elim_frame <- rbind(first_elim_frame, prop_nocases)
     }
     
     setTxtProgressBar(pb,i)
@@ -246,24 +247,20 @@ first_elim_prob <- function(){
 elim_prob_t <- first_elim_prob()
 
 # Prob elim w/in time figs ------------
-elim_prob_smol <- elim_prob_t %>%
-  pivot_longer(cols = yr2_elim:yr11_elim, names_to = "year", 
-               values_to = "prob") %>%
-  mutate(year = as.numeric(str_extract(year, "(\\d)+"))) %>%
-  group_by(year, sero) %>%
-  mutate(year = year-1) %>%
-  summarise(mean_prob = mean(prob))
+elim_prob_vax <- elim_prob_t %>%
+  group_by(sero, nweek) %>%
+  summarise(mean_prop = mean(prop))
 
 # dev.new(width = 80, height = 60, unit = "mm", res = 600,
 #         noRStudioGD=TRUE)
 
-ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
+ggplot(data=elim_prob_vax, aes(x = nweek, y = mean_prop,
                                 color = factor(sero)))+
   geom_line(linewidth = 1)+
+  # geom_smooth()+
   geom_hline(yintercept = 0.95, linetype="dashed")+
   scale_color_viridis_d(end = 0.9, name = "Vaccination Rate")+
-  lims(x = c(1, 10))+
-  labs(x = "Year", y = "Probability of 0 Cases")+
+  labs(x = "Week", y = "Probability of 0 Cases")+
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
 
@@ -271,6 +268,32 @@ ggplot(data=elim_prob_smol, aes(x = year, y = mean_prob,
 
 # ggsave(filename = "./full_Figs/full_elim_meant.jpeg", width=8,
 #        dpi=600, units="in", height = 6)
+
+# Look @ other vars
+imm_figs <- list()
+
+for(i in 1:length(unique(elim_prob_t$sero))){
+  subset <- elim_prob_t %>%
+    filter(sero == unique(elim_prob_t$sero)[i]) %>%
+    group_by(rate, nweek) %>%
+    summarise(mean_prop = mean(prop))
+  
+  imm_figs[[i]] <- ggplot(data=subset, aes(x = nweek, 
+                                           y = mean_prop,
+                                           color = factor(rate)))+
+    geom_line(linewidth = 1)+
+    # geom_smooth()+
+    geom_hline(yintercept = 0.95, linetype="dashed")+
+    scale_color_viridis_d(end = 0.9, name = "Immigration Rate")+
+    labs(x = "Week", y = "Probability of 0 Cases")+
+    theme_bw(base_size=16)+
+    theme(panel.grid = element_blank())
+}
+
+# Re calculation ------------------------
+get_re <- function(){
+  
+}
 
 # Function to calculate # weeks rabies-free -------------
 rabies_free <- function(){

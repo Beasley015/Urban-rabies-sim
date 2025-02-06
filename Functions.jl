@@ -271,11 +271,9 @@ function spread_disease(;dat, home)
         
         for i in 1:length(x)
             append!(poss_coords,
-            [(x[i]-2, y[i]+2), (x[i]-1, y[i]+2), (x[i], y[i]+2), (x[i]+1, y[i]+2), (x[i]+2, y[i]+2),
-            (x[i]-2, y[i]+1), (x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1), (x[i]+2, y[i]+1),
-            (x[i]-2, y[i]), (x[i]-1, y[i]), (x[i]+1, y[i]), (x[i]+2, y[i]),
-            (x[i]-2, y[i]-1), (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1), (x[i]+2, y[i]-1),
-            (x[i]-2, y[i]-2), (x[i]-1, y[i]-2), (x[i], y[i]-2), (x[i]+1, y[i]-2), (x[i]+2, y[i]-2)])
+            [(x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1),
+            (x[i]-1, y[i]), (x[i]+1, y[i]),,
+            (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1)])
         end
         
         # Get raccoons within range
