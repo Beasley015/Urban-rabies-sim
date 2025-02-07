@@ -1,6 +1,7 @@
 library(tidyverse)
 library(viridis)
 library(DescTools)
+library(R0)
 
 setwd("./ParamSensitivity")
 
@@ -54,7 +55,7 @@ prop_eliminated <- dis %>%
   select(rep, l1, l2) %>%
   group_by(l1, l2) %>%
   distinct() %>%
-  summarise(prop = n()/5)
+  summarise(prop = n()/10)
 
 unique(prop_eliminated$prop) #ok not bad
 

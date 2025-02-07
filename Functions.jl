@@ -151,7 +151,7 @@ function initialize_disease(dat)
     unvax = findall(dat.vaccinated .== 0)
 
     # Choose raccoons to infect
-    new_diseases = ifelse(length(unvax) > 40, sample(unvax, 40, replace = false), unvax)
+    new_diseases = ifelse(length(unvax) > 30, sample(unvax, 30, replace = false, ordered = true), unvax)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1

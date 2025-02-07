@@ -50,11 +50,6 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
     for year in 1:years
         for step in 1:time_steps
-            # Initialize disease when population stabilizes
-            if year == 2 && step == 1
-                initialize_disease(lil_guys)
-            end
-
             # Lots of death
             dont_fear_the_reaper(dat=lil_guys, home=home_coords)
 
@@ -107,6 +102,11 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             lil_guys.time_since_inf[lil_guys.incubation .== 1] = lil_guys.time_since_inf[lil_guys.incubation.==1] .+ 1
             lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
+            # Initialize disease when population stabilizes
+            if year == 2 && step == 1
+                initialize_disease(lil_guys)
+            end           
+
             elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
 
             # Filter out buffer zone
@@ -135,7 +135,7 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]],
 reps = 10
 
 lam1 = [0.03, 0.035, 0.04]
-lam2 = [0.002, 0.003, 0.004]
+lam2 = [0.008, 0.01, 0.012]
 
 for rep in 1:reps
     for j in 1:length(lam1)
