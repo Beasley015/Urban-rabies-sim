@@ -69,11 +69,11 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 #=
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                sero_rate=0.3, immigration_rate=immigration_rate, year=year)
+                                sero_rate=0, immigration_rate=immigration_rate, year=year)
             elseif immigration_type == "wave"
                 if 40 < step < 50
                     immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                type="wave", sero_rate=0.3, immigration_rate=immigration_rate, year=year)
+                                type="wave", sero_rate=0, immigration_rate=immigration_rate, year=year)
                 end
             end
 =#
