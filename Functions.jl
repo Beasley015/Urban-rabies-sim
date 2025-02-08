@@ -447,7 +447,7 @@ function juvies_leave(dat, home, land_size)
                         downleft, down, downright], size(juvies,1))
 
         # Get dispersal distance
-        distances = rand(Poisson(2), size(juvies,1))
+        distances = rand(Poisson(3), size(juvies,1))
 
         # RUN!
         coords = Vector(undef, size(juvies,1))
@@ -556,7 +556,7 @@ function adults_move(dat, home, land_size, year)
                         downleft, down, downright], size(adults,1))
 
         # Get dispersal distance (shorter for adults)
-        distances = rand(Poisson(1), size(adults,1))
+        distances = rand(Poisson(2), size(adults,1))
 
         # RUN!
         coords = Vector(undef, size(adults,1))
