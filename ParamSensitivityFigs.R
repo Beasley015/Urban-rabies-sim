@@ -136,7 +136,7 @@ ggplot(data = dis, aes(x = nweek, y = n_symptomatic,
 mean_cases <- dis %>%
   filter(nweek > 100, elim == "False") %>%
   group_by(rep, l2, l1) %>%
-  summarise(mean.cases = mean(n_symptomatic)) %>%
+  summarise(mean.cases = median(n_symptomatic)) %>%
   mutate(l1 = factor(l1), 
          l2 = factor(l2))
 
