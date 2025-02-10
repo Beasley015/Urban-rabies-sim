@@ -134,7 +134,7 @@ ggplot(data = dis, aes(x = nweek, y = n_symptomatic,
 #        units = "in")
 
 mean_cases <- dis %>%
-  filter(nweek > 52, elim == "False") %>%
+  filter(nweek > 100, elim == "False") %>%
   group_by(rep, l2, l1) %>%
   summarise(mean.cases = mean(n_symptomatic)) %>%
   mutate(l1 = factor(l1), 
@@ -305,7 +305,7 @@ dis <- read.csv("disease_test.csv") %>%
   select(rep, year, week, total_pop, n_infected, n_symptomatic,
          elim, l1, l2) %>%
   mutate(nweek = ((year-1)*52)+week) %>%
-  filter(l1 == 0.03 & l2 == 0.002) %>%
+  filter(l1 == 0.02 & l2 == 0.006) %>%
   filter(year > 1)
 
 r0.list <- list()
@@ -315,6 +315,6 @@ for(i in 1:length(unique(dis$rep))){
   r0.list[[i]] <- estimate.R(epid = test$n_symptomatic, 
              GT=generation.time("gamma", c(4.5, 1)),
              pop.size = test$total_pop,
-             methods = c('ML', 'EG'))
+             method = c('EG'))
 }
 print(r0.list)
