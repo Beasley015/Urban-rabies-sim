@@ -11,11 +11,12 @@ library(pbmcapply) #Progress bar w/ETA
 library(tidyverse)
 library(viridis)
 library(agricolae)
+library(R0)
 
 options(dplyr.summarise.inform = FALSE)
 dir <- "./outputs" 
 
-# Function: Calculate proportion of outbreaks eliminated ----------
+# Function: Calculate proportion of outbreaks eliminated --------
 prop_elim <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
@@ -87,7 +88,7 @@ first_elim <- function(){
     time_to_elim <- testfile %>%
       filter(elim == "True", year >= 2) %>%
       group_by(rep, sero, rate, type, disease) %>%
-      mutate(nweek = ((year-2)*52) + week) %>%
+      mutate(nweek = ((year-1)*52) + week) %>%
       filter(nweek == min(nweek))
     
     if(i==1){
@@ -135,6 +136,9 @@ ggplot(data = imm_rate_elim, aes(x = factor(sero),
   theme(panel.grid = element_blank())
 # Immigration matters most when immunity is low
 
+# ggsave(filename = "./full_Figs/time_elim_rate.jpeg", width=6,
+#        height=4, dpi=600, units="in")
+
 # interaction: proportion diseased immigrants
 rate_interac <- first_elim_full %>%
   mutate(disease = factor(disease, levels = c("0","0.015", 
@@ -178,6 +182,17 @@ ggplot(data=im_interac[im_interac$sero==0.2,],
   scale_fill_viridis_c()
 # not really
 
+# disease/immigration interactions: make this a patchwork ####
+im_interac <- first_elim_full %>%
+  mutate(disease=factor(disease), rate = factor(rate)) %>%
+  group_by(sero, disease, rate) %>%
+  summarise(center = median(nweek))
+
+ggplot(data=im_interac[im_interac$sero==0.6,], 
+       aes(x = disease, y = rate, fill=center))+
+  geom_tile()+
+  scale_fill_viridis_c()
+
 # Prob of elimination at time t --------------------
 first_elim_prob <- function(){
   # Get names of files
@@ -193,7 +208,7 @@ first_elim_prob <- function(){
                                str_replace(dir, ".", ""), "/",
                                filenames[i],sep = "")) %>%
       filter(year >= 2) %>%
-      mutate(nweek = ((year-2)*52) + week)
+      mutate(nweek = ((year-1)*52) + week)
     
     recols <- testfile %>%
       group_by(rep, sero, rate, type, disease) %>%
@@ -290,10 +305,105 @@ for(i in 1:length(unique(elim_prob_t$sero))){
     theme(panel.grid = element_blank())
 }
 
-# Re calculation ------------------------
-get_re <- function(){
+# ggsave(plot = imm_figs[[9]], 
+#        filename = "./full_Figs/full_elim_vax8.jpeg", width=8,
+#        dpi=600, units="in", height = 6)
+
+# R0 calculation ------------------------
+get_r0 <- function(){
+  # Get names of files
+  filenames <- list.files(path = dir, pattern = "*.csv")
   
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
+  for(i in 1:length(filenames)){
+    # Read 'em in
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
+    
+    # Calculate time in weeks & get time to first elimination
+    time_to_elim <- testfile %>%
+      filter(elim == "True", year >= 2) %>%
+      group_by(rep, sero, rate, type, disease) %>%
+      mutate(nweek = ((year-1)*52) + week) %>%
+      filter(nweek == min(nweek))
+    
+    r0 <- data.frame(rep = integer(), sero = numeric(),
+                     disease = numeric(), rate = numeric(),
+                     type = character(), r0 = numeric())
+    
+    for(j in 1:length(unique(time_to_elim$rep))){
+      onerep <- testfile %>%
+        filter(rep == unique(.$rep)[j])
+      
+      first_elim <- filter(time_to_elim, 
+                           rep == unique(testfile$rep)[j])
+      
+      endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
+                         first_elim$nweek)
+    
+      test <- try(
+        suppressMessages({
+          estimate.R(epid = onerep$n_symptomatic[53:endpoint], 
+                     GT=generation.time("gamma", c(4.5, 1)),
+                     method = 'TD', begin = 1, 
+                     end = endpoint-53, nsim = 100)}),
+        silent= T
+      )
+
+      if(class(test) %in% 'try-error') {next} else {
+        r.est <- suppressMessages({
+          estimate.R(epid = onerep$n_symptomatic[53:endpoint], 
+                     GT=generation.time("gamma", c(4.5, 1)),
+                     method = 'TD', begin = 1, end = endpoint-53,
+                     nsim = 1000)
+        })
+      }
+      
+      r.est <- r.est$estimates$TD$R 
+      
+      med.rest <- median(r.est[r.est > quantile(r.est, 0.025, 
+                                                na.rm = T) &
+                                 r.est < quantile(r.est, 0.975, 
+                                                  na.rm = T)])
+    
+      row <- data.frame(rep=unique(onerep$rep), 
+                       sero=unique(onerep$sero),
+                       rate=unique(onerep$rate),
+                       disease=unique(onerep$disease), 
+                       type=unique(onerep$type), 
+                       r0=med.rest)
+      
+      r0 <- bind_rows(r0, row)
+    }
+    
+    if(i==1){
+      r0.frame <- r0
+    } else{
+      r0.frame <- rbind(r0.frame, r0)
+    }
+    setTxtProgressBar(pb,i)
+  }
+  return(r0.frame)
 }
+
+r0 <- get_r0()
+
+# R0 figures ---------------
+ggplot(data = r0, aes(x = factor(sero), y = r0))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Adult Vaccination Rate", 
+       y = bquote("Median"~R[e]))+
+  theme_bw(base_size=14)+
+  theme(panel.grid=element_blank())
+
+# ggsave(filename = "./full_Figs/full_re.jpeg", width=8,
+#        dpi=600, units="in", height = 6)
+
+# R0 by week -----------------
 
 # Function to calculate # weeks rabies-free -------------
 rabies_free <- function(){
