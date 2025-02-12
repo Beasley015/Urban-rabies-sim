@@ -305,16 +305,26 @@ dis <- read.csv("disease_test.csv") %>%
   select(rep, year, week, total_pop, n_infected, n_symptomatic,
          elim, l1, l2) %>%
   mutate(nweek = ((year-1)*52)+week) %>%
-  filter(l1 == 0.02 & l2 == 0.006) %>%
+  filter(l1 == 0.09 & l2 == 0.01) %>%
   filter(year > 1)
+
+first_elim <- dis %>%
+  filter(elim == "True") %>%
+  group_by(rep) %>%
+  summarise(first = min(nweek))
 
 r0.list <- list()
 for(i in 1:length(unique(dis$rep))){
   test <- filter(dis, rep==i)  
+  
+  start <- as.numeric(min(which(test$n_symptomatic>0)))
+  end <- first_elim$first[i]-53
 
-  r0.list[[i]] <- estimate.R(epid = test$n_symptomatic, 
-             GT=generation.time("gamma", c(4.5, 1)),
-             pop.size = test$total_pop,
-             method = c('EG'))
+  r0.list[[i]] <- estimate.R(epid = 
+                               dis$n_symptomatic[start:end], 
+               GT=generation.time("gamma", c(4.5, 1)),
+               method = 'TD', begin = 1, end = end-53,
+               nsim = 1000)
 }
+
 print(r0.list)
