@@ -12,6 +12,7 @@ library(tidyverse)
 library(viridis)
 library(agricolae)
 library(R0)
+# library(patchwork)
 
 options(dplyr.summarise.inform = FALSE)
 dir <- "./outputs" 
@@ -106,11 +107,14 @@ first_elim_full <- first_elim()
 
 # Time to elimination: figs ------------------
 elim_sansbar <- first_elim_full %>%
-  mutate(sero = factor(sero))
+  mutate(sero = factor(sero)) %>%
+  filter(rate %in% c(1,5))
   
-ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek))+
-  geom_boxplot(fill = 'lightgray')+
+ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek,
+                                fill = factor(rate)))+
+  geom_boxplot()+
   # geom_jitter()+
+  scale_fill_manual(values = c('lightgray', 'limegreen'))+
   labs(x = "Adult Vaccination Rate", 
        y = "Time to Elimination (Weeks)")+
   theme_bw()+
@@ -188,10 +192,24 @@ im_interac <- first_elim_full %>%
   group_by(sero, disease, rate) %>%
   summarise(center = median(nweek))
 
-ggplot(data=im_interac[im_interac$sero==0.6,], 
-       aes(x = disease, y = rate, fill=center))+
-  geom_tile()+
-  scale_fill_viridis_c()
+interac_list <- list()
+
+for(i in 1:length(c(0, 0.2, 0.4, 0.6))){
+  samples <- c(0, 0.2, 0.4, 0.6)
+  
+  interac_list[[i]] <- ggplot(data=im_interac[im_interac$sero==samples[i],], 
+        aes(x = disease, y = rate, fill=center))+
+    geom_tile()+
+    scale_fill_viridis_c(name = "Weeks to Elimination",
+                         limits = c(100, 215))+
+    labs(x = "Immigrant Disease Rate", y = "Immigration Rate",
+         title = paste("Vaccination Rate = ", samples[i],
+                       sep = ""))
+}
+
+((interac_list[[1]] + interac_list[[2]])/
+  (interac_list[[3]] + interac_list[[4]])) +
+  plot_layout(guides = 'collect')
 
 # Prob of elimination at time t --------------------
 first_elim_prob <- function(){
@@ -263,18 +281,21 @@ elim_prob_t <- first_elim_prob()
 
 # Prob elim w/in time figs ------------
 elim_prob_vax <- elim_prob_t %>%
-  group_by(sero, nweek) %>%
+  filter(rate %in% c(1,5), sero %in% c(0, 0.8)) %>%
+  group_by(sero, nweek, rate) %>%
   summarise(mean_prop = mean(prop))
 
 # dev.new(width = 80, height = 60, unit = "mm", res = 600,
 #         noRStudioGD=TRUE)
 
 ggplot(data=elim_prob_vax, aes(x = nweek, y = mean_prop,
-                                color = factor(sero)))+
+                                color = factor(sero),
+                               linetype = factor(rate)))+
   geom_line(linewidth = 1)+
   # geom_smooth()+
   geom_hline(yintercept = 0.95, linetype="dashed")+
   scale_color_viridis_d(end = 0.9, name = "Vaccination Rate")+
+  scale_linetype(name = "Immigration Rate")+
   labs(x = "Week", y = "Probability of 0 Cases")+
   theme_bw(base_size=16)+
   theme(panel.grid = element_blank())
@@ -289,7 +310,8 @@ imm_figs <- list()
 
 for(i in 1:length(unique(elim_prob_t$sero))){
   subset <- elim_prob_t %>%
-    filter(sero == unique(elim_prob_t$sero)[i]) %>%
+    filter(rate %in% c(1,5),
+           sero == unique(elim_prob_t$sero)[i]) %>%
     group_by(rate, nweek) %>%
     summarise(mean_prop = mean(prop))
   
@@ -305,8 +327,8 @@ for(i in 1:length(unique(elim_prob_t$sero))){
     theme(panel.grid = element_blank())
 }
 
-# ggsave(plot = imm_figs[[9]], 
-#        filename = "./full_Figs/full_elim_vax8.jpeg", width=8,
+# ggsave(plot = imm_figs[[1]],
+#        filename = "./full_Figs/full_elim_vax0.jpeg", width=8,
 #        dpi=600, units="in", height = 6)
 
 # R0 calculation ------------------------
@@ -332,15 +354,15 @@ get_r0 <- function(){
       filter(nweek == min(nweek))
     
     r0 <- data.frame(rep = integer(), sero = numeric(),
-                     disease = numeric(), rate = numeric(),
-                     type = character(), r0 = numeric())
+                     rate = numeric(), disease = numeric(),
+                     type = character(), r.0 = numeric())
     
     for(j in 1:length(unique(time_to_elim$rep))){
       onerep <- testfile %>%
-        filter(rep == unique(.$rep)[j])
+        filter(rep == unique(time_to_elim$rep)[j])
       
       first_elim <- filter(time_to_elim, 
-                           rep == unique(testfile$rep)[j])
+                           rep == unique(time_to_elim$rep)[j])
       
       endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
                          first_elim$nweek)
@@ -354,30 +376,34 @@ get_r0 <- function(){
         silent= T
       )
 
+      # Error somewhere in here:
       if(class(test) %in% 'try-error') {next} else {
         r.est <- suppressMessages({
           estimate.R(epid = onerep$n_symptomatic[53:endpoint], 
                      GT=generation.time("gamma", c(4.5, 1)),
-                     method = 'TD', begin = 1, end = endpoint-53,
-                     nsim = 1000)
+                     method = 'TD', nsim = 1000)
         })
+        
       }
-      
       r.est <- r.est$estimates$TD$R 
       
       med.rest <- median(r.est[r.est > quantile(r.est, 0.025, 
                                                 na.rm = T) &
-                                 r.est < quantile(r.est, 0.975, 
+                                 r.est < quantile(r.est, 
+                                                  0.975, 
                                                   na.rm = T)])
-    
-      row <- data.frame(rep=unique(onerep$rep), 
-                       sero=unique(onerep$sero),
-                       rate=unique(onerep$rate),
-                       disease=unique(onerep$disease), 
-                       type=unique(onerep$type), 
-                       r0=med.rest)
       
-      r0 <- bind_rows(r0, row)
+      if(is.na(med.rest)==T) {next} else{
+        
+        row <- data.frame(rep=unique(onerep$rep), 
+                          sero=unique(onerep$sero),
+                          rate=unique(onerep$rate),
+                          disease=unique(onerep$disease), 
+                          type=unique(onerep$type), 
+                          r.0=med.rest)
+          
+        r0 <- bind_rows(r0, row)
+      }
     }
     
     if(i==1){
@@ -392,8 +418,10 @@ get_r0 <- function(){
 
 r0 <- get_r0()
 
+saveRDS(r0, "r0.rds")
+
 # R0 figures ---------------
-ggplot(data = r0, aes(x = factor(sero), y = r0))+
+ggplot(data = r0, aes(x = factor(sero), y = r.0))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Adult Vaccination Rate", 
        y = bquote("Median"~R[e]))+
@@ -474,58 +502,35 @@ reinfection <- function(){
                    style = "ETA") 
   
   for(i in 1:length(filenames)){
-    # Read 'em in
     testfile <- read.csv(paste(getwd(), 
                                str_replace(dir, ".", ""), "/",
-                               filenames[i],sep = ""))
-    
-    # Calculate time in weeks & get time to first elimination
-    time_to_elim <- testfile %>%
+                               filenames[i],sep = "")) %>%
       filter(year >= 2) %>%
+      mutate(nweek = ((year-1)*52) + week)
+    
+    recols <- testfile %>%
       group_by(rep, sero, rate, type, disease) %>%
-      filter(elim == "True") %>%
-      mutate(nweek = ((year-1)*52) + week) %>%
-      filter(nweek == min(nweek))
+      filter(elim == "False" & lag(elim) == "True")
     
-    first.elim <- data.frame(first_elim=time_to_elim$nweek,
-                             rep=time_to_elim$rep)
+    elims <- testfile %>%
+      group_by(rep, sero, rate, type, disease) %>%
+      filter(elim == "True" & lag(elim) == "False")
     
-    reinf_frame <- testfile %>%
-      left_join(first.elim, by = "rep") %>%
-      filter(year >= 2) %>%
-      mutate(nweek = ((year-1)*52) + week) %>%
-      group_by(rep, disease, sero, rate, type) %>%
-      filter(nweek > first_elim) %>%
-      filter(elim == "False") 
+    recol.time <- rbind(elims, recols) %>%
+      arrange(rep, nweek) %>%
+      mutate(time = case_when(elim == "True" ~ nweek-lag(nweek),
+                              TRUE ~ NA)) #%>%
+      filter(is.na(time) == F) %>%
+      filter(time > 9)
     
-    if(nrow(reinf_frame)==0){
-      reinf_frame <- data.frame(rep = 0, week = 0, 
-                                sero = unique(testfile$sero),
-                                disease = unique(testfile$disease),
-                                rate = unique(testfile$rate),
-                                type = unique(testfile$type),
-                                elim = 0, first_elim = 0,
-                                nweek = 0, reinf_start = 0, 
-                                reinf_length = 0, reinf_prob = 0,
-                                time_to_reinf=0)
-    }else{
-    
-      reinf_frame <- reinf_frame %>%
-        mutate(reinf_start = min(nweek)) %>%
-        mutate(reinf_length = n()) %>%
-        filter(nweek==max(nweek)) %>%
-        ungroup() %>%
-        group_by(rep, sero, disease, rate, type) %>%
-        select(-c(n_infected, n_symptomatic,total_pop,actual_sero,
-                  year)) %>%
-        filter(reinf_length == max(reinf_length)) %>%
-        filter(reinf_length > 10) %>%
-        ungroup() %>%
-        mutate(reinf_prob = length(unique(rep))/nrow(first.elim),
-             time_to_reinf = nweek-first_elim)
-    }
-    
-    if(exists("reinf_frame_full")==F){
+    reinf_frame <- suppressMessages(full_join(testfile, 
+                                           recol.time)) %>%
+      filter(is.na(time)==F) %>%
+      dplyr::select(rep, sero, disease, rate, 
+                    type, nweek, time) %>%
+      mutate(prop = length(unique(.$rep))/50)
+
+    if(i==1){
       reinf_frame_full <- reinf_frame
     } else{
       reinf_frame_full <- rbind(reinf_frame_full, reinf_frame)
@@ -539,24 +544,31 @@ reinf_outs <- reinfection()
 
 # Figures: reinfection prob & length -------------------
 reinf_outs <- reinf_outs %>%
-  mutate(elim=first_elim-(52+1)) %>%
+  filter(rate %in% c(1,5), disease != 0) %>%
   mutate(sero=factor(sero)) %>%
   # mutate(TimePeriod = case_when(between(week,19,41) ~
   #                                 "Juveniles w/Mom",
   #        TRUE ~ "Juveniles Independent"))
-  mutate(TimePeriod = case_when(reinf_start < 18 | 
-                                  reinf_start > 43 ~ 
+  mutate(InfStart = nweek-time) %>%
+  mutate(TimePeriod = case_when(InfStart < 18 | 
+                                  InfStart > 43 ~ 
                                   "Post-dispersal",
-                                between(reinf_start,18,28) ~
+                                between(InfStart,18,28) ~
                                   "Juveniles w/Mom",
-                                between(reinf_start,29,42) ~ 
+                                between(InfStart,29,42) ~ 
                                   "Independent Juveniles"))
 
-ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob))+
+probs_condensed <- reinf_outs %>%
+  dplyr::select(sero, type, disease, rate, prop) %>%
+  distinct()
+
+ggplot(data=probs_condensed, aes(x=factor(sero),y=prop,
+                                 fill = factor(rate)))+
   geom_boxplot()+
   # scale_fill_manual(values = c("lightgray", "limegreen"))+
-  scale_fill_viridis_d(end=0.9)+
-  labs(x = "Seroprevalence", y = "Recolonization Probability")+
+  scale_fill_viridis_d(end=0.9, name = "Immigration Rate")+
+  labs(x = "Adult Vaccination Rate", 
+       y = "Recolonization Probability")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -567,7 +579,7 @@ ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_prob))+
 rate_inter_rinf <- reinf_outs %>%
   mutate(disease=factor(disease), sero=factor(sero))%>%
   group_by(sero,disease)%>%
-  summarise(med = median(reinf_prob))
+  summarise(med = median(prop))
 
 ggplot(data=rate_inter_rinf, aes(x=sero,y=disease,
                                 fill=med))+
@@ -582,7 +594,7 @@ ggplot(data=rate_inter_rinf, aes(x=sero,y=disease,
 rate_inter_rinf <- reinf_outs %>%
   mutate(rate=factor(rate), sero=factor(sero))%>%
   group_by(sero,rate)%>%
-  summarise(med = median(reinf_prob))
+  summarise(med = median(prop))
 
 ggplot(data=rate_inter_rinf, aes(x=sero,y=rate,
                                  fill=med))+
@@ -630,9 +642,23 @@ ggplot(data = reinf_timing, aes(x = TimePeriod,
 #        width = 8, units = "in", dpi = 600)
 
 # Reinfection length ------------------
-reinf_outs <- filter(reinf_outs, reinf_prob > 0)
+reinf_outs <- filter(reinf_outs, prop > 0)
 
-ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_length,
+# Test for associations between elimination time 
+# and reinfection length
+summary(lm(data = reinf_outs, time~InfStart))
+
+ggplot(data = reinf_outs, aes(x = InfStart, y = time))+
+  geom_point()+
+  geom_abline(intercept = 52*11, slope = -1, linetype = 'dashed')+
+  labs(x = "Reinfection Start", y = "Reinfection Length") +
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# ggsave(filename = "./full_Figs/rinflength_starttime.jpeg",
+#        width = 6, height = 4, dpi= 600, units = "in")
+
+ggplot(data=reinf_outs, aes(x=factor(sero),y=time,
                             fill = TimePeriod))+
   geom_boxplot()+
   # geom_jitter()+
@@ -649,7 +675,7 @@ ggplot(data=reinf_outs, aes(x=factor(sero),y=reinf_length,
 dis_inter_rlen <- reinf_outs %>%
   mutate(disease=factor(disease), sero=factor(sero))%>%
   group_by(sero,disease)%>%
-  summarise(med = median(reinf_length))
+  summarise(med = median(time))
 
 ggplot(data=dis_inter_rlen, aes(x=sero,y=disease,
                                 fill=med))+
@@ -663,12 +689,12 @@ ggplot(data=dis_inter_rlen, aes(x=sero,y=disease,
 dis_inter_rlen <- reinf_outs %>%
   mutate(disease=factor(disease), sero=factor(sero))%>%
   group_by(sero,disease, TimePeriod)%>%
-  summarise(med = median(reinf_length))
+  summarise(med = median(time))
 
 ggplot(data=dis_inter_rlen, aes(x=TimePeriod,y=disease,
                                 fill=med))+
   geom_tile()+
-  scale_fill_viridis(name="Disease Rate",
+  scale_fill_viridis(name="Reinfection Length",
                      option = "B")+
   labs(x="Seroprevalence", y="Immigrant Disease Rate")+
   theme_bw(base_size=12)+
@@ -678,7 +704,7 @@ ggplot(data=dis_inter_rlen, aes(x=TimePeriod,y=disease,
 rate_inter_rinf <- reinf_outs %>%
   mutate(rate=factor(rate), sero=factor(sero))%>%
   group_by(sero,rate)%>%
-  summarise(med = median(reinf_length))
+  summarise(med = median(time))
 
 ggplot(data=rate_inter_rinf, aes(x=sero,y=rate,
                                 fill=med))+
