@@ -55,7 +55,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
             spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
@@ -132,10 +132,10 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]],
                     "n_symptomatic","actual_sero", "elim", "l1", "l2"])
 
 
-reps = 10
+reps = 5
 
-lam1 = [0.08, 0.09, 0.1]
-lam2 = [0.005, 0.01, 0.015]
+lam1 = [0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12]
+lam2 = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04]
 
 for rep in 1:reps
     for j in 1:length(lam1)
