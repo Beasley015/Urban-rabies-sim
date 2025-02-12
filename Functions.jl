@@ -245,23 +245,39 @@ function spread_disease(;dat, home, lambda1, lambda2)
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
 
-    # Infect raccoons that share cell with diseased guy
+    # Infect raccoons that are currently in diseased guy's home range
     if length(diseased_coords) != 0
-        # Get all guys with shared coords
-        direct_exposure = [intersect(findall(.==(diseased_coords[i][1]), dat.x),findall(.==(diseased_coords[i][2]), dat.y)) 
-            for i in 1:length(diseased_coords)]
-        direct_exposure = sort(unique(vcat(direct_exposure...)))
+
+        # Define diseased guys' location
+        x = deepcopy(dat.x[findall(dat.infectious .== 1)])
+        y = deepcopy(dat.y[findall(dat.infectious .== 1)])
+
+        poss_coords = Vector{Tuple{Int64, Int64}}()
+
+        for i in 1:length(x)
+            append!(poss_coords,
+            [(x-1, y+1), (x, y+1), (x+1, y+1),
+            (x-1, y), (x,y), (x+1, y),
+            (x-1, y-1), (x, y-1), (x+1, y-1)])
+        end
+
+        # Get raccoons within range
+        HR_exposure = [intersect(findall(.==(poss_coords[i][1]), dat.x),findall(.==(poss_coords[i][2]), dat.y)) 
+                        for i in 1:length(poss_coords)]
+
+        HR_exposure = sort(unique(vcat(HR_exposure...)))
 
         # Remove vaccinated individuals
-        direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
+        HR_exposure = HR_exposure[dat.vaccinated[HR_exposure] .== 0]
 
         # Infect with set probability
-        direct_exposure = direct_exposure[rand(Bernoulli(lambda1), length(direct_exposure)) .== 1]
+        infections = rand(Bernoulli(lambda2), length(HR_exposure))
+        HR_exposure = HR_exposure[infections .== 1]
 
-        dat.incubation[direct_exposure] .= 1
+        dat.incubation[HR_exposure] .= 1
     end
     
-    # Infect raccoons within 1 km of diseased guy
+    # Infect raccoons with HR overlap, but not currently in diseased guy's HR
     if length(diseased_coords) != 0
         # Define diseased guys' location
         x = deepcopy(dat.x[findall(dat.infectious .== 1)])
@@ -272,9 +288,9 @@ function spread_disease(;dat, home, lambda1, lambda2)
         for i in 1:length(x)
             append!(poss_coords,
             [(x[i]-2, y[i]+2), (x[i]-1, y[i]+2), (x[i], y[i]+2), (x[i]+1, y[i]+2), (x[i]+2, y[i]+2),
-            (x[i]-2, y[i]+1), (x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1), (x[i]+2, y[i]+1),
-            (x[i]-2, y[i]), (x[i]-1, y[i]), (x[i]+1, y[i]), (x[i]+2, y[i]),
-            (x[i]-2, y[i]-1), (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1), (x[i]+2, y[i]-1),
+            (x[i]-2, y[i]+1), (x[i]+2, y[i]+1),
+            (x[i]-2, y[i]), (x[i]+2, y[i]),
+            (x[i]-2, y[i]-1), (x[i]+2, y[i]-1),
             (x[i]-2, y[i]-2), (x[i]-1, y[i]-2), (x[i], y[i]-2), (x[i]+1, y[i]-2), (x[i]+2, y[i]-2)])
         end
         
