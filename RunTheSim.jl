@@ -25,7 +25,7 @@ Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
 function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
-                        outputs, l1, l2)
+                        outputs, l1)
     # Define average population-level immunity
     seroprev = seros
 
@@ -58,7 +58,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
+            spread_disease(dat=lil_guys, home=home_coords, lambda=l1)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
 #=
@@ -115,34 +115,31 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), 
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
-                    elimination, l1, l2]
+                    elimination, l1]
 
             push!(outputs, row)
         end
         println(string("Year =", year))
     end
-    println(string("Rep = ", rep), string("L1 = ", l1), string("L2 = ", l2))
+    println(string("Rep = ", rep), string("L1 = ", l1))
 end
 
 # Run it!
 # Create empty data frame
 
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[]], 
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]], 
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
-                    "n_symptomatic","actual_sero", "elim", "l1", "l2"])
+                    "n_symptomatic","actual_sero", "elim", "l1"])
 
 
-reps = 5
+reps = 10
 
-lam1 = [0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12]
-lam2 = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04]
+lam1 = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
 
 for rep in 1:reps
     for j in 1:length(lam1)
-        for k in 1:length(lam2)
     the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs, l1 = lam1[j], l2 = lam2[k])
-        end
+                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs, l1 = lam1[j])
     end
 end
 
