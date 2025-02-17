@@ -240,7 +240,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.001)
 end
 
 # Disease transmission
-function spread_disease(;dat, home, lambda1, lambda2)
+function spread_disease(;dat, home, lambda)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
@@ -256,9 +256,9 @@ function spread_disease(;dat, home, lambda1, lambda2)
 
         for i in 1:length(x)
             append!(poss_coords,
-            [(x-1, y+1), (x, y+1), (x+1, y+1),
-            (x-1, y), (x,y), (x+1, y),
-            (x-1, y-1), (x, y-1), (x+1, y-1)])
+            [(x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1),
+            (x[i]-1, y[i]), (x[i],y[i]), (x[i]+1, y[i]),
+            (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1)])
         end
 
         # Get raccoons within range
@@ -271,12 +271,13 @@ function spread_disease(;dat, home, lambda1, lambda2)
         HR_exposure = HR_exposure[dat.vaccinated[HR_exposure] .== 0]
 
         # Infect with set probability
-        infections = rand(Bernoulli(lambda2), length(HR_exposure))
+        infections = rand(Bernoulli(lambda), length(HR_exposure))
         HR_exposure = HR_exposure[infections .== 1]
 
         dat.incubation[HR_exposure] .= 1
     end
     
+#=
     # Infect raccoons with HR overlap, but not currently in diseased guy's HR
     if length(diseased_coords) != 0
         # Define diseased guys' location
@@ -309,6 +310,7 @@ function spread_disease(;dat, home, lambda1, lambda2)
 
         dat.incubation[indirect_exposure] .= 1
     end
+=#
 
     return dat
 end
