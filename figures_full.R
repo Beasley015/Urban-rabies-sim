@@ -282,7 +282,7 @@ elim_prob_t <- first_elim_prob()
 
 # Prob elim w/in time figs ------------
 elim_prob_vax <- elim_prob_t %>%
-  filter(rate %in% c(1,5), sero %in% c(0, 0.8)) %>%
+  filter(rate %in% c(1,5,10), sero %in% c(0, 0.8)) %>%
   group_by(sero, nweek, rate) %>%
   summarise(mean_prop = mean(prop))
 

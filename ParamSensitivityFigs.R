@@ -42,18 +42,66 @@ ggplot(data = seasonal, aes(x = season, y = total_pop))+
 # ggsave("seasonal_pop_10.jpeg", width = 5, height = 4,
 #        units = "in")
 
+# Transmission Rates: Wide Sweep -----------
+dis.wide <- read.csv("disease_test_widenet.csv") %>%
+  select(rep, year, week, total_pop, n_infected, 
+         n_symptomatic, elim, l1) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+# proportion eliminated
+prop_eliminated <- dis.wide %>%
+  filter(year >= 2, elim == "True") %>%
+  select(rep, l1) %>%
+  group_by(l1) %>%
+  distinct() %>%
+  summarise(prop = n()/5)
+
+unique(prop_eliminated$prop)
+
+# Time to elimination
+time_to_elim <- dis.wide %>%
+  group_by(l1, rep) %>%
+  filter(year >= 2, elim == "True") %>%
+  filter(nweek == min(nweek)) %>%
+  distinct() %>%
+  mutate(l1 = factor(l1))
+
+ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
+  geom_boxplot(fill = "lightgray")+
+  labs(x = "Transmission Rate", y = "Week of Elimination")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+# ggsave("weekelim_wide.jpeg", width = 6, height = 4,
+#        units = "in")
+
+mean_cases <- dis.wide %>%
+  filter(nweek > 70, elim == "False") %>%
+  mutate(l1 = factor(l1, levels = sort(unique(l1)))) %>%
+  group_by(rep, l1) %>%
+  summarise(mean.cases = median(n_symptomatic))
+  
+ggplot(data=mean_cases, aes(x=l1, y = mean.cases))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Transmission Rate", y = "Median Weekly Cases")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# ggsave("medcase_wide.jpeg", width = 6, height = 4,
+#        units = "in")
+
 # Transmission Rates -----------------------
 # Note: pop immunity set at 0, immigration rate low, no imm disease
 dis <- read.csv("disease_test.csv") %>%
   select(rep, year, week, total_pop, n_infected, n_symptomatic, elim,
-         l1) %>% #, l2) %>%
+         l1, l2) %>%
   mutate(nweek = ((year-1)*52)+week)
 
 # Compare proportion of outbreaks eliminated
 prop_eliminated <- dis %>%
   filter(year >= 2, elim == "True") %>%
-  select(rep, l1) %>% #, l2) %>%
-  group_by(l1) %>% #, l2) %>%
+  select(rep, l1, l2) %>%
+  group_by(l1, l2) %>%
   distinct() %>%
   summarise(prop = n()/10)
 
@@ -83,13 +131,14 @@ ggplot(prop_eliminated, aes(x = factor(l1),
 
 # Weeks to elimination
 time_to_elim <- dis %>%
-  group_by(l1, rep) %>% #, l2) %>%
+  group_by(l1, rep, l2) %>%
   filter(year >= 2, elim == "True") %>%
   filter(nweek == min(nweek)) %>%
   # right_join(combos, by = c("l1", "l2")) %>%
   distinct() %>%
-  mutate(l1 = factor(l1))#, 
-         #l2 = factor(l2))
+  mutate(l1 = factor(l1), 
+         l2 = factor(l2, levels = c(0.001, 0.002, 0.003, 0.004,
+                                    0.005)))
 
 ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
   geom_boxplot(fill = "lightgray")+
@@ -121,10 +170,10 @@ ggplot(data = time_to_elim, aes(x = l1, y = l2,
 
 # Check with cases per week
 ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
-                       color = factor(l1)))+
+                       color = factor(rep)))+
   geom_line()+
   geom_hline(yintercept = 50, linetype = "dashed")+
-  # facet_grid(rows = vars(l1), cols = vars(l2))+
+  facet_grid(rows = vars(l1), cols = vars(l2))+
   scale_color_viridis_d(end = 0.9, name = "Rep")+
   xlim(c(52+1, 600))+
   theme_bw()+
@@ -135,10 +184,9 @@ ggplot(data = dis, aes(x = nweek, y = n_symptomatic,
 
 mean_cases <- dis %>%
   filter(nweek > 100, elim == "False") %>%
-  group_by(rep, l1) %>% #,l2) %>%
+  group_by(rep, l1,l2) %>%
   summarise(mean.cases = median(n_symptomatic)) %>%
-  mutate(l1 = factor(l1))#, 
-         #l2 = factor(l2))
+  mutate(l1 = factor(l1),l2 = factor(l2))
 
 ggplot(data=mean_cases, aes(x=l1, y = mean.cases))+
   geom_boxplot()
@@ -146,7 +194,7 @@ ggplot(data=mean_cases, aes(x=l1, y = mean.cases))+
 ggplot(data=mean_cases, aes(x = l1, y = l2,
                            fill = mean.cases))+
   geom_tile()+
-  scale_fill_viridis(name = "Mean Weekly Cases")+
+  scale_fill_viridis(name = "Median Weekly Cases")+
   labs(x = "Within-cell transmission", y = "Home range transmission")+
   theme_bw()
 
@@ -155,7 +203,7 @@ ggplot(data=mean_cases, aes(x = l1, y = l2,
 
 # Population sizes with disease ------------------
 dis_pop <- dis %>%
-  group_by(l1,nweek) %>% #,l2) %>%
+  group_by(l1,nweek,l2) %>%
   summarise(mean_pop = mean(total_pop))
 
 ggplot(data = dis_pop, aes (x = nweek, y = mean_pop, 
@@ -164,7 +212,7 @@ ggplot(data = dis_pop, aes (x = nweek, y = mean_pop,
   geom_vline(xintercept = 53, linetype = 'dashed')+
   scale_color_viridis_d(name = "Within-cell transmission",
                         end = 0.9)+
-  # facet_grid(rows = vars(l2))+
+  facet_grid(rows = vars(l2))+
   theme_bw()+
   theme(panel.grid.minor = element_blank())
 
@@ -306,50 +354,54 @@ summary(end.year$mean_growth)
 # R-naught -------------------
 dis <- read.csv("disease_test.csv") %>%
   select(rep, year, week, total_pop, n_infected, n_symptomatic,
-         elim, l1) %>%#, l2) %>%
+         elim, l1, l2) %>%
   mutate(nweek = ((year-1)*52)+week) %>%
   # filter(l1 == 0.09 & l2 == 0.01) %>%
   filter(year > 1)
 
 first_elim <- dis %>%
   filter(elim == "True") %>%
-  group_by(rep, l1) %>%
+  group_by(rep, l1, l2) %>%
   summarise(first = min(nweek))
 
 r0.list <- list()
 for(i in 1:length(unique(dis$rep))){
   for(j in 1:length(unique(dis$l1))){
-    test <- filter(dis, rep==i & l1==unique(dis$l1)[j]) 
-    elim_test <- filter(first_elim, 
-                        rep==i & l1==unique(dis$l1)[j]) 
+    for(k in 1:length(unique(dis$l2))){
+      test <- filter(dis, rep==i & l1==unique(dis$l1)[j]
+                     & l2==unique(dis$l2)[k]) 
+      elim_test <- filter(first_elim, 
+                          rep==i & l1==unique(dis$l1)[j] &
+                            l2==unique(dis$l2)[k]) 
     
-    if(nrow(elim_test) != 1){next}
+      if(nrow(elim_test) != 1){next}
   
-    start <- as.numeric(min(which(test$n_symptomatic>0)))
-    end <- elim_test$first-53
+      start <- as.numeric(min(which(test$n_symptomatic>0)))
+      end <- elim_test$first-53
 
-    r0.test <- try(r0 <- estimate.R(epid = 
+      r0.test <- try(r0 <- estimate.R(epid = 
                                test$n_symptomatic[start:end], 
-                GT=generation.time("gamma", c(4.5, 1)),
-                method = 'TD', nsim = 1000))
+                  GT=generation.time("gamma", c(4.5, 1)),
+                  method = 'TD', nsim = 1000))
     
-    if(class(r0.test) %in% 'try-error') {next} else {
-          r0 <- estimate.R(epid = 
+      if(class(r0.test) %in% 'try-error') {next} else {
+            r0 <- estimate.R(epid = 
                                test$n_symptomatic[start:end], 
-                GT=generation.time("gamma", c(4.5, 1)),
-                method = 'TD', nsim = 1000)
-    }
+                  GT=generation.time("gamma", c(4.5, 1)),
+                  method = 'TD', nsim = 1000)
+      }
     
-    vec <- c(unique(test$rep), unique(test$l1), 
-             median(r0$estimates$TD$R))
+      vec <- c(unique(test$rep), unique(test$l1), unique(test$l2),
+              median(r0$estimates$TD$R))
              
-    len <- length(r0.list)
-    r0.list[[len+1]] <- vec
+      len <- length(r0.list)
+      r0.list[[len+1]] <- vec
+    }
   }
 }
 
 r0.df <- as.data.frame(do.call(rbind, r0.list))
-colnames(r0.df) <- c("rep", "l1", "Re")
+colnames(r0.df) <- c("rep", "l1", "l2", "Re")
 
 ggplot(data = r0.df, aes(x = factor(l1), y = Re))+
   geom_boxplot()
