@@ -103,12 +103,6 @@ function populate_landscape(;guy_density = 1.5, seros)
     xmin = 6; xmax = 55
     ymin = 6; ymax = 55
 
-    # Use these values and remove buffer for functionality tests:
-    #=
-    xmin = 1; xmax = 20
-    ymin = 1; ymax = 20
-    =#
-
     land_area = (xmax-xmin)*(ymax-ymin)
 
     # get number of guys based on landscape size & density
@@ -155,10 +149,7 @@ function initialize_disease(dat)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1
-
-    # Start infection timer
-    dat.time_since_inf = ifelse.(dat.incubation .== 1, 1, dat.time_since_inf)
-
+    
     return dat
 end
 
@@ -240,7 +231,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.001)
 end
 
 # Disease transmission
-function spread_disease(;dat, home, lambda1)#, lambda2)
+function spread_disease(;dat, home)
     # Find all infected guys
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
@@ -271,12 +262,12 @@ function spread_disease(;dat, home, lambda1)#, lambda2)
         HR_exposure = HR_exposure[dat.vaccinated[HR_exposure] .== 0]
 
         # Infect with set probability
-        infections = rand(Bernoulli(lambda1), length(HR_exposure))
+        infections = rand(Bernoulli(0.035), length(HR_exposure))
         HR_exposure = HR_exposure[infections .== 1]
 
         dat.incubation[HR_exposure] .= 1
     end
- #=   
+
     # Infect raccoons with HR overlap, but not currently in diseased guy's HR
     if length(diseased_coords) != 0
         # Define diseased guys' location
@@ -304,12 +295,11 @@ function spread_disease(;dat, home, lambda1)#, lambda2)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(lambda2), length(indirect_exposure))
+        infections = rand(Bernoulli(0.02), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
     end
-=#
     return dat
 end
 

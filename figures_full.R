@@ -59,7 +59,7 @@ prop_elim <- prop_elim()
 # All sims
 ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
                            color = factor(rate)))+
-  geom_jitter()+
+  geom_point()+
   #geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
@@ -108,15 +108,16 @@ first_elim_full <- first_elim()
 # Time to elimination: figs ------------------
 elim_sansbar <- first_elim_full %>%
   mutate(sero = factor(sero)) %>%
-  filter(rate %in% c(1,5))
+  # filter(rate %in% c(1,5)) %>%
+  mutate(nweek = nweek-52, years = nweek/52)
   
-ggplot(data = elim_sansbar, aes(x=factor(sero),y=nweek,
+ggplot(data = elim_sansbar, aes(x=factor(sero),y=years,
                                 fill = factor(rate)))+
   geom_boxplot()+
   # geom_jitter()+
   scale_fill_manual(values = c('lightgray', 'limegreen'))+
   labs(x = "Adult Vaccination Rate", 
-       y = "Time to Elimination (Weeks)")+
+       y = "Time to Elimination (Years)")+
   theme_bw()+
   theme(panel.grid=element_blank())
 
@@ -173,7 +174,7 @@ ggplot(data = type_interac, aes(x = factor(sero), y = type,
   labs(x = "Vaccination Rate", y="Immigration Type")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
-# Immigration type doesn't seem to matter
+# Immigration type matters a lot; propagule persists more
 
 # any interaction between immigrant prevalence & type?
 im_interac <- first_elim_full %>%
@@ -282,7 +283,7 @@ elim_prob_t <- first_elim_prob()
 
 # Prob elim w/in time figs ------------
 elim_prob_vax <- elim_prob_t %>%
-  filter(rate %in% c(1,5,10), sero %in% c(0, 0.8)) %>%
+  filter(rate %in% c(1,2), sero %in% c(0, 0.8)) %>%
   group_by(sero, nweek, rate) %>%
   summarise(mean_prop = mean(prop))
 

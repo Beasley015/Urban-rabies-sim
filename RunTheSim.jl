@@ -20,12 +20,12 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions.jl")
 
 # Load in parameters
-job = 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
 function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
-                        outputs, l1)#, l2)
+                        outputs)
     # Define average population-level immunity
     seroprev = seros
 
@@ -58,10 +58,9 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, lambda1=l1)#, lambda2=l2)
+            spread_disease(dat=lil_guys, home=home_coords)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
-#=
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
                                 sero_rate=0, immigration_rate=immigration_rate, year=year)
@@ -71,7 +70,6 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                                 type="wave", sero_rate=0, immigration_rate=immigration_rate, year=year)
                 end
             end
-=#
 
             # Dispersal
             if step == 43
@@ -115,40 +113,31 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # Calculate summary statistics and append to data frame
             row = [rep, year, step, seros, immigration_disease, immigration_rate, immigration_type, size(buffer,1), 
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
-                    elimination, l1]#, l2]
+                    elimination]
 
             push!(outputs, row)
         end
-        println(string("Year =", year))
     end
-    println(string("Rep = ", rep), string("L1 = ", l1))#, string("L2 = ", l2))
 end
 
 # Run it!
 # Create empty data frame
 
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[]],#,[]], 
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
-                    "n_symptomatic","actual_sero", "elim", "l1"])#,"l2"])
+                    "n_symptomatic","actual_sero", "elim"])
 
 
-reps = 10
-
-lam1 = [0.0143, 0.0224, 0.0349, 0.0543, 0.0847, 0.132]
-#lam2 = [0.001, 0.002, 0.003, 0.004, 0.005]
+reps = 50
 
 for rep in 1:reps
-    for j in 1:length(lam1)
-       # for k in 1:length(lam2)
-            the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs, l1 = lam1[j])#, l2 = lam2[k])
-        #end
-    end
+    the_mega_loop(years=11, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
 # Create filename
-filename = "disease_test_l1.csv"#string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
-                    #"im_type",string(Params[!,4][1]),".csv")
+filename = string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+                    "im_type",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)
