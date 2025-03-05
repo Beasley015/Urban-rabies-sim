@@ -11,11 +11,11 @@ library(pbmcapply) #Progress bar w/ETA
 library(tidyverse)
 library(viridis)
 library(agricolae)
-library(EpiEstim)
+library(R0)
 library(patchwork)
 
 options(dplyr.summarise.inform = FALSE)
-dir <- "./outputs" 
+dir <- "./Outputs" 
 
 # Function: Check immunity rates ------------------
 immune <- function(){
@@ -405,18 +405,25 @@ get_r0 <- function(){
       first_elim <- filter(time_to_elim, 
                            rep == unique(testfile$rep)[j])
       
+      start <- min(which(onerep$n_symptomatic>0))
+      
       endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
                          first_elim$nweek)
       
-      re.full <- suppressMessages(
-        estimate_R(onerep$n_symptomatic[52:endpoint], 
-                 method="parametric_si",
-                 config = make_config(list(
-                   mean_si = 2.6, 
-                   std_si = 1.5)))
-        )
+      tests <- try(est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
+                             GT=generation.time("gamma", c(4.5, 1))),
+                   silent=T)
       
-      re.est <- median(test$R$`Median(R)`)
+      if(class(tests) %in% 'try-error' == T) {next} else{
+        r0.test <- est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
+                            GT=generation.time("gamma", c(4.5, 1)))
+      }
+      
+      # r0.test <- est.R0.TD(epid=onerep$n_symptomatic[start:endpoint],
+      #           GT = generation.time("gamma", c(4.5, 1)),
+      #           nsim = 1000)
+      
+      re.est <- median(r0.test$R)
       
       row <- data.frame(rep=unique(onerep$rep), 
                           sero=unique(onerep$sero),
@@ -441,10 +448,14 @@ get_r0 <- function(){
 r0 <- get_r0()
 
 # R0 figures ---------------
+r0 %>%
+  # group_by(sero) %>%
+  summarise(median=median(r.0))
+
 ggplot(data = r0, aes(x = factor(sero), y = r.0))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Adult Vaccination Rate", 
-       y = bquote("Median"~R[e]))+
+       y = bquote(R[0]))+
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
