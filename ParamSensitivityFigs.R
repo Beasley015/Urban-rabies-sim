@@ -72,13 +72,16 @@ time_to_elim %>%
   group_by(l1) %>%
   summarise(meantime = median(nweek))
 
-ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
+elim_l1 <- ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
   geom_boxplot(fill = "lightgray")+
   labs(x = "Transmission Rate", y = "Week of Elimination")+
   theme_bw()+
   theme(panel.grid = element_blank())
 
-# ggsave("weekelim_wide_10rep.jpeg", width = 6, height = 4,
+(elim_wide/elim_l1)+
+  plot_annotation(tag_levels = "a")
+
+# ggsave("weekelim_wide.jpeg", width = 10, height = 4,
 #        units = "in")
 
 mean_cases <- dis.wide %>%
@@ -86,7 +89,12 @@ mean_cases <- dis.wide %>%
   mutate(l1 = factor(l1, levels = sort(unique(l1)))) %>%
   group_by(rep, l1) %>%
   summarise(mean.cases = median(n_symptomatic))
-  
+
+mean_cases %>%
+  ungroup() %>%
+  group_by(l1) %>%
+  summarise(meancases = median(mean.cases))
+
 ggplot(data=mean_cases, aes(x=l1, y = mean.cases))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Transmission Rate", y = "Median Weekly Cases")+
@@ -428,6 +436,12 @@ end.year <- pop %>%
 summary(end.year$mean_growth)
 
 # R-naught -------------------
+dis <- read.csv("disease_test_l1.csv") %>%
+  select(rep, year, week, total_pop, n_infected, 
+         n_symptomatic, elim, l1) %>%
+  mutate(nweek = ((year-1)*52)+week) %>%
+  filter(year > 1)
+
 dis <- read.csv("disease_test_smol.csv") %>%
   select(rep, year, week, total_pop, n_infected, n_symptomatic,
          elim, l2) %>%
@@ -437,16 +451,16 @@ dis <- read.csv("disease_test_smol.csv") %>%
 
 first_elim <- dis %>%
   filter(elim == "True") %>%
-  group_by(rep, l2) %>%
+  group_by(rep, l1) %>%
   summarise(first = min(nweek))
 
 r0.list <- list()
 for(i in 1:length(unique(dis$rep))){
-  # for(j in 1:length(unique(dis$l1))){
-    for(k in 1:length(unique(dis$l2))){
-      test <- filter(dis, rep==i & l2==unique(dis$l2)[k]) 
+  for(j in 1:length(unique(dis$l1))){
+    # for(k in 1:length(unique(dis$l2))){
+      test <- filter(dis, rep==i & l1==unique(dis$l1)[j]) 
       elim_test <- filter(first_elim, 
-                          rep==i & l2==unique(dis$l2)[k]) 
+                          rep==i & l1==unique(dis$l1)[j]) 
     
       if(nrow(elim_test) != 1){next}
   
@@ -465,7 +479,7 @@ for(i in 1:length(unique(dis$rep))){
                   method = 'TD', nsim = 1000)
       }
     
-      vec <- c(unique(test$rep), unique(test$l2),
+      vec <- c(unique(test$rep), unique(test$l1),
               median(r0$estimates$TD$R))
              
       len <- length(r0.list)
@@ -475,15 +489,20 @@ for(i in 1:length(unique(dis$rep))){
 }
 
 r0.df <- as.data.frame(do.call(rbind, r0.list))
-colnames(r0.df) <- c("rep", "l2", "Re")
+colnames(r0.df) <- c("rep", "l1", "Re")
 
 r0.df <- r0.df %>%
-  group_by(rep, l2) %>%
+  group_by(rep, l1) %>%
   filter(Re < quantile(.$Re, 0.975) && Re > quantile(.$Re, 0.025))
 
-ggplot(data = r0.df, aes(x = factor(l2), y = Re))+
+r0.df %>%
+  ungroup() %>%
+  group_by(l1) %>%
+  summarise(mean.re = median(Re))
+
+ggplot(data = r0.df, aes(x = factor(l1), y = Re))+
   geom_boxplot(fill='lightgray')+
-  labs(x = "Peripheral Transmission", y = bquote(R[e]))+
+  labs(x = "Core Transmission", y = bquote(R[e]))+
   theme_bw(base_size = 14)+
   theme(panel.grid=element_blank())
 

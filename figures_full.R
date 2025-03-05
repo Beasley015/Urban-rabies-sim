@@ -11,11 +11,50 @@ library(pbmcapply) #Progress bar w/ETA
 library(tidyverse)
 library(viridis)
 library(agricolae)
-library(R0)
+library(EpiEstim)
 library(patchwork)
 
 options(dplyr.summarise.inform = FALSE)
 dir <- "./outputs" 
+
+# Function: Check immunity rates ------------------
+immune <- function(){
+  # Get names of files
+  filenames <- list.files(path = dir, pattern = "*.csv")
+  
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
+  for(i in 1:length(filenames)){
+    # Read 'em in
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
+    
+    # Calculate mean immunity per week
+    immun_rate <- testfile %>%
+      mutate(nweek = (year-1)*52 + week) %>%
+      select(rep,sero,type,disease,rate,nweek,actual_sero) %>%
+      group_by(sero, type, disease, rate, nweek) %>%
+      summarise(mean_vax_rate = mean(actual_sero))
+    
+    if(i==1){
+      vax_frame <- immun_rate
+    } else{
+      vax_frame <- rbind(vax_frame, immun_rate)
+    }
+    
+    setTxtProgressBar(pb,i)
+  }
+  return(vax_frame)
+}
+
+vax_frame <- immune()
+
+ggplot(data = vax_frame, aes(x = nweek, y = mean_vax_rate,
+                             color = factor(sero)))+
+  geom_line()
 
 # Function: Calculate proportion of outbreaks eliminated --------
 prop_elim <- function(){
@@ -111,11 +150,11 @@ elim_sansbar <- first_elim_full %>%
   # filter(rate %in% c(1,5)) %>%
   mutate(nweek = nweek-52, years = nweek/52)
   
-ggplot(data = elim_sansbar, aes(x=factor(sero),y=years,
-                                fill = factor(rate)))+
+ggplot(data = elim_sansbar, aes(x=factor(sero),y=years))+#,
+                                #fill = factor(rate)))+
   geom_boxplot()+
   # geom_jitter()+
-  scale_fill_manual(values = c('lightgray', 'limegreen'))+
+  # scale_fill_manual(values = c('lightgray', 'limegreen'))+
   labs(x = "Adult Vaccination Rate", 
        y = "Time to Elimination (Years)")+
   theme_bw()+
@@ -283,16 +322,16 @@ elim_prob_t <- first_elim_prob()
 
 # Prob elim w/in time figs ------------
 elim_prob_vax <- elim_prob_t %>%
-  filter(rate %in% c(1,2), sero %in% c(0, 0.8)) %>%
-  group_by(sero, nweek, rate) %>%
+  # filter(rate %in% c(1,2), sero %in% c(0, 0.8)) %>%
+  group_by(sero, nweek) %>%
   summarise(mean_prop = mean(prop))
 
 # dev.new(width = 80, height = 60, unit = "mm", res = 600,
 #         noRStudioGD=TRUE)
 
 ggplot(data=elim_prob_vax, aes(x = nweek, y = mean_prop,
-                                color = factor(sero),
-                               linetype = factor(rate)))+
+                                color = factor(sero)))+#,
+                               # linetype = factor(rate)))+
   geom_line(linewidth = 1)+
   # geom_smooth()+
   geom_hline(yintercept = 0.95, linetype="dashed")+
@@ -359,53 +398,34 @@ get_r0 <- function(){
                      rate = numeric(), disease = numeric(),
                      type = character(), r.0 = numeric())
     
-    for(j in 1:length(unique(time_to_elim$rep))){
+    for(j in 1:length(unique(testfile$rep))){
       onerep <- testfile %>%
-        filter(rep == unique(time_to_elim$rep)[j])
+        filter(rep == unique(testfile$rep)[j])
       
       first_elim <- filter(time_to_elim, 
-                           rep == unique(time_to_elim$rep)[j])
+                           rep == unique(testfile$rep)[j])
       
       endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
                          first_elim$nweek)
-    
-      test <- try(
-        suppressMessages({
-          estimate.R(epid = onerep$n_symptomatic[53:endpoint], 
-                     GT=generation.time("gamma", c(4.5, 1)),
-                     method = 'TD', begin = 1, 
-                     end = endpoint-53, nsim = 100)}),
-        silent= T
-      )
-
-      # Error somewhere in here:
-      if(class(test) %in% 'try-error') {next} else {
-        r.est <- suppressMessages({
-          estimate.R(epid = onerep$n_symptomatic[53:endpoint], 
-                     GT=generation.time("gamma", c(4.5, 1)),
-                     method = 'TD', nsim = 1000)
-        })
-        
-      }
-      r.est <- r.est$estimates$TD$R 
       
-      med.rest <- median(r.est[r.est > quantile(r.est, 0.025, 
-                                                na.rm = T) &
-                                 r.est < quantile(r.est, 
-                                                  0.975, 
-                                                  na.rm = T)])
+      re.full <- suppressMessages(
+        estimate_R(onerep$n_symptomatic[52:endpoint], 
+                 method="parametric_si",
+                 config = make_config(list(
+                   mean_si = 2.6, 
+                   std_si = 1.5)))
+        )
       
-      if(is.na(med.rest)==T) {next} else{
-        
-        row <- data.frame(rep=unique(onerep$rep), 
+      re.est <- median(test$R$`Median(R)`)
+      
+      row <- data.frame(rep=unique(onerep$rep), 
                           sero=unique(onerep$sero),
                           rate=unique(onerep$rate),
                           disease=unique(onerep$disease), 
                           type=unique(onerep$type), 
-                          r.0=med.rest)
+                          r.0=re.est)
           
         r0 <- bind_rows(r0, row)
-      }
     }
     
     if(i==1){
@@ -419,8 +439,6 @@ get_r0 <- function(){
 }
 
 r0 <- get_r0()
-
-saveRDS(r0, "r0.rds")
 
 # R0 figures ---------------
 ggplot(data = r0, aes(x = factor(sero), y = r.0))+
@@ -562,7 +580,7 @@ reinf_outs <- reinf_outs %>%
                                   "Independent Juveniles"))
 
 probs_condensed <- reinf_outs %>%
-  filter(rate %in% c(1,5,10)) %>%
+  # filter(rate %in% c(1,5,10)) %>%
   dplyr::select(sero, type, disease, rate, prop) %>%
   distinct()
 
