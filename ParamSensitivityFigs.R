@@ -127,6 +127,11 @@ time_to_elim <- dis.wide %>%
   distinct() %>%
   mutate(l2 = factor(l2))
 
+time_to_elim %>%
+  ungroup() %>%
+  group_by(l2) %>%
+  summarise(mean=median(nweek))
+
 ggplot(data = time_to_elim, aes(x = l2, y = nweek))+
   geom_boxplot(fill = "lightgray")+
   labs(x = "Transmission Rate", y = "Week of Elimination")+
@@ -141,6 +146,10 @@ mean_cases <- dis.wide %>%
   mutate(l2 = factor(l2, levels = sort(unique(l2)))) %>%
   group_by(rep, l2) %>%
   summarise(mean.cases = median(n_symptomatic))
+
+mean_cases %>%
+  group_by(l2) %>%
+  summarise(median = median(mean.cases))
 
 ggplot(data=mean_cases, aes(x=l2, y = mean.cases))+
   geom_boxplot(fill = 'lightgray')+
@@ -264,18 +273,18 @@ ggplot(data=mean_cases, aes(x = l1, y = l2,
 
 # Population sizes with disease ------------------
 dis_pop <- dis %>%
-  group_by(l1,nweek,l2) %>%
+  group_by(nweek,l1) %>%
   summarise(mean_pop = mean(total_pop))
 
-ggplot(data = dis_pop, aes (x = nweek, y = mean_pop, 
-                        color = factor(l1)))+
+ggplot(data = dis_pop, aes (x = nweek, y = mean_pop))+
   geom_line()+
   geom_vline(xintercept = 53, linetype = 'dashed')+
-  scale_color_viridis_d(name = "Within-cell transmission",
-                        end = 0.9)+
-  facet_grid(rows = vars(l2))+
-  theme_bw()+
-  theme(panel.grid.minor = element_blank())
+  # scale_color_viridis_d(name = "Within-cell transmission",
+  #                       end = 0.9)+
+  # facet_grid(rows = vars(l2))+
+  labs(x="Week", y = "Mean Population Size")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
 
 # ggsave(filename = "pop_direct.jpeg", width = 8, height = 6,
 #        units = "in")
@@ -287,7 +296,7 @@ ggplot(data = dis_pop, aes (x = nweek, y = mean_pop,
   scale_color_viridis_d(name = "Between-cell transmission",
                         end = 0.9)+
   labs(x = "Week", y = "Mean Population Size")+
-  facet_grid(rows = vars(l1))+
+  # facet_grid(rows = vars(l1))+
   theme_bw()+
   theme(panel.grid.minor = element_blank())
 
@@ -436,9 +445,9 @@ end.year <- pop %>%
 summary(end.year$mean_growth)
 
 # R-naught -------------------
-dis <- read.csv("disease_test_l1.csv") %>%
+dis <- read.csv("disease_test_l2wide.csv") %>%
   select(rep, year, week, total_pop, n_infected, 
-         n_symptomatic, elim, l1) %>%
+         n_symptomatic, elim, l2) %>%
   mutate(nweek = ((year-1)*52)+week) %>%
   filter(year > 1)
 
@@ -451,16 +460,16 @@ dis <- read.csv("disease_test_smol.csv") %>%
 
 first_elim <- dis %>%
   filter(elim == "True") %>%
-  group_by(rep, l1) %>%
+  group_by(rep, l2) %>%
   summarise(first = min(nweek))
 
 r0.list <- list()
 for(i in 1:length(unique(dis$rep))){
-  for(j in 1:length(unique(dis$l1))){
-    # for(k in 1:length(unique(dis$l2))){
-      test <- filter(dis, rep==i & l1==unique(dis$l1)[j]) 
+  # for(j in 1:length(unique(dis$l1))){
+    for(k in 1:length(unique(dis$l2))){
+      test <- filter(dis, rep==i & l2==unique(dis$l2)[k]) 
       elim_test <- filter(first_elim, 
-                          rep==i & l1==unique(dis$l1)[j]) 
+                          rep==i & l2==unique(dis$l2)[k]) 
     
       if(nrow(elim_test) != 1){next}
   
@@ -479,7 +488,7 @@ for(i in 1:length(unique(dis$rep))){
                   method = 'TD', nsim = 1000)
       }
     
-      vec <- c(unique(test$rep), unique(test$l1),
+      vec <- c(unique(test$rep), unique(test$l2),
               median(r0$estimates$TD$R))
              
       len <- length(r0.list)
