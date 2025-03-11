@@ -97,14 +97,18 @@ prop_elim <- prop_elim()
 # Figs: Proportion of outbreaks eliminated ---------
 # All sims
 ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
-                           color = factor(rate)))+
+                           color = factor(rate),
+                           group = factor(rate)))+
   geom_point()+
+  # geom_smooth(method = 'lm', se = F)+
   #geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
        y = "Proportion Reaching Elimination")+
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
+
+summary(lm(data=prop_elim, prop~sero+rate))
 
 # ggsave("./full_Figs/prop_elim_box.jpeg", width = 7, height = 5,
 #        units = "in")
@@ -461,8 +465,6 @@ ggplot(data = r0, aes(x = factor(sero), y = r.0))+
 
 # ggsave(filename = "./full_Figs/full_re.jpeg", width=8,
 #        dpi=600, units="in", height = 6)
-
-# R0 by week -----------------
 
 # Function to calculate # weeks rabies-free -------------
 rabies_free <- function(){
@@ -1071,7 +1073,7 @@ prev.mean <- prev(metric = "median")
 # Prevalence figs -------------------
 prev.sero <- prev.mean %>%
   filter(nweek >= 52) %>%
-  filter(disease == 0.03) %>%
+  # filter(disease == 0.03) %>%
   group_by(sero, nweek) %>%
   summarise(med = median(median_prev))
 
