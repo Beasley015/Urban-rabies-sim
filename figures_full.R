@@ -100,7 +100,7 @@ ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
                            color = factor(rate),
                            group = factor(rate)))+
   geom_point()+
-  # geom_smooth(method = 'lm', se = F)+
+  geom_smooth(method = 'lm', se = F)+
   #geom_boxplot(fill="lightgray")+
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
@@ -108,7 +108,7 @@ ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
-summary(lm(data=prop_elim, prop~sero+rate))
+summary(lm(data=prop_elim, prop~sero+rate+sero*rate))
 
 # ggsave("./full_Figs/prop_elim_box.jpeg", width = 7, height = 5,
 #        units = "in")
@@ -153,6 +153,13 @@ elim_sansbar <- first_elim_full %>%
   mutate(sero = factor(sero)) %>%
   # filter(rate %in% c(1,5)) %>%
   mutate(nweek = nweek-52, years = nweek/52)
+
+elim_sansbar %>%
+  group_by(sero) %>%
+  summarise(med = median(years))
+
+quicklook <- aov(data=elim_sansbar, years~sero)
+HSD.test(quicklook, trt = 'sero', console=T)
   
 ggplot(data = elim_sansbar, aes(x=factor(sero),y=years))+#,
                                 #fill = factor(rate)))+
@@ -286,7 +293,7 @@ first_elim_prob <- function(){
       mutate(time = case_when(elim == "True" ~ nweek-lag(nweek),
                               TRUE ~ NA)) %>%
       filter(is.na(time) == F) %>%
-      filter(time < 9)
+      filter(time <= 10)
     
     testfile <- suppressMessages(full_join(testfile, recol.time))
     
@@ -541,6 +548,8 @@ reinfection <- function(){
       filter(year >= 2) %>%
       mutate(nweek = ((year-1)*52) + week)
     
+    if(unique(testfile$disease == 0)){next}
+    
     recols <- testfile %>%
       group_by(rep, sero, rate, type, disease) %>%
       filter(elim == "False" & lag(elim) == "True")
@@ -554,7 +563,7 @@ reinfection <- function(){
       mutate(time = case_when(elim == "True" ~ nweek-lag(nweek),
                               TRUE ~ NA)) %>%
       filter(is.na(time) == F) %>%
-      filter(time > 9)
+      filter(time >= 10)
     
     reinf_frame <- suppressMessages(full_join(testfile, 
                                            recol.time)) %>%
@@ -576,9 +585,8 @@ reinfection <- function(){
 
 reinf_outs <- reinfection()
 
-# Figures: reinfection prob & length -------------------
+# Figures: reinfection prob (change to time until reinf?) -------
 reinf_outs <- reinf_outs %>%
-  filter(disease != 0) %>%
   mutate(sero=factor(sero)) %>%
   # mutate(TimePeriod = case_when(between(week,19,41) ~
   #                                 "Juveniles w/Mom",
@@ -600,8 +608,8 @@ probs_condensed <- reinf_outs %>%
 summary(lm(data=reinf_outs, prop~as.numeric(sero)+rate))
 
 ggplot(data=probs_condensed, aes(x=factor(sero),y=prop,
-                                 fill = factor(rate)))+
-  geom_boxplot()+
+                                 color = factor(rate)))+
+  geom_point()+
   # scale_fill_manual(values = c("lightgray", "limegreen"))+
   scale_fill_viridis_d(end=0.9, name = "Immigration Rate")+
   labs(x = "Adult Vaccination Rate", 
@@ -717,7 +725,7 @@ dis_inter_rlen <- reinf_outs %>%
 ggplot(data=dis_inter_rlen, aes(x=sero,y=disease,
                                 fill=med))+
   geom_tile()+
-  scale_fill_viridis(name="Disease Rate",
+  scale_fill_viridis(name="Reinfection Length",
                      option = "B")+
   labs(x="Seroprevalence", y="Immigrant Disease Rate")+
   theme_bw(base_size=12)+
