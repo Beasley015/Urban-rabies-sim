@@ -154,6 +154,10 @@ elim_sansbar <- first_elim_full %>%
   # filter(rate %in% c(1,5)) %>%
   mutate(nweek = nweek-52, years = nweek/52)
 
+# Quick look:
+summary(lm(data=elim_sansbar,
+           years~as.numeric(sero)+rate+disease))
+
 elim_sansbar %>%
   group_by(sero) %>%
   summarise(med = median(years))
@@ -474,6 +478,7 @@ ggplot(data = r0, aes(x = factor(sero), y = r.0))+
 #        dpi=600, units="in", height = 6)
 
 # Function to calculate # weeks rabies-free -------------
+# Change this to time between elim & recolonization? ---------
 rabies_free <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
