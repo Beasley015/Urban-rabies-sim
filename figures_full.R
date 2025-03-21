@@ -95,7 +95,10 @@ prop_elim <- function(){
 prop_elim <- prop_elim()
 
 # Figs: Proportion of outbreaks eliminated ---------
-# All sims
+# Quick glance
+summary(lm(data=prop_elim, prop~sero+rate+disease+sero*rate))
+
+# All sims: vax & immigration rate
 ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
                            color = factor(rate),
                            group = factor(rate)))+
@@ -108,7 +111,25 @@ ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
-summary(lm(data=prop_elim, prop~sero+rate+sero*rate))
+# prop_means <- prop_elim %>%
+#   group_by(sero,rate) %>%
+#   summarise(mean.prop = mean(prop))
+# 
+# ggplot(data=prop_means, aes(x=factor(sero), y=mean.prop, fill=factor(rate)))+
+#   geom_col(position = "dodge")+
+#   geom_hline(yintercept=0.95, linetype="dashed")
+
+ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
+                           color = factor(disease),
+                           group = factor(disease)))+
+  geom_point()+
+  geom_smooth(method = 'lm', se = F)+
+  #geom_boxplot(fill="lightgray")+
+  geom_hline(yintercept=0.95, linetype="dashed") +
+  labs(x = "Adult Vaccination Rate", 
+       y = "Proportion Reaching Elimination")+
+  theme_bw(base_size=14)+
+  theme(panel.grid=element_blank())
 
 # ggsave("./full_Figs/prop_elim_box.jpeg", width = 7, height = 5,
 #        units = "in")
@@ -578,7 +599,7 @@ reinfection <- function(){
       mutate(prop = length(unique(.$rep))/
                length(unique(elims$rep)))
 
-    if(i==1){
+    if(exists("reinf_frame_full")==F){
       reinf_frame_full <- reinf_frame
     } else{
       reinf_frame_full <- rbind(reinf_frame_full, reinf_frame)
