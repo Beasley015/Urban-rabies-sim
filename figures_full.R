@@ -13,7 +13,6 @@ library(viridis)
 library(agricolae)
 library(R0)
 library(patchwork)
-library(quantreg)
 
 options(dplyr.summarise.inform = FALSE)
 dir <- "./Outputs" 
@@ -694,7 +693,8 @@ reinfection <- function(){
     first_elim <- elims %>%
       filter(nweek == min(nweek)) %>%
       mutate(first = nweek) %>%
-      select(rep,sero,disease,rate,type,first) 
+      select(rep,sero,disease,rate,type,first,
+             actual_sero,total_pop) 
     
     recol.time <- rbind(elims, recols) %>%
       arrange(rep, nweek) %>%
@@ -710,7 +710,8 @@ reinfection <- function(){
                 by = c('rep', 'sero', 'disease', 
                        'rate', 'type')) %>%
       dplyr::select(rep, sero, disease, rate, 
-                    type, nweek, time, first) %>%
+                    type, nweek, time, first, actual_sero.x,
+                    total_pop.x) %>%
       mutate(prop = length(unique(.$rep))/
                length(unique(elims$rep))) %>%
       group_by(rep) %>%
@@ -1005,6 +1006,39 @@ ggplot(data=type_inter_rinf, aes(x=sero,y=type,
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
+# Reinf length ~ assorted vars -------------
+# Length ~ time rabies free
+ggplot(data=reinf_outs, aes(x = weeks_elim, y = time,
+                            color = factor(rate)))+
+  geom_point(alpha = 0.5)+
+  geom_smooth(se = F)
+
+# Length ~ pop size at outbreak start
+ggplot(data=reinf_outs, aes(x = total_pop.x, y = time,
+                            color = factor(rate)))+
+  geom_point(alpha = 0.5)+
+  geom_smooth(se = F)
+
+# Length ~ vax rate at outbreak start
+ggplot(data=reinf_outs, aes(x = actual_sero.x, y = time,
+                            color = factor(type)))+
+  geom_point(alpha = 0.5)+
+  geom_smooth(se = F)
+
+# Time to next birth pulse
+pulses <- seq(20, 572, by = 52)
+
+time_to_bp <- reinf_outs %>%
+  ungroup() %>%
+  filter(type == "propagule" & nweek < 540) %>%
+  rowwise() %>%
+  mutate(nxt_bp = min(pulses[which(pulses > nweek)])-nweek)
+
+ggplot(data=time_to_bp, aes(x = nxt_bp, y = time,
+                            color = factor(rate)))+
+  geom_point()+
+  geom_smooth(se = F)
+  
 # Total cases -----------------------
 cases <- function(){
   # Get names of files
