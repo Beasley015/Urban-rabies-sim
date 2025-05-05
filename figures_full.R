@@ -166,15 +166,17 @@ im_vars_elim <- prop_elim %>%
   group_by(rate, disease) %>%
   summarise(mean.prop = mean(prop))
 
-ggplot(data = im_vars_elim, aes(x = factor(rate), 
-                                y = factor(disease),
-                                fill = mean.prop))+
-  geom_tile()+
-  scale_fill_viridis(option = "B", direction = -1,
-                     name = "Proportion Eliminated")+
-  labs(x = "Weekly Immigrants", y = "Immigrant Disease Rate")
+ggplot(data = prop_elim, aes(x = factor(rate), 
+                                y = prop,
+                                fill = factor(disease)))+
+  geom_boxplot()+
+  scale_fill_viridis_d(name="Immigrant Prevalence")+
+  labs(x = "Expected Weekly Immigrants", 
+       y = "Proportion Eliminated")+
+  theme_bw()+
+  theme(panel.grid=element_blank())
 
-# ggsave("./full_Figs/prop_elim_heatmap_imvars.jpeg",
+# ggsave("./full_Figs/prop_elim_imvars.jpeg",
 #        width = 7, height = 5, units = "in")
 
 # Look at immigration type
@@ -182,16 +184,17 @@ elim.typesero <- prop_elim %>%
   group_by(type, sero) %>%
   summarise(mean.prop = mean(prop))
   
-ggplot(data=elim.typesero, aes(x=factor(sero), y=type, 
-                               fill=mean.prop))+
-  geom_tile()+
-  scale_fill_viridis(name = "Proportion Eliminated")+
-  labs(x = "Adult Vaccination Rate", y = "Immigration Type")+
+ggplot(data=prop_elim, aes(x=factor(sero), y=prop, 
+                               fill=type))+
+  geom_boxplot()+
+  scale_fill_viridis_d(name = "Immigration Type", end = 0.9)+
+  labs(x = "Adult Vaccination Rate", 
+       y = "Proportion Eliminated")+
   theme_bw(base_size = 12)+
   theme(panel.grid=element_blank())
   
 # ggsave("./full_Figs/prop_elim_heatmap_imtype.jpeg",
-#        width = 7, height = 5, units = "in")
+#        width = 7.5, height = 3, units = "in")
 
 # Rate & type 
 elim.typerate <- prop_elim %>%
@@ -263,11 +266,11 @@ HSD.test(quicklook, trt = 'sero', console=T)
 # dev.new(width = 80, height = 60, unit = "mm", res=600,
 #         noRStudioGD=TRUE)
   
-ggplot(data = elim_sansbar, aes(x=factor(sero),y=years))+#,
-                                #fill = factor(rate)))+
-  geom_boxplot(fill = 'lightgray')+
+ggplot(data = elim_sansbar, aes(x=factor(sero),y=years,
+                                fill = factor(rate)))+
+  geom_boxplot()+#fill = 'lightgray')+
   # geom_jitter()+
-  # scale_fill_manual(values = c('lightgray', 'limegreen'))+
+  scale_fill_viridis_d(name='Weekly Immigrants')+
   labs(x = "Adult Vaccination Rate", 
        y = "Time to Elimination (Years)")+
   theme_bw(base_size=16)+
@@ -282,12 +285,12 @@ ggplot(data = imm_rate_elim, aes(x = factor(sero),
   geom_tile()+
   scale_fill_viridis(name = "Weeks to Elimination",
                        option="B")+
-  labs(x = "Vaccination Rate", y = "Immigration Rate")+
-  theme_bw(base_size=16)+
+  labs(x = "Adult Vaccination Rate", y = "Expected Weekly Immigrants")+
+  theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "./full_Figs/time_elim_rate.jpeg", width=6,
-#        height=4, dpi=600, units="in")
+# ggsave(filename = "./full_Figs/time_elim_rate.jpeg",
+#        width=7.5, height=4, dpi=600, units="in")
 
 # interaction: proportion diseased immigrants
 rate_interac <- first_elim_full %>%
@@ -698,7 +701,7 @@ reinfection <- function(){
       mutate(time = case_when(elim == "True" ~ nweek-lag(nweek),
                               TRUE ~ NA)) %>%
       filter(is.na(time) == F) %>%
-      filter(time >= 10)
+      filter(time >= 52)
     
     reinf_frame <- suppressMessages(full_join(testfile, 
                                            recol.time)) %>%
@@ -764,10 +767,10 @@ summary(lm(data=weekly_probs_condensed,
 reinf_imms <- ggplot(data=weekly_probs_condensed, 
                       aes(x=factor(rate), y=weekly_prop,
                           fill = factor(disease)))+
-  geom_boxplot(outlier.shape = NA)+
+  geom_boxplot()+
   scale_fill_viridis_d(end=0.9, 
                        name = "Immigrant Disease Rate")+
-  scale_y_continuous(limits = c(0, 0.035))+
+  scale_y_continuous(limits = c(0, 0.03))+
   labs(x = "Expected Weekly Immigrants", 
        y = "Weekly Recolonization Probability")+
   theme_bw(base_size=14)+
@@ -779,32 +782,46 @@ reinf_imms <- ggplot(data=weekly_probs_condensed,
 reinf_type <- ggplot(data=weekly_probs_condensed, 
                      aes(x=factor(rate), y = weekly_prop,
                          fill=type))+
-  geom_boxplot(outlier.shape = NA)+
+  geom_boxplot()+
   scale_fill_viridis_d(end=0.9,
                     name = "Immigration Type")+
-  scale_y_continuous(limits = c(0, 0.035))+
+  scale_y_continuous(limits = c(0, 0.03))+
   labs(x= "Expected Weekly Immigrants", 
        y = "Weekly Recolonization Probability")+
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
-dev.new(width = 160, height = 60, unit = "mm", res=600,
-        noRStudioGD=TRUE)
+recol_vax <- ggplot(data=weekly_probs_condensed, 
+       aes(x=factor(sero), y = weekly_prop,
+           fill=factor(rate)))+
+  geom_boxplot()+
+  scale_fill_viridis_d(end=0.9,
+                       name = "Weekly Immigrants")+
+  scale_y_continuous(limits = c(0, 0.03))+
+  labs(x= "Adult Vaccination Rate", 
+       y = "Weekly Recolonization Probability")+
+  theme_bw(base_size=14)+
+  theme(panel.grid=element_blank())
 
-(reinf_imms | reinf_type)+
+dev.new(width = 160, height = 120, unit = "mm", res=600)
+
+((reinf_imms | reinf_type)/recol_vax)+
   plot_annotation(tag_levels = "a")
 
+# ggsave(filename = "./full_Figs/rinfprob_imms_outliers.jpeg",
+#        width=12.5, height = 4.5, unit='in')
+
 ggplot(data=probs_condensed, aes(x=factor(sero), y = prop,
-                                 fill=type))+
+                                 fill=factor(rate)))+
   geom_boxplot()+
-  scale_fill_manual(values = c('limegreen', 'lightgray'),
-                    name = "Immigration Type")+
+  # scale_fill_manual(values = c('limegreen', 'lightgray'),
+  #                   name = "Immigration Type")+
+  scale_fill_viridis_d()+
   labs(x= "Expected Weekly Immigrants", 
        y = "Reinvasion Probability")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
   
-
 weekly_probs_med <- weekly_probs_condensed %>%
   group_by(sero, rate) %>%
   summarise(med = median(weekly_prop), mean = mean(weekly_prop))
@@ -816,12 +833,12 @@ ggplot(data=weekly_probs_med, aes(x=sero,
   scale_fill_viridis(option = "B", direction = -1,
                        name = "Weekly Recol. Probability")+
   labs(x = "Adult Vaccination Rate", 
-       y = "Weekly Immigrants")+
+       y = "Expected Weekly Immigrants")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
 # ggsave(filename = "./full_Figs/rinfprob_heat_ratevax.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
+#        width = 7.5, height = 3.5, dpi= 600, units = "in")
 
 # Immigration type
 type_inter_rinf <- reinf_outs %>%
@@ -867,15 +884,12 @@ reinf_outs <- filter(reinf_outs, prop > 0)
 # and reinfection length
 summary(lm(data = reinf_outs, time~(nweek-time)))
 
-ggplot(data = reinf_outs, aes(x = (nweek-time), y = time))+
-  geom_point()+
-  geom_abline(intercept = 52*11, slope = -1, linetype = 'dashed')+
-  labs(x = "Reinfection Start", y = "Reinfection Length") +
-  theme_bw(base_size = 14)+
-  theme(panel.grid = element_blank())
+ggplot(data=reinf_outs, aes(x = factor(sero), y = time,
+                            fill=factor(rate)))+
+  geom_boxplot(outlier.shape = NA)
 
-# ggsave(filename = "./full_Figs/rinflength_starttime.jpeg",
-#        width = 6, height = 4, dpi= 600, units = "in")
+dev.new(width = 80, height = 60, unit = "mm", res=600,
+        noRStudioGD=TRUE)
 
 ggplot(data=reinf_outs, aes(x=TimePeriod,y=time))+
   geom_boxplot(fill = 'lightgray', outlier.shape = NA)+
@@ -884,7 +898,7 @@ ggplot(data=reinf_outs, aes(x=TimePeriod,y=time))+
   # scale_fill_viridis_d(name = "Time Period", end = 0.9)+
   scale_y_continuous(limits = c(0,75))+
   labs(x = "Adult Vaccination Rate", 
-       y = "Reinfection Length (Weeks)")+
+       y = "Recolonization Length (Weeks)")+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
@@ -893,8 +907,19 @@ ggplot(data=reinf_outs, aes(x=TimePeriod,y=time))+
 
 # Quick look at vax rates
 reinf_outs %>%
+  select(rep, sero, disease, rate, type, time) %>%
   group_by(sero) %>%
-  summarise(mean = mean(time), median=median(time))
+  group_map(~mutate(., n_reinf = n()), .keep = TRUE) %>%
+  bind_rows() %>%
+  filter(time > 52) %>%
+  group_by(sero) %>%
+  group_map(~mutate(., n_long = n()), .keep = TRUE) %>%
+  bind_rows() %>%
+  group_by(sero) %>%
+  mutate(perc_long = n_long/n_reinf) %>%
+  mutate(max = max(time)) %>%
+  select(sero, perc_long, max) %>%
+  distinct()
 
 rq025 <- rq(time ~ as.numeric(sero), data = reinf_outs, 
             tau = 0.025)
@@ -957,9 +982,10 @@ imm.vars <- reinf_outs %>%
   group_by(rate,sero) %>%
   summarise(mean = mean(time), median=median(time))
 
-ggplot(data=reinf_outs, aes(x=factor(rate),y=time))+
-  geom_boxplot(outlier.shape=NA)+
-  scale_y_continuous(limits = c(0,50))
+ggplot(data=imm.vars, aes(x=factor(sero),y=factor(rate),
+                            fill=mean))+
+  geom_tile()+
+  scale_fill_viridis()
 
 # ggsave(filename = "./full_Figs/rinflength_rate_vax.jpeg",
 #               width = 6, height = 4, dpi= 600, units = "in")
@@ -1127,16 +1153,17 @@ reinf_case_frame.vax <- reinf_case_frame %>%
   group_by(sero, rate) %>%
   summarise(mean=mean(ncases), median=median(ncases))
 
-ggplot(data=reinf_case_frame.vax, aes(x=sero,y=factor(rate),
-                                  fill=median))+
-  geom_tile()+
-  scale_fill_viridis_c(option = "B", direction=1,
-                       name="Cases Post Reinvasion")+
-  labs(x = "Adult Vaccination Rate", y = "Weekly Immigrants")+
+ggplot(data=reinf_case_frame, aes(x=factor(sero),y=ncases,
+                                  fill=factor(rate)))+
+  geom_boxplot(outlier.shape=NA)+
+  scale_fill_viridis_d(name="Weekly Immigrants")+
+  labs(x = "Adult Vaccination Rate", 
+       y = "Cases Post-Recolonization")+
+  scale_y_continuous(limits = c(0,2000))+
   theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "./full_Figs/reinfcases_heat.jpeg",
+# ggsave(filename = "./full_Figs/reinfcases_box.jpeg",
 #        width = 6, height = 4, dpi= 600, units = "in")
 
 # Closer look at low imm rate
