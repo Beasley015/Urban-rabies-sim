@@ -768,13 +768,13 @@ summary(lm(data=weekly_probs_condensed,
 reinf_imms <- ggplot(data=weekly_probs_condensed, 
                       aes(x=factor(rate), y=weekly_prop,
                           fill = factor(disease)))+
-  geom_boxplot()+
+  geom_boxplot(outlier.shape=NA)+
   scale_fill_viridis_d(end=0.9, 
                        name = "Immigrant Disease Rate")+
-  scale_y_continuous(limits = c(0, 0.03))+
+  scale_y_continuous(limits = c(0, 0.016))+
   labs(x = "Expected Weekly Immigrants", 
        y = "Weekly Recolonization Probability")+
-  theme_bw(base_size=14)+
+  theme_bw(base_size=12)+
   theme(panel.grid = element_blank())
 
 # ggsave(filename = "./full_Figs/rinfprob_imms.jpeg",
@@ -783,25 +783,25 @@ reinf_imms <- ggplot(data=weekly_probs_condensed,
 reinf_type <- ggplot(data=weekly_probs_condensed, 
                      aes(x=factor(rate), y = weekly_prop,
                          fill=type))+
-  geom_boxplot()+
+  geom_boxplot(outlier.shape=NA)+
   scale_fill_viridis_d(end=0.9,
                     name = "Immigration Type")+
-  scale_y_continuous(limits = c(0, 0.03))+
+  scale_y_continuous(limits = c(0, 0.016))+
   labs(x= "Expected Weekly Immigrants", 
        y = "Weekly Recolonization Probability")+
-  theme_bw(base_size=14)+
+  theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
 
 recol_vax <- ggplot(data=weekly_probs_condensed, 
        aes(x=factor(sero), y = weekly_prop,
            fill=factor(rate)))+
-  geom_boxplot()+
+  geom_boxplot(outlier.shape=NA)+
   scale_fill_viridis_d(end=0.9,
                        name = "Weekly Immigrants")+
-  scale_y_continuous(limits = c(0, 0.03))+
+  scale_y_continuous(limits = c(0, 0.016))+
   labs(x= "Adult Vaccination Rate", 
        y = "Weekly Recolonization Probability")+
-  theme_bw(base_size=14)+
+  theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
 
 dev.new(width = 160, height = 120, unit = "mm", res=600)
