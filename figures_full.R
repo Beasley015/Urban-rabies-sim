@@ -455,7 +455,7 @@ ggplot(data=elim_prob_vax, aes(x = nweek, y = mean_prop,
 #        dpi=600, units="in", height = 6)
 
 # R0 calculation ------------------------
-get_r0 <- function(){
+get_r0 <- function(estimate = "R0"){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
   
@@ -481,31 +481,57 @@ get_r0 <- function(){
                      type = character(), r.0 = numeric())
     
     for(j in 1:length(unique(testfile$rep))){
-      onerep <- testfile %>%
-        filter(rep == unique(testfile$rep)[j])
+      if(estimate == "R0"){
+        onerep <- testfile %>%
+          filter(rep == unique(testfile$rep)[j])
       
-      first_elim <- filter(time_to_elim, 
+        first_elim <- filter(time_to_elim, 
                            rep == unique(testfile$rep)[j])
       
-      start <- min(which(onerep$n_symptomatic>0))
+        start <- min(which(onerep$n_symptomatic>0))
       
-      endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
-                         first_elim$nweek)
+        endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
+                          first_elim$nweek)
       
-      tests <- try(est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
+        tests <- try(est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
                              GT=generation.time("gamma", c(4.5, 1))),
                    silent=T)
       
-      if(class(tests) %in% 'try-error' == T) {next} else{
-        r0.test <- est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
+        if(class(tests) %in% 'try-error' == T) {next} else{
+          r0.test <- est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
                             GT=generation.time("gamma", c(4.5, 1)))
-      }
-      
-      # r0.test <- est.R0.TD(epid=onerep$n_symptomatic[start:endpoint],
-      #           GT = generation.time("gamma", c(4.5, 1)),
-      #           nsim = 1000)
-      
-      re.est <- median(r0.test$R)
+          
+          re.est <- median(r0.test$R)
+        }
+        
+      } else if(estimate == "Re"){
+        onerep <- testfile %>%
+          filter(rep == unique(testfile$rep)[j])
+        
+        first_elim <- filter(time_to_elim, 
+                             rep == unique(testfile$rep)[j])
+        
+        start <- min(which(onerep$n_symptomatic>0))
+        
+        endpoint <- ifelse(nrow(first_elim)<1, 52*11, 
+                           first_elim$nweek)
+        
+        tests <- try(est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
+                               GT=generation.time("gamma", c(4.5, 1))),
+                     silent=T)
+        
+        if(class(tests) %in% 'try-error' == T) {next} else{
+          r0.test <- est.R0.SB(epid = onerep$n_symptomatic[start:endpoint],
+                               GT=generation.time("gamma", c(4.5, 1)))
+        }
+          
+          re.est <- median(r0.test$R)*
+            (1-onerep$actual_sero[start:endpoint])
+          
+          re.est <- mean(re.est)
+
+        
+      } else(print("Error: estimate must be R0 or Re"))
       
       row <- data.frame(rep=unique(onerep$rep), 
                           sero=unique(onerep$sero),
@@ -528,6 +554,7 @@ get_r0 <- function(){
 }
 
 r0 <- get_r0()
+re <- get_r0(estimate = "Re")
 
 # R0 figures ---------------
 r0.grp <- r0 %>%
@@ -541,10 +568,28 @@ ggplot(data = r0, aes(x = factor(sero), y = r.0))+
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
-mean(r0.grp$mean) #ESTIMATED R0: 1.38
+mean(r0$mean) #ESTIMATED R0: 1.38
 
 # ggsave(filename = "./full_Figs/full_re.jpeg", width=8,
 #        dpi=600, units="in", height = 6)
+
+# Re figures ------------
+re.grp <- re %>%
+  group_by(sero) %>%
+  summarise(med = median(r.0), mean = mean(r.0))
+
+# when vax = 0%: mean re = 1.14
+# when vax = 80%: mean re = 0.51
+
+ggplot(data = re, aes(x = factor(sero), y = r.0))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Adult Vaccination Rate", 
+       y = bquote(R[e]))+
+  theme_bw(base_size=14)+
+  theme(panel.grid=element_blank())
+
+# ggsave(filename = "./full_figs/re_estimated.jpeg", height = 4,
+#        width = 6, units = "in")
 
 # Time between elimination & recolonization ---------
 rabies_free <- function(){
