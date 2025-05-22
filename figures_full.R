@@ -746,7 +746,7 @@ reinfection <- function(){
       mutate(time = case_when(elim == "True" ~ nweek-lag(nweek),
                               TRUE ~ NA)) %>%
       filter(is.na(time) == F) %>%
-      filter(time >= 52)
+      filter(time >= 10)
     
     reinf_frame <- suppressMessages(full_join(testfile, 
                                            recol.time)) %>%
@@ -815,8 +815,8 @@ reinf_imms <- ggplot(data=weekly_probs_condensed,
                           fill = factor(disease)))+
   geom_boxplot(outlier.shape=NA)+
   scale_fill_viridis_d(end=0.9, 
-                       name = "Immigrant Disease Rate")+
-  scale_y_continuous(limits = c(0, 0.016))+
+                       name = "Immigrant Prevalence")+
+  scale_y_continuous(limits = c(0, 0.03))+
   labs(x = "Expected Weekly Immigrants", 
        y = "Weekly Recolonization Probability")+
   theme_bw(base_size=12)+
@@ -831,7 +831,7 @@ reinf_type <- ggplot(data=weekly_probs_condensed,
   geom_boxplot(outlier.shape=NA)+
   scale_fill_viridis_d(end=0.9,
                     name = "Immigration Type")+
-  scale_y_continuous(limits = c(0, 0.016))+
+  scale_y_continuous(limits = c(0, 0.03))+
   labs(x= "Expected Weekly Immigrants", 
        y = "Weekly Recolonization Probability")+
   theme_bw(base_size=12)+
@@ -843,7 +843,7 @@ recol_vax <- ggplot(data=weekly_probs_condensed,
   geom_boxplot(outlier.shape=NA)+
   scale_fill_viridis_d(end=0.9,
                        name = "Weekly Immigrants")+
-  scale_y_continuous(limits = c(0, 0.016))+
+  scale_y_continuous(limits = c(0, 0.03))+
   labs(x= "Adult Vaccination Rate", 
        y = "Weekly Recolonization Probability")+
   theme_bw(base_size=12)+
