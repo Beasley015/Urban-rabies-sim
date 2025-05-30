@@ -18,11 +18,11 @@ CSV.write("params.csv", param_frame)
 job_file = """
 #! /bin/bash
 #SBATCH --array=1-$(size(param_frame, 1))
-#SBATCH --time=23:00:00
+#SBATCH --time=18:00:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot
 #SBATCH --output=$(joinpath("slurm", "%x-%a.out")) 
-#SBATCH --mem-per-cpu=245G
+#SBATCH --mem-per-cpu=150G
 #SBATCH --mail-user=emily.beasley@umontreal.ca
 #SBATCH --mail-type=ALL
 

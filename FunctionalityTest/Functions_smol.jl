@@ -1,5 +1,5 @@
 # Create simulated landscapes
-function initialize_land(;land_size = 60, barrier_strength=0, habitats)
+function initialize_land(;land_size = 60, habitats, movement_test=false)
     # 1 cell = 0.5 km by 0.5 km
     # 5-cell buffer in outputs
 
@@ -7,101 +7,28 @@ function initialize_land(;land_size = 60, barrier_strength=0, habitats)
     clustered_land = rand(NeutralLandscapes.MidpointDisplacement(0.774), (land_size, land_size))
     landscape = NeutralLandscapes.classify(clustered_land, land_proportions[2:10])
 
-    # Add buffer habitat (comment out for movement functionality tests)
-    landscape[1:5,:] .= 10
-    landscape[56:60,:] .= 10
-    landscape[:,1:5] .= 10
-    landscape[:,56:60] .= 10
-
-    #=
-    # Create barrier if one exists
-    if barrier_strength != 0
-        # Pick starting and ending edges for barrier
-        edges = ["north", "south", "east", "west"]
-        barrier1edge = sample(edges, 2, replace=false)
-        barrier2edge = sample(edges, 2, replace=false)
-
-        function create_coord(x)
-            y=Vector(undef, 2)
-
-            if x == "north"
-                y[1] = rand(1:land_size)
-                y[2] = land_size
-            elseif x == "east"
-                y[1] = land_size
-                y[2] = rand(1:land_size)
-            elseif x == "south"
-                y[1] = rand(1:land_size)
-                y[2] = 1
-            else 
-                y[1] = 1
-                y[2] = rand(1:land_size)
-            end
-
-            return y
-        end
-        
-        # Start & end coords for barrier
-        barrier1start = create_coord(barrier1edge[1])
-        barrier1end = create_coord(barrier1edge[2])
-
-        barrier2start = create_coord(barrier2edge[1])
-        barrier2end = create_coord(barrier2edge[2])
-        
-        # Create barriers by calculating slope and intercept from the coords
-        function add_barriers(startcoords, endcoords)
-            # Calculate slope of barrier line
-            if (startcoords[1] - endcoords[1]) == 0
-                slope = "undefined"
-            else
-                slope = (startcoords[2]-endcoords[2])/(startcoords[1]-endcoords[1])
-            end
-
-            # Intercept of barrier
-            if slope != "undefined"
-                intercept = startcoords[2] - slope*startcoords[1]
-                # Get the cells the barrier falls on
-                x = collect(range(start=minimum([startcoords[1], endcoords[1]]), stop=maximum([startcoords[1],endcoords[1]]), step=0.1))
-                y = (slope .* x) .+ intercept
-                barrier = DataFrame(x = Int.(round.(x)), y = Int.(round.(y)))
-                barrier = unique(barrier)
-            else
-                x = fill(startcoords[1], land_size)
-                y = collect(range(start=1, stop=land_size, step=1))
-
-                barrier = DataFrame(x = x, y = y)
-            end
-
-            return(barrier)
-        end
-
-        # Build the barrier
-        barrier1 = add_barriers(barrier1start, barrier1end)
-        barrier2 = add_barriers(barrier2start, barrier2end)
-        
-        landscape[CartesianIndex.(barrier1.x, barrier1.y)] .= 9.0
-        landscape[CartesianIndex.(barrier2.x, barrier2.y)] .= 9.0
-        
-        # Define barrier strength
-        barrier_stren = [1,2,3,4]
-        barrier_coefs = [-0.25, -0.5, -1, -10]
-
-        barrier_frame = DataFrame(strength=barrier_stren, coef = barrier_coefs)
-        barrier_index = findall(x-> x == barrier_strength, barrier_frame.strength)
-        coef = barrier_frame.coef[barrier_index]
-
-        habitats[9,:] = ["barrier", 0.0, coef[1]]
+    if movement_test==false
+        # Add buffer habitat (not included in movement tests)
+        landscape[1:5,:] .= 10
+        landscape[56:60,:] .= 10
+        landscape[:,1:5] .= 10
+        landscape[:,56:60] .= 10
     end
-    =#
 
     return landscape
 end
 
 # Initialize raccoon populations
-function populate_landscape(;guy_density = 1.5, seros)
-    # Define main area of simulation
-    xmin = 6; xmax = 55
-    ymin = 6; ymax = 55
+function populate_landscape(;guy_density = 1.5, seros, movement_test=false)
+    if movement_test == false
+        # Define main area of simulation
+        xmin = 6; xmax = 55
+        ymin = 6; ymax = 55
+    else
+        # Use these values and remove buffer for functionality tests:
+        xmin = 1; xmax = 20
+        ymin = 1; ymax = 20
+    end
 
     land_area = (xmax-xmin)*(ymax-ymin)
 
@@ -118,24 +45,26 @@ function populate_landscape(;guy_density = 1.5, seros)
     lil_guys.y[lil_guys.y .== 0] .= 1
 
     # Repeat at a low density to populate the buffer
-    xpossible = vcat(1:5, 56:60)
-    ypossible = vcat(1:5, 56:60)
+    if movement_test==false
+        xpossible = vcat(1:5, 56:60)
+        ypossible = vcat(1:5, 56:60)
 
-    buffer_area = 100
+        buffer_area = 100
 
-    # Buffer density: typically 4 per km^2, so 1 per cell
-    nbuffer = rand(Poisson(buffer_area*1))
+        # Buffer density: typically 4 per km^2, so 1 per cell
+        nbuffer = rand(Poisson(buffer_area*1))
 
-    buffer_ids = collect((maximum(parse.(Int64,lil_guys.id))+1):(maximum(parse.(Int64,lil_guys.id))+nbuffer))
+        buffer_ids = collect((maximum(parse.(Int64,lil_guys.id))+1):(maximum(parse.(Int64,lil_guys.id))+nbuffer))
 
-    lil_guys_buffer = DataFrame(id = string.(buffer_ids), x = sample(xpossible, nbuffer, replace = true), y = sample(ypossible, nbuffer, replace = true), 
-        incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, sex = Int.(rand(Bernoulli(0.5), nbuffer)),
-        mom = NaN, vaccinated = 0, age = rand(52:(52*8), nbuffer))
+        lil_guys_buffer = DataFrame(id = string.(buffer_ids), x = sample(xpossible, nbuffer, replace = true), y = sample(ypossible, nbuffer, replace = true), 
+            incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, sex = Int.(rand(Bernoulli(0.5), nbuffer)),
+            mom = NaN, vaccinated = 0, age = rand(52:(52*8), nbuffer))
 
         lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1] = rand(Bernoulli(0.6), 
                 length(lil_guys_buffer.vaccinated[lil_guys_buffer.incubation .!= 1]))
 
-    lil_guys = [lil_guys; lil_guys_buffer]
+        lil_guys = [lil_guys; lil_guys_buffer]
+    end
 
     return lil_guys
 end
@@ -145,11 +74,14 @@ function initialize_disease(dat)
     unvax = findall(dat.vaccinated .== 0)
 
     # Choose raccoons to infect
-    new_diseases = ifelse(length(unvax) > 10, sample(unvax, 10, replace = false, ordered = true), unvax)
+    new_diseases = ifelse(length(unvax) > 40, sample(unvax, 40, replace = false), unvax)
 
     # Initialize disease
     dat.incubation[new_diseases] .= 1
-    
+
+    # Start infection timer
+    dat.time_since_inf = ifelse.(dat.incubation .== 1, 1, dat.time_since_inf)
+
     return dat
 end
 
@@ -170,7 +102,7 @@ function look_around(x,y,land_size)
 end
 
 # Movement function
-function move(coords, dat, home, landscape, reso=500, rate=-0.001)
+function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     # Where coords = list of tuples representing possible moves,
     # dat = data frame of agents,
     # reso = width/height of grid cell in meters
@@ -236,39 +168,23 @@ function spread_disease(;dat, home)
     diseased = filter(:infectious => x -> x .== 1, dat)
     diseased_coords = [(diseased.x[i], diseased.y[i]) for i in 1:size(diseased,1)]
 
-    # Infect raccoons that are currently in diseased guy's home range
+    # Infect raccoons that share cell with diseased guy
     if length(diseased_coords) != 0
-
-        # Define diseased guys' location
-        x = deepcopy(dat.x[findall(dat.infectious .== 1)])
-        y = deepcopy(dat.y[findall(dat.infectious .== 1)])
-
-        poss_coords = Vector{Tuple{Int64, Int64}}()
-
-        for i in 1:length(x)
-            append!(poss_coords,
-            [(x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1),
-            (x[i]-1, y[i]), (x[i],y[i]), (x[i]+1, y[i]),
-            (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1)])
-        end
-
-        # Get raccoons within range
-        HR_exposure = [intersect(findall(.==(poss_coords[i][1]), dat.x),findall(.==(poss_coords[i][2]), dat.y)) 
-                        for i in 1:length(poss_coords)]
-
-        HR_exposure = sort(unique(vcat(HR_exposure...)))
+        # Get all guys with shared coords
+        direct_exposure = [intersect(findall(.==(diseased_coords[i][1]), dat.x),findall(.==(diseased_coords[i][2]), dat.y)) 
+            for i in 1:length(diseased_coords)]
+        direct_exposure = sort(unique(vcat(direct_exposure...)))
 
         # Remove vaccinated individuals
-        HR_exposure = HR_exposure[dat.vaccinated[HR_exposure] .== 0]
+        direct_exposure = direct_exposure[dat.vaccinated[direct_exposure] .== 0]
 
         # Infect with set probability
-        infections = rand(Bernoulli(0.035), length(HR_exposure))
-        HR_exposure = HR_exposure[infections .== 1]
+        direct_exposure = direct_exposure[rand(Bernoulli(0.03), length(direct_exposure)) .== 1]
 
-        dat.incubation[HR_exposure] .= 1
+        dat.incubation[direct_exposure] .= 1
     end
-
-    # Infect raccoons with HR overlap, but not currently in diseased guy's HR
+    
+    # Infect raccoons within 1 km of diseased guy
     if length(diseased_coords) != 0
         # Define diseased guys' location
         x = deepcopy(dat.x[findall(dat.infectious .== 1)])
@@ -279,9 +195,9 @@ function spread_disease(;dat, home)
         for i in 1:length(x)
             append!(poss_coords,
             [(x[i]-2, y[i]+2), (x[i]-1, y[i]+2), (x[i], y[i]+2), (x[i]+1, y[i]+2), (x[i]+2, y[i]+2),
-            (x[i]-2, y[i]+1), (x[i]+2, y[i]+1),
-            (x[i]-2, y[i]), (x[i]+2, y[i]),
-            (x[i]-2, y[i]-1), (x[i]+2, y[i]-1),
+            (x[i]-2, y[i]+1), (x[i]-1, y[i]+1), (x[i], y[i]+1), (x[i]+1, y[i]+1), (x[i]+2, y[i]+1),
+            (x[i]-2, y[i]), (x[i]-1, y[i]), (x[i]+1, y[i]), (x[i]+2, y[i]),
+            (x[i]-2, y[i]-1), (x[i]-1, y[i]-1), (x[i], y[i]-1), (x[i]+1, y[i]-1), (x[i]+2, y[i]-1),
             (x[i]-2, y[i]-2), (x[i]-1, y[i]-2), (x[i], y[i]-2), (x[i]+1, y[i]-2), (x[i]+2, y[i]-2)])
         end
         
@@ -295,11 +211,12 @@ function spread_disease(;dat, home)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(0.02), length(indirect_exposure))
+        infections = rand(Bernoulli(0.002), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
     end
+
     return dat
 end
 
@@ -353,17 +270,23 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home)
+function dont_fear_the_reaper(;dat, home, step)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
     deleteat!(home, findall(rand_deaths .== 1))
 
+    n_random_mort = length(rand_deaths[rand_deaths .== 1])
+
     # disease mortality
+    n_dis_mort = length(findall(.>=(2), dat.time_since_disease))
+
     deleteat!(home, findall(.>=(2), dat.time_since_disease))
-    filter!(:time_since_disease => <(2), dat)
+    filter!(:time_since_disease => <(2), dat) 
 
     # old age mortality
+    n_old_mort = length(findall(.>=(52*8), dat.age))
+
     deleteat!(home, findall(.>=(52*8), dat.age))
     deleteat!(dat, findall(.>=(52*8), dat.age))
 
@@ -372,6 +295,8 @@ function dont_fear_the_reaper(;dat, home)
 
     deleteat!(home, no_mom)
     filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
+
+    orphan_mort = length(no_mom)
     
     # Density-related mortality
     # get coordinates where there are multiple guys
@@ -409,6 +334,12 @@ function dont_fear_the_reaper(;dat, home)
         deleteat!(dat, dead_guys)
         deleteat!(home, dead_guys)
     end  
+
+    juvie_cc_mort = length(dead_juvies[dead_juvies .== 1])
+    adult_cc_mort = length(dead_adults[dead_adults .== 1])
+
+    deadvec = [step, n_random_mort, n_dis_mort, orphan_mort, juvie_cc_mort, adult_cc_mort, size(dat,1)]
+    push!(dead_bois, deadvec)
 end
 
 # Vaccination function
@@ -453,7 +384,7 @@ function juvies_leave(dat, home, land_size)
                         downleft, down, downright], size(juvies,1))
 
         # Get dispersal distance
-        distances = rand(Poisson(3), size(juvies,1))
+        distances = rand(Poisson(2), size(juvies,1))
 
         # RUN!
         coords = Vector(undef, size(juvies,1))
@@ -562,7 +493,7 @@ function adults_move(dat, home, land_size, year)
                         downleft, down, downright], size(adults,1))
 
         # Get dispersal distance (shorter for adults)
-        distances = rand(Poisson(2), size(adults,1))
+        distances = rand(Poisson(1), size(adults,1))
 
         # RUN!
         coords = Vector(undef, size(adults,1))

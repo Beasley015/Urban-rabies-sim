@@ -485,7 +485,7 @@ for(i in 1:length(unique(dis$rep))){
             r0 <- estimate.R(epid = 
                                test$n_symptomatic[start:end], 
                   GT=generation.time("gamma", c(4.5, 1)),
-                  method = 'TD', nsim = 1000)
+                  method = 'SB', nsim = 1000)
       }
     
       vec <- c(unique(test$rep), unique(test$l2),
@@ -498,25 +498,26 @@ for(i in 1:length(unique(dis$rep))){
 }
 
 r0.df <- as.data.frame(do.call(rbind, r0.list))
-colnames(r0.df) <- c("rep", "l1", "Re")
+colnames(r0.df) <- c("rep", "l1", "R0")
 
 r0.df <- r0.df %>%
   group_by(rep, l1) %>%
-  filter(Re < quantile(.$Re, 0.975) && Re > quantile(.$Re, 0.025))
+  filter(R0 < quantile(.$R0, 0.975) && 
+           Re > quantile(.$R0, 0.025))
 
 r0.df %>%
   ungroup() %>%
   group_by(l1) %>%
-  summarise(mean.re = median(Re))
+  summarise(mean.r0 = median(R0))
 
-ggplot(data = r0.df, aes(x = factor(l1), y = Re))+
+ggplot(data = r0.df, aes(x = factor(l1), y = R0))+
   geom_boxplot(fill='lightgray')+
-  labs(x = "Core Transmission", y = bquote(R[e]))+
+  labs(x = "Core Transmission", y = bquote(R[0]))+
   theme_bw(base_size = 14)+
   theme(panel.grid=element_blank())
 
-# ggsave(filename="R_e_sensitivity.jpeg", width = 5, height = 3.5,
-#        units = 'in')
+# ggsave(filename="R_0_sensitivity.jpeg", width = 5,
+# height = 3.5, units = 'in')
 
 # Epicurves, just for fun ----------------------
 curve.df <- dis %>%
