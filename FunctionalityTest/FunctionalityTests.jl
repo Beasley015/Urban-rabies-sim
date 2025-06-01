@@ -17,20 +17,24 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 # Load in functions
 include("Functions_smol.jl")
 
-# Load in parameters
-job= 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
-Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
+# Define parameters
+Params = 
 
 # Simulation function
 function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
-                        outputs)
+                        outputs, movement_test=false, mortality_test=false)
 
     # create landscape
-    land_size = 20
-    landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_frame, movement_test=true)
+    if movement_test==true
+        land_size=20
+    else
+        land_size=60
+    end
+    
+    landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_frame, movement_test=movement_test)
 
     # Populate landscape
-    lil_guys = populate_landscape(seros=0, guy_density=0.5, movement_test=true)
+    lil_guys = populate_landscape(seros=0, guy_density=0.5, movement_test=movement_test)
 
     # define home coordinates for distance-decay function
     home_coords = deepcopy(lil_guys[:,[1,2,3]])
@@ -38,8 +42,10 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
     for year in 1:years
         for step in 1:time_steps
             # Initialize disease at year 2, when population stabilizes
-            if year == 2 && step == 1
-                initialize_disease(lil_guys)
+            if movement_test==false
+                if year == 2 && step == 1
+                    initialize_disease(lil_guys)
+                end
             end
 
             # Lots of death
@@ -49,8 +55,10 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
             move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
-            # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords)
+            if movement_test==false
+                # Spread disease
+                spread_disease(dat=lil_guys, home=home_coords)
+            end
 
             # Reproduction occurs at specific time steps
             if step == 18
@@ -76,51 +84,58 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             lil_guys.time_since_inf[lil_guys.incubation .== 1] = lil_guys.time_since_inf[lil_guys.incubation.==1] .+ 1
             lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
-            #elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
+            if movement_test==false
+                elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
+            end
 
             # Code for testing movement:
-            #=
-            if year > 1 && step < 43
-                df_step = DataFrame(rep=rep, year=year, week=step, id=lil_guys.id, x=lil_guys.x, y=lil_guys.y, 
-                                        hab=landscape[CartesianIndex.(lil_guys.x, lil_guys.y)])
-                append!(outputs, df_step, promote = true)
+            if movement_test==true
+                if year > 1 && step < 43
+                    df_step = DataFrame(rep=rep, year=year, week=step, id=lil_guys.id, x=lil_guys.x, y=lil_guys.y, 
+                                            hab=landscape[CartesianIndex.(lil_guys.x, lil_guys.y)])
+                    append!(outputs, df_step, promote = true)
+                end
             end
-            =#
             
             # Code for testing disease transmission:
-            #=
-            if year >= 2
-                # get locations of symptomatic guys
-                infec = filter(:incubation => x -> x .== 1, lil_guys)
+            if movement_test==false
+                if year >= 2
+                    # get locations of symptomatic guys
+                    infec = filter(:incubation => x -> x .== 1, lil_guys)
 
-                # put it in a data frame
-                frame = DataFrame(year = year, week = step, id = infec.id, x = infec.x, y = infec.y,
-                                        inc = infec.incubation, inf = infec.infectious)
+                    # put it in a data frame
+                    frame = DataFrame(year = year, week = step, id = infec.id, x = infec.x, y = infec.y,
+                                            inc = infec.incubation, inf = infec.infectious)
 
-                # Calculate summary statistics and append to data frame
-                append!(outputs, frame, promote = true)
+                    # Calculate summary statistics and append to data frame
+                    append!(outputs, frame, promote = true)
+                end
             end
-            =#
+
+            # Code for testing mortality
+            if mortality_test==true
+
+            end
         end
-        #println(year)
     end
     # Include this line to save the landscape:
     #CSV.write("ExampleLand.csv",  Tables.table(landscape), writeheader=false)
-    
-    #println(string("Rep = ", rep))
 end
 
 # Run it!
-# Create empty data frame
+# Data frame for movement tests
+
+# Data frame for disease transmission tests
 #=
 outputs = DataFrame([[], [], [], [], [], [], []], 
                     ["year", "week", "id", "x", "y", "inc", "inf"])
-                    =#
+=#
 
-# use this for mortality tests
-dead_bois = DataFrame([[], [], [], [], [], [],[]], 
+# Data frame for mortality tests
+#=
+outputs = DataFrame([[], [], [], [], [], [],[]], 
             ["step", "n_random_mort", "n_dis_mort", "orphan_mort", "juvie_cc_mort", "adult_cc_mort", "pop_size"])
-
+=#
 reps = 1
 
 for rep in 1:reps
@@ -131,4 +146,4 @@ end
 # Create filename
 filename = "mvt_mortality_test.csv"
 # Save results
-CSV.write(filename, dead_bois)
+CSV.write(filename, outputs)
