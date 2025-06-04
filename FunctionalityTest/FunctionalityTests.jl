@@ -18,7 +18,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions_smol.jl")
 
 # Define parameters
-Params = 
+Params = DataFrame(seros = 0.0, imm_rate = 0, imm_dis = 0, imm_type = "wave")
 
 # Simulation function
 function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
@@ -31,7 +31,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
         land_size=60
     end
     
-    landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_frame, movement_test=movement_test)
+    landscape = initialize_land(land_size=land_size, habitats = hab_frame, movement_test=movement_test)
 
     # Populate landscape
     lil_guys = populate_landscape(seros=0, guy_density=0.5, movement_test=movement_test)
@@ -49,7 +49,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
 
             # Lots of death
-            dont_fear_the_reaper(dat=lil_guys, home=home_coords, step=step)
+            dont_fear_the_reaper(dat=lil_guys, home=home_coords, step=step, mortality_test=mortality_test)
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
@@ -91,8 +91,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             # Code for testing movement:
             if movement_test==true
                 if year > 1 && step < 43
-                    df_step = DataFrame(rep=rep, year=year, week=step, id=lil_guys.id, x=lil_guys.x, y=lil_guys.y, 
-                                            hab=landscape[CartesianIndex.(lil_guys.x, lil_guys.y)])
+                    df_step = DataFrame(rep=rep, year=year, week=step, id=lil_guys.id, x=lil_guys.x, y=lil_guys.y)
                     append!(outputs, df_step, promote = true)
                 end
             end
@@ -114,7 +113,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Code for testing mortality
             if mortality_test==true
-
+                # Code for adding rows to data frame
             end
         end
     end
@@ -123,27 +122,44 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 end
 
 # Run it!
+#=
 # Data frame for movement tests
+outputs = DataFrame([[],[],[],[],[],[]],
+                    ["rep", "year", "week", "id", "x", "y"])
+
+# Run it
+reps = 5
+for rep in 1:reps
+    the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                    immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
+                    movement_test=true)
+end
+
+# Create filename
+filename = "mvt_test.csv"
+=#
 
 # Data frame for disease transmission tests
-#=
 outputs = DataFrame([[], [], [], [], [], [], []], 
                     ["year", "week", "id", "x", "y", "inc", "inf"])
-=#
+
+                    
 
 # Data frame for mortality tests
 #=
 outputs = DataFrame([[], [], [], [], [], [],[]], 
             ["step", "n_random_mort", "n_dis_mort", "orphan_mort", "juvie_cc_mort", "adult_cc_mort", "pop_size"])
-=#
+
 reps = 1
 
 for rep in 1:reps
     the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = dead_bois)
+                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 end
 
 # Create filename
 filename = "mvt_mortality_test.csv"
+=#
+
 # Save results
 CSV.write(filename, outputs)

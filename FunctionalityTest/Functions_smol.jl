@@ -270,7 +270,7 @@ function reproduce(dat, home)
 end
 
 # Mortality function
-function dont_fear_the_reaper(;dat, home, step)
+function dont_fear_the_reaper(;dat, home, step, mortality_test=false)
     # random mortality
     rand_deaths = rand(Binomial(1, 0.001),size(dat,1))
     deleteat!(dat, findall(rand_deaths .== 1))
@@ -338,8 +338,10 @@ function dont_fear_the_reaper(;dat, home, step)
     juvie_cc_mort = length(dead_juvies[dead_juvies .== 1])
     adult_cc_mort = length(dead_adults[dead_adults .== 1])
 
-    deadvec = [step, n_random_mort, n_dis_mort, orphan_mort, juvie_cc_mort, adult_cc_mort, size(dat,1)]
-    push!(dead_bois, deadvec)
+    if mortality_test==true
+        deadvec = [step, n_random_mort, n_dis_mort, orphan_mort, juvie_cc_mort, adult_cc_mort, size(dat,1)]
+        push!(dead_bois, deadvec)
+    end
 end
 
 # Vaccination function

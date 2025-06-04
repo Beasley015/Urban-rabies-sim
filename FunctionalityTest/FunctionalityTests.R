@@ -9,12 +9,6 @@ library(sf)
 
 setwd("./FunctionalityTest")
 
-# Test some distance-decay functions -----------
-x <- seq(0,3000,100)
-y <- exp(-0.001 * (x^2)/100)
-
-plot(x,y)
-
 # Movement/distance decay test -------------
 raccoons <- read.csv("mvt_test.csv") %>%
   filter(rep == sample(1:max(rep), 1))
@@ -41,106 +35,6 @@ hr_sizes <-hr_props %>%
   st_concave_hull(ratio = 0.3, allow_holes = F)
   
 summary(st_area(hr_sizes))
-
-guys.to.keep <- sample(raccoons$id[which(raccoons$week==1)], 5)
-
-a.few.raccoons <- raccoons %>%
-  filter(id %in% guys.to.keep, week < 43) %>%
-  group_by(rep, id, x, y, hab) %>%
-  summarise(count = n()) %>%
-  ungroup() %>%
-  group_by(id) %>%
-  mutate(prop = count/sum(count))
-
-home.coords <- raccoons %>%
-  filter(week == 1)
-
-few.raccoons.sp <- dplyr::select(a.few.raccoons, id, x, y) %>%
-  filter(id %in% c(348, 62))
-coordinates(few.raccoons.sp) <- c("x", "y")
-
-raccoon.mcp <- mcp(few.raccoons.sp, percent = 95)
-
-ggplot(data = a.few.raccoons, aes(x = x, y = y, fill = prop,
-                                  color = factor(id)))+
-  geom_tile(size = 1)+
-  # geom_polygon(data = raccoon.mcp, aes(long,lat, group = id))
-  scale_fill_gradient(low = 'white', high = 'forestgreen',
-                      name = "Proportion")+
-  scale_color_viridis_d(name = "ID")+
-  # geom_point(data = home.coords[home.coords$id %in% guys.to.keep,],
-  #            aes(x = x, y = y), size = 4, color = "black",
-  #            inherit.aes = F)+
-  lims(x = c(0,21), y = c(0,21))+
-  theme_dark(base_size = 14)
-
-# ggsave(filename = "samplemvt.jpeg", width = 6, height=5,
-#        units = "in")
-
-# Look at effects of habitat -----------
-# HR size based on habitat in attractor cell
-hab.vals <- data.frame(id = 1:5, vals = c("Deciduous", "DevLo",
-                                          "Pasture", "DevHi",
-                                          "Wetlands"))
-habitats <- raccoons %>%
-  filter(week < 43) %>%
-  group_by(id, x, y, habs) %>%
-  summarise(count = n()) %>%
-  left_join(hab.vals, by = c("habs" = "id"))
-
-ggplot(data = habitats, aes(x = vals, y = count))+
-  geom_boxplot(fill='lightgray')+
-  labs(x = "Habitat", y = "Annual Home Range Size (# cells)")+
-  theme_bw(base_size = 12)+
-  theme(panel.grid = element_blank())
-
-# ggsave("sizebyhab.jpeg", width = 4, height = 3, units = "in")
-
-summary(aov(count~factor(habs), data = habitats))
-
-# Proportion of raccoons w/attractor per habitat type
-hr_habs <- home.coords %>%
-  group_by(habs) %>%
-  summarise(count = n()) %>%
-  mutate(Used = count/sum(count)) %>%
-  mutate(Available = c(0.2585, 0.2337, 0.1915, 0.1266, 
-                       0.0899)) %>%
-  mutate(names = c("Deciduous", "DevLo", "Pasture", "DevHi", 
-                   "Wetlands")) %>%
-  select(-c(count, habs)) %>%
-  pivot_longer(cols = -names, names_to = "var", values_to = "prop")
-
-ggplot(data = hr_habs, aes(x = names, y = prop, fill = var))+
-  geom_col(position = "dodge", color = 'black')+
-  scale_fill_manual(values = c('limegreen', 'lightgray'), name = "")+
-  labs(y = "Proportion", x = "Habitat")+
-  theme_bw(base_size = 12)+
-  theme(panel.grid = element_blank())
-
-# ggsave("HomeRangeHabs.jpeg", height = 4, width = 6)
-
-# Time spent in each habitat type
-hab_total <- raccoons %>%
-  filter(week < 43) %>%
-  group_by(hab_current) %>%
-  summarise(count = n()) %>%
-  mutate(Used = count/sum(count)) %>%
-  mutate(Available = c(0.2585, 0.2337, 0.1915, 0.1266, 
-                       0.0899)) %>%
-  mutate(names = c("Deciduous", "DevLo", "Pasture", "DevHi", 
-                   "Wetlands")) %>%
-  select(-c(count, hab_current)) %>%
-  pivot_longer(cols = -names, names_to = "var", values_to = "prop")
-
-ggplot(data = hab_total, aes(x = names, y = prop, fill = var))+
-  geom_col(position="dodge", color = 'black')+
-  
-  scale_fill_manual(values = c('limegreen', 'lightgray'), name = "")+
-  labs(y = "Proportion", x = "Habitat")+
-  theme_bw(base_size = 12)+
-  theme(panel.grid = element_blank())
-
-# ggsave("PositionHabs.jpeg", height = 4, width = 6)
 
 # Look at land cover-------------
 # Load in data
@@ -169,7 +63,7 @@ ggplot(data = df, aes(x=x, y=y, fill=hab))+
 # ggsave(filename = "sample_landscape.jpeg", height = 2, width = 4,
 #        units = "in")
 
-# Length of latent period ------------------
+# Length of latent period #RESUME HERE------------------
 dis <- read.csv("disease.csv")
 
 ggplot(data = dis, aes(x = time))+
