@@ -66,7 +66,7 @@ ggplot(data = df, aes(x=x, y=y, fill=hab))+
 # Length of latent period #RESUME HERE------------------
 dis <- read.csv("disease.csv")
 
-ggplot(data = dis, aes(x = time))+
+ggplot(data = dis, aes(x = time_since_inf))+
   geom_bar(fill = 'lightgray', color = 'black')+
   labs(x = "Length of latent period (Weeks)", y = "Count")+
   theme_bw(base_size = 12)+
@@ -76,67 +76,15 @@ ggsave(filename = "latent_period.jpeg", height = 3, width = 4,
        units = "in")
 
 # Recovery probability -----------
-rec <- read.csv("recovery.csv")
+rec <- read.csv("disease.csv")
 
-rec2 <- apply(rec, 2, sum)/sum(rec)
+rec2 <- rec %>%
+  group_by(week) %>%
+  summarise(n_transition = n(), n_recover = min(recover)) %>%
+  ungroup() %>%
+  summarise(perc = sum(n_recover)/sum(n_transition))
 
-# Disease spread gif and figs ------------
-# Set up data
-dis <- read.csv("mvt_disease_test.csv") %>%
-  mutate(nweek = ((year-1)*52)+ week) %>%
-  group_by(nweek, x, y) %>%
-  summarise(inc = n(), inf = sum(inf)) %>%
-  mutate(inf = case_when(inf == 0 ~ '0',
-                         TRUE ~ '1'))
-
-# Create gif
-trans.fig <- ggplot(data = dis, aes(x = x, y = y, fill = inc))+
-  geom_tile(aes(width = 1, height = 1), linewidth = 1)+
-  geom_point(aes(x = x, y = y, alpha = inf), size = 2,
-             color = 'white')+
-  scale_fill_viridis_c(name = "Exposed")+
-  scale_alpha_discrete(range = c(0, 1), name = "Infectious")+
-  lims(x = c(0, 21), y = c(0, 21))+
-  theme(axis.title = element_blank(), 
-        title = element_text(size = 16))
-
-animation_test <- 
-  trans.fig + 
-  transition_states(nweek)+
-  labs(subtitle = "Week: {closest_state}") 
-
-trans.animate <- animate(animation_test, nframes = 45, fps = 2)
-trans.animate
-
-# anim_save(filename="trans_animation.gif", 
-#           animation = trans.animate)
-
-# Create stationary figures
-dis_subset <- filter(dis, nweek <= min(nweek)+3)
-sub.figs <- list()
-
-for(i in 1:length(unique(dis_subset$nweek))){
-  sub.figs[[i]] <- ggplot(data = dis_subset[dis_subset$nweek==unique(dis_subset$nweek)[i],], aes(x = x, y = y, fill = inc))+
-    geom_tile(aes(width = 1, height = 1), linewidth = 1)+
-    geom_point(aes(x = x, y = y, alpha = inf), size = 2,
-               color = 'white')+
-    scale_fill_viridis_c(name = "Infected", limits = c(0,max(dis_subset$inc)))+
-    scale_alpha_discrete(range = c(0, 1), name = "Infectious",
-                         guide = "none")+
-    lims(x = c(0, 21), y = c(0, 21))+
-    labs(title = paste("Week", unique(dis_subset$nweek)[i], 
-                       sep = " "))+
-    theme_bw()
-    theme(axis.title = element_blank(), 
-          title = element_text(size = 18))
-}
-
-(sub.figs[[1]] + sub.figs[[2]] + sub.figs[[3]])+
-  plot_layout(guides = 'collect')+
-  plot_annotation(tag_levels = 'a')
-
-# ggsave(filename = "fixed_trans_fig.jpeg", width = 12, height = 4,
-#        units = "in")
+rec2
 
 # Mortality tests --------------------
 mort_counts <- read.csv(file = "mvt_mortality_test.csv")

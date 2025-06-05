@@ -361,7 +361,7 @@ function dont_fear_the_reaper(;dat, home)
 
     # disease mortality
     deleteat!(home, findall(.>=(2), dat.time_since_disease))
-    filter!(:time_since_disease => <(2), dat)
+    filter!(:time_since_disease => .<(2), dat)
 
     # old age mortality
     deleteat!(home, findall(.>=(52*8), dat.age))

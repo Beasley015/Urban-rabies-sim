@@ -41,6 +41,8 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
     for year in 1:years
         for step in 1:time_steps
+            n_recover = zeros(years*time_steps)
+
             # Initialize disease at year 2, when population stabilizes
             if movement_test==false
                 if year == 2 && step == 1
@@ -75,7 +77,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
 
             # Function where some infected guys become symptomatic or recover
-            change_state(lil_guys)
+            change_state(lil_guys,n_recover,step)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -96,15 +98,16 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                 end
             end
             
-            # Code for testing disease transmission:
-            if movement_test==false
+            # Code for testing disease transition functions:
+            if movement_test==false & mortality_test==false
                 if year >= 2
                     # get locations of symptomatic guys
-                    infec = filter(:incubation => x -> x .== 1, lil_guys)
+                    infec = filter([:infectious, :time_since_disease] => (x,y) -> x .== 1 && y .== 1, lil_guys)
 
                     # put it in a data frame
-                    frame = DataFrame(year = year, week = step, id = infec.id, x = infec.x, y = infec.y,
-                                            inc = infec.incubation, inf = infec.infectious)
+                    frame = select(infec, [:id, :incubation, :infectious, :time_since_inf, :time_since_disease])
+                    frame.week .= step
+                    frame.recover .= n_recover[step]
 
                     # Calculate summary statistics and append to data frame
                     append!(outputs, frame, promote = true)
@@ -140,10 +143,17 @@ filename = "mvt_test.csv"
 =#
 
 # Data frame for disease transmission tests
-outputs = DataFrame([[], [], [], [], [], [], []], 
-                    ["year", "week", "id", "x", "y", "inc", "inf"])
+outputs = DataFrame([[],[],[],[],[],[],[]], ["id","incubation", "week","infectious", "time_since_inf","time_since_disease","recover"])
 
-                    
+reps = 5
+
+for rep in 1:reps
+    the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
+                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
+end
+
+# Create filename
+filename = "disease.csv"  
 
 # Data frame for mortality tests
 #=

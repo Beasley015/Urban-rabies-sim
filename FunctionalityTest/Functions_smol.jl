@@ -221,13 +221,20 @@ function spread_disease(;dat, home)
 end
 
 # Transition from incubation period to infectious period or recovery
-function change_state(dat)
+function change_state(dat, n_recover=n_recover, step=step)
     # Recovery: approx. 10% recover, reduced to weekly probability 
     prob_recover = rand.(Bernoulli.(0.002), length(dat.incubation .== 1))
 
     if length(prob_recover) > 0
         dat.incubation[prob_recover .== 1] .= 0
+        dat.time_since_inf[prob_recover .== 1] .= 0
         dat.vaccinated[prob_recover .== 1] .= 1
+    end
+
+    if length(prob_recover) > 0 
+        n_recover[step] = sum(prob_recover)
+    else 
+        n_recover[step] = 0
     end
 
     # Probability of transition
@@ -237,6 +244,8 @@ function change_state(dat)
     if length(prob) > 0
         dat.infectious[(dat.incubation .== 1) .& (dat.infectious .== 0)] = reduce(vcat,rand.(Bernoulli.(prob), 1))
     end
+
+    return n_recover
 end
 
 # Reproduction function
@@ -279,10 +288,10 @@ function dont_fear_the_reaper(;dat, home, step, mortality_test=false)
     n_random_mort = length(rand_deaths[rand_deaths .== 1])
 
     # disease mortality
-    n_dis_mort = length(findall(.>=(2), dat.time_since_disease))
+    n_dis_mort = length(findall(.>(1), dat.time_since_disease))
 
     deleteat!(home, findall(.>=(2), dat.time_since_disease))
-    filter!(:time_since_disease => <(2), dat) 
+    filter!(:time_since_disease => .<(2), dat) 
 
     # old age mortality
     n_old_mort = length(findall(.>=(52*8), dat.age))
