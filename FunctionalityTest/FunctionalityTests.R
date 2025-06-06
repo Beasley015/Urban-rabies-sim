@@ -63,7 +63,7 @@ ggplot(data = df, aes(x=x, y=y, fill=hab))+
 # ggsave(filename = "sample_landscape.jpeg", height = 2, width = 4,
 #        units = "in")
 
-# Length of latent period #RESUME HERE------------------
+# Length of latent period ------------------
 dis <- read.csv("disease.csv")
 
 ggplot(data = dis, aes(x = time_since_inf))+
@@ -86,7 +86,7 @@ rec2 <- rec %>%
 
 rec2
 
-# Mortality tests --------------------
+# Mortality tests RESUME HERE --------------------
 mort_counts <- read.csv(file = "mvt_mortality_test.csv")
 
 # Mortality as % of population
@@ -136,3 +136,4 @@ dis <- more_percs %>%
   select(n_random_mort_perc:adult_cc_mort_perc)
 
 colMeans(dis, na.rm = T)
+

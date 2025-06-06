@@ -349,7 +349,7 @@ function dont_fear_the_reaper(;dat, home, step, mortality_test=false)
 
     if mortality_test==true
         deadvec = [step, n_random_mort, n_dis_mort, orphan_mort, juvie_cc_mort, adult_cc_mort, size(dat,1)]
-        push!(dead_bois, deadvec)
+        push!(outputs, deadvec)
     end
 end
 

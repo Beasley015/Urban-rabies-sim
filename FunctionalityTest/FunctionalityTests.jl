@@ -99,7 +99,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
             
             # Code for testing disease transition functions:
-            if movement_test==false & mortality_test==false
+            if movement_test==false && mortality_test==false
                 if year >= 2
                     # get locations of symptomatic guys
                     infec = filter([:infectious, :time_since_disease] => (x,y) -> x .== 1 && y .== 1, lil_guys)
@@ -112,11 +112,6 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
                     # Calculate summary statistics and append to data frame
                     append!(outputs, frame, promote = true)
                 end
-            end
-
-            # Code for testing mortality
-            if mortality_test==true
-                # Code for adding rows to data frame
             end
         end
     end
@@ -142,6 +137,7 @@ end
 filename = "mvt_test.csv"
 =#
 
+#=
 # Data frame for disease transmission tests
 outputs = DataFrame([[],[],[],[],[],[],[]], ["id","incubation", "week","infectious", "time_since_inf","time_since_disease","recover"])
 
@@ -154,9 +150,9 @@ end
 
 # Create filename
 filename = "disease.csv"  
+=#
 
 # Data frame for mortality tests
-#=
 outputs = DataFrame([[], [], [], [], [], [],[]], 
             ["step", "n_random_mort", "n_dis_mort", "orphan_mort", "juvie_cc_mort", "adult_cc_mort", "pop_size"])
 
@@ -164,12 +160,12 @@ reps = 1
 
 for rep in 1:reps
     the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=rep, immigration_disease = Params[!,3][1], 
-                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
+                        immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
+                        mortality_test=true)
 end
 
 # Create filename
 filename = "mvt_mortality_test.csv"
-=#
 
 # Save results
 CSV.write(filename, outputs)

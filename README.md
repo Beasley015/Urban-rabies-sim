@@ -37,12 +37,12 @@ Processes agent-based model outputs and visualizes the results.
 
 ## **Subfolders**
 
-Subfolders (with the exception of outputs) contain separate README files with more detailed metadata.
-
 ### outputs
 
 Contains all results of the agent-based model described in the main manuscript saved in .csv format.
 
-### FunctionalityTest (CURRENTLY UPDATING)
+### FunctionalityTest
+
+Contains files for testing various functions of the agent-based model, specifically landscape construction, agent movement, transitions between disease states, and agent mortality. A README file with more details can be found in the subfolder.
 
 ### ParamSensitivity (CURRENTLY UPDATING)
