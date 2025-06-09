@@ -45,4 +45,6 @@ Contains all results of the agent-based model described in the main manuscript s
 
 Contains files for testing various functions of the agent-based model, specifically landscape construction, agent movement, transitions between disease states, and agent mortality. A README file with more details can be found in the subfolder.
 
-### ParamSensitivity (CURRENTLY UPDATING)
+### ParamSensitivity 
+
+Contains results of parameter sensitivity analyses, stored in .csv format. Also includes the script ParamSensitivityFigs.R, which generates figures from the output files.
