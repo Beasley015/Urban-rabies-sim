@@ -125,6 +125,8 @@ ggplot(data=prop_elim, aes(x=factor(sero),
   theme_bw(base_size=16)+
   theme(panel.grid=element_blank())
 
+# ggsave("VaxImmElim.jpeg", width = 10, height = 7, units = "in")
+
 # dev.off()
 
 prop_means <- prop_elim %>%
@@ -848,6 +850,9 @@ recol_vax <- ggplot(data=weekly_probs_condensed,
        y = "Weekly Recolonization Probability")+
   theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
+
+ggsave("recol_vax.jpeg", recol_vax, width = 12, height=7,
+       units = "in")
 
 dev.new(width = 160, height = 120, unit = "mm", res=600)
 
