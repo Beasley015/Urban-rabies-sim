@@ -115,17 +115,17 @@ ggplot(data=prop_elim, aes(x=factor(sero),
                                            y = prop,
                                color = factor(rate),
                                group = factor(rate)))+
-  geom_point()+
-  geom_smooth(method = 'lm', se = F)+
+  geom_point(size = 1.5)+
+  geom_smooth(method = 'lm', se = F, linewidth = 1.5)+
   #geom_boxplot(fill="lightgray")+
   scale_color_viridis_d(end = 0.9, name = "Weekly Immigrants")+
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
        y = "Proportion Reaching Elimination")+
-  theme_bw(base_size=16)+
+  theme_bw(base_size=20)+
   theme(panel.grid=element_blank())
 
-# ggsave("VaxImmElim.jpeg", width = 10, height = 7, units = "in")
+ggsave("VaxImmElim.jpeg", width = 10, height = 7, units = "in")
 
 # dev.off()
 
