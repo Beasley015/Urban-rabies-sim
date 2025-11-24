@@ -140,7 +140,7 @@ function populate_landscape(;guy_density = 1.5, seros, land_size)
     return lil_guys
 end
 
-function initialize_disease(dat, nstart)
+function initialize_disease(;dat, nstart)
     # Get indices of unvaccinated guys
     unvax = findall(dat.vaccinated .== 0)
 

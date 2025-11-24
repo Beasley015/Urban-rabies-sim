@@ -22,21 +22,18 @@ hab_coefs = [0.124, 0, -0.044, -0.496, 0.56, -0.143, -0.556, 0.441, 0, -0.5]
 # Burlington:
 hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coefs)
 # More urban:
-urban_frame = DataFrame(type = hab_names, prop = more_urban, coef = hab_coefs)
+#urban_frame = DataFrame(type = hab_names, prop = more_urban, coef = hab_coefs)
 # Less urban:
-rural_frame = DataFrame(type = hab_names, prop = less_urban, coef = hab_coefs)
+#rural_frame = DataFrame(type = hab_names, prop = less_urban, coef = hab_coefs)
 
 # Load in functions
 include("Functions_sensitivity.jl")
-
-# Fixed parameters for better comparisons
-Params = [0.3, 1, 0.01, "propagule"]
 
 # Simulation function
 function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, hab_props,
                         amort, jmort)
     # Define average population-level immunity
-    seroprev = Params[1]
+    seroprev = 0.0
 
     # create landscape
     landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_props)
@@ -69,6 +66,8 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
+            # Remove when doing parameter sensitivity
+            #=
             if immigration_type == "propagule"
                 immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
                                 sero_rate=0, immigration_rate=immigration_rate, year=year)
@@ -78,6 +77,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
                                 type="wave", sero_rate=0, immigration_rate=immigration_rate, year=year)
                 end
             end
+            =#
 
             # Dispersal
             if step == 43
@@ -110,7 +110,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
 
             # Initialize disease when population stabilizes
             if year == 2 && step == 1
-                initialize_disease(lil_guys, nstart=start_cases)
+                initialize_disease(dat=lil_guys, nstart=start_cases)
             end           
 
             elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
@@ -119,12 +119,14 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
             
             # Calculate summary statistics and append to data frame
-            row = [rep, year, step, land_size, maxK, l1, l2, start_cases, hab_props, amort, jmort, size(buffer,1), 
+            row = [rep, year, step, land_size, maxK, l1, l2, start_cases, hab_props, # change hab_props to name of object
+                     amort, jmort, size(buffer,1), 
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
                     elimination]
 
             push!(outputs, row)
         end
+        println(string("year = ", year))
     end
 end
 
@@ -132,7 +134,7 @@ end
 # Create empty data frame
 
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[],[]],
-                    ["rep", "year", "week", "land_size", "maxK", "lambda1", "lambda2", "starting_cases",,
+                    ["rep", "year", "week", "land_size", "maxK", "lambda1", "lambda2", "starting_cases",
                     "a_mort", "j_mort", "urbanization", "total_pop", "n_infected", "n_symptomatic",
                     "actual_sero", "elim"])
 
@@ -147,13 +149,13 @@ for i in 1:length(a_morts)
     for j in 1:length(j_morts)
         for k in 1:length(Ks)
             for rep in 1:reps
-                the_mega_loop(years=11, time_steps = 52, seros=Params[1], rep=rep, immigration_disease = Params[3], 
-                                immigration_type=Params[1], immigration_rate = Params[2], outputs = outputs,
-                                land_size=60, maxK=Ks[k], l1=0.035, l2=0.02, start_cases=10, hab_props=hab_frame,
-                                amort = a_morts[i], jmort=j_morts[j])
+                the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=Ks[k], l1=0.035,
+                             l2=0.02, start_cases=10, hab_props=hab_frame, amort = a_morts[i], jmort=j_morts[j])
 
-        print(string("K = ", Ks[k], ", AdultMortality = ", a_morts[i], ", JuvieMortality = ", j_morts[j], 
-                ", rep = " rep))
+        println(string("K = ", Ks[k], ", AdultMortality = ", a_morts[i], ", JuvieMortality = ", j_morts[j], 
+                ", rep = ", rep))
+            end
+        end
     end
 end
 
