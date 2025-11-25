@@ -5,6 +5,9 @@ library(R0)
 
 setwd("./ParamSensitivity")
 
+# Carrying capacity: max K, adult mortality, juvie mortality ---------
+read.csv("K_mortality_sensitivity.csv", nrows = 20)
+
 # Population size ---------------------
 pop <- read.csv("kmax10.csv") %>%
   select(rep, year, week, total_pop, amort, jmort) %>%
