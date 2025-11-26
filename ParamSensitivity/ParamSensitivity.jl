@@ -63,7 +63,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
+            #spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
 
             # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
             # Remove when doing parameter sensitivity
@@ -109,9 +109,11 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
             # Initialize disease when population stabilizes
+            #=
             if year == 2 && step == 1
                 initialize_disease(dat=lil_guys, nstart=start_cases)
             end           
+            =#
 
             elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
 
@@ -119,7 +121,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
             
             # Calculate summary statistics and append to data frame
-            row = [rep, year, step, land_size, maxK, l1, l2, start_cases, hab_props, # change hab_props to name of object
+            row = [rep, year, step, land_size, maxK, l1, l2, start_cases, "hab_placeholder", # change hab_props to name of object
                      amort, jmort, size(buffer,1), 
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
                     elimination]
@@ -135,11 +137,11 @@ end
 
 outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[],[]],
                     ["rep", "year", "week", "land_size", "maxK", "lambda1", "lambda2", "starting_cases",
-                    "a_mort", "j_mort", "urbanization", "total_pop", "n_infected", "n_symptomatic",
+                    "urbanization","a_mort", "j_mort", "total_pop", "n_infected", "n_symptomatic",
                     "actual_sero", "elim"])
 
 
-reps = 20
+reps = 10
 
 a_morts = [0.005, 0.0075, 0.01]
 j_morts = [0.015, 0.02, 0.025]
