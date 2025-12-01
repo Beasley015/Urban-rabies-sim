@@ -9,10 +9,6 @@ using CSV
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
-# Alternate 1: more urban than Burlington
-more_urban = []
-# Alternate 2: less urban than Burlington
-less_urban = []
 
 # Data frame of habitat types & movement coefficients (see McClure et al. 2022)
 hab_names = ["Deciduous", "DevLo", "Pasture", "DevHi", "Wetlands", "Conifers", "Crops", "Shrub",
@@ -21,22 +17,17 @@ hab_coefs = [0.124, 0, -0.044, -0.496, 0.56, -0.143, -0.556, 0.441, 0, -0.5]
 
 # Burlington:
 hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coefs)
-# More urban:
-#urban_frame = DataFrame(type = hab_names, prop = more_urban, coef = hab_coefs)
-# Less urban:
-#rural_frame = DataFrame(type = hab_names, prop = less_urban, coef = hab_coefs)
 
 # Load in functions
 include("Functions_sensitivity.jl")
 
 # Simulation function
-function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, hab_props,
-                        amort, jmort)
+function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, amort, jmort)
     # Define average population-level immunity
     seroprev = 0.0
 
     # create landscape
-    landscape = initialize_land(land_size=land_size, barrier_strength = 0, habitats = hab_props)
+    landscape = initialize_land(land_size=land_size, barrier_strength = 0)
 
     # Create array of vaccination probabilities
     vaxprob = fill(seroprev, (land_size,land_size))
@@ -135,17 +126,16 @@ end
 # Run it!
 # Create empty data frame
 
-outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[],[]],
+outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
                     ["rep", "year", "week", "land_size", "maxK", "lambda1", "lambda2", "starting_cases",
-                    "urbanization","a_mort", "j_mort", "total_pop", "n_infected", "n_symptomatic",
-                    "actual_sero", "elim"])
+                    "a_mort", "j_mort", "total_pop", "n_infected", "n_symptomatic", "actual_sero", "elim"])
 
 
 reps = 10
 
 a_morts = [0.005, 0.0075, 0.01]
 j_morts = [0.015, 0.02, 0.025]
-Ks = [8,10,12]
+Ks = [12, 15, 18]
 
 for i in 1:length(a_morts)
     for j in 1:length(j_morts)

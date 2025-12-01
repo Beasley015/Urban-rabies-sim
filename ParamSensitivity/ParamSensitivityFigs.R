@@ -6,44 +6,26 @@ library(R0)
 setwd("./ParamSensitivity")
 
 # Carrying capacity: max K, adult mortality, juvie mortality ---------
-read.csv("K_mortality_sensitivity.csv", nrows = 20)
-
-# Population size ---------------------
-pop <- read.csv("kmax10.csv") %>%
-  select(rep, year, week, total_pop, amort, jmort) %>%
+kmort <- read.csv("K_mortality_sensitivity.csv") %>%
+  select(rep, year, week, total_pop, a_mort, j_mort, maxK) %>%
   mutate(nweek = ((year-1)*52)+week)
 
-ggplot(data=pop, aes(x = nweek, y = total_pop, 
-                     color = factor(rep)))+
-  geom_line()+
-  scale_color_viridis_d(name = "Rep", end = 0.9)+
-  facet_grid(rows = vars(amort), cols=vars(jmort))+
-  labs(x = "Week", y = "Population Size", title = "Max K = 40")+
-  theme_bw(base_size = 12)+
-  theme(panel.grid = element_blank())
-
-# ggsave("maxcc_10.jpeg", width = 7, height = 4, units = "in")
-
-# Compare July and October population sizes ------------
-seasonal <- pop %>%
+seasonal <- kmort %>%
   filter(week %in% c(28:31, 41:44)) %>%
   mutate(season = case_when(week %in% c(28:31) == T ~ "Summer",
                             TRUE ~ "Fall"))
 
 seasonal.summary <- seasonal %>%
-  group_by(amort, jmort, season) %>%
-  summarise(mean = mean(total_pop), min = min(total_pop),
-            max = max(total_pop))
+  group_by(maxK, a_mort, j_mort, season) %>%
+  summarise(mean_dens = mean(total_pop)/625, min = min(total_pop)/625,
+            max = max(total_pop)/625)
 
-ggplot(data = seasonal, aes(x = season, y = total_pop))+
-  geom_boxplot(fill = 'lightgray')+
-  facet_grid(rows = vars(amort), cols = vars(jmort))+
-  labs(x = "Season", y = "Carrying Capacity", title = "Max K = 40")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
+# summer empirical range 7.75–27.25, mean 15
+# fall empirical range 6.75–15, mean 11
 
-# ggsave("seasonal_pop_10.jpeg", width = 5, height = 4,
-#        units = "in")
+likely.combos <- seasonal.summary %>%
+  mutate(likely = case_when(season=="Summer" & mean_dens>12 & mean_dens<18 ~ "YES",
+                            TRUE ~ "NO"))
 
 # Transmission Rates: Wide Sweep -----------
 # dis.wide <- read.csv("disease_test_widenet.csv") %>%

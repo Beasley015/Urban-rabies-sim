@@ -1,5 +1,5 @@
 # Create simulated landscapes
-function initialize_land(;land_size = 60, barrier_strength=0, habitats)
+function initialize_land(;land_size = 60, barrier_strength=0)
     # 1 cell = 0.5 km by 0.5 km
     # 5-cell buffer in outputs
 
