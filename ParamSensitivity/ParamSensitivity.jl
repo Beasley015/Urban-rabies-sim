@@ -112,8 +112,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             buffer = filter([:x, :y] => (x, y) -> 5 < x < 55 && 5 < y < 55, lil_guys)
             
             # Calculate summary statistics and append to data frame
-            row = [rep, year, step, land_size, maxK, l1, l2, start_cases, "hab_placeholder", # change hab_props to name of object
-                     amort, jmort, size(buffer,1), 
+            row = [rep, year, step, land_size, maxK, l1, l2, start_cases, amort, jmort, size(buffer,1), 
                     sum(buffer.incubation), sum(buffer.infectious), sum(buffer.vaccinated)/size(buffer,1), 
                     elimination]
 
@@ -142,7 +141,7 @@ for i in 1:length(a_morts)
         for k in 1:length(Ks)
             for rep in 1:reps
                 the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=Ks[k], l1=0.035,
-                             l2=0.02, start_cases=10, hab_props=hab_frame, amort = a_morts[i], jmort=j_morts[j])
+                             l2=0.02, start_cases=10, amort = a_morts[i], jmort=j_morts[j])
 
         println(string("K = ", Ks[k], ", AdultMortality = ", a_morts[i], ", JuvieMortality = ", j_morts[j], 
                 ", rep = ", rep))
