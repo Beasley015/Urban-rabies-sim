@@ -27,14 +27,16 @@ likely.combos <- seasonal.summary %>%
   mutate(likely = case_when(season=="Summer" & mean_dens>12 & mean_dens<18 ~ "YES",
                             TRUE ~ "NO"))
 
-k_18 <- seasonal %>%
+k_18 <- kmort %>%
   filter(maxK==18) %>%
-  group_by(a_mort, j_mort, nweek) %>%
+  group_by(a_mort, j_mort, nweek, rep) %>%
   summarise(mean_pop = mean(total_pop))
 
-ggplot(k_18, aes(x = nweek, y = mean_pop))+
+ggplot(k_18, aes(x = nweek, y = mean_pop, color = factor(rep)))+
   geom_line()+
-  geom_vline(xintercept = c(18, 18+52))
+  # geom_vline(xintercept = c(18, 18+52))+
+  scale_color_viridis_d()+
+  facet_grid(rows=vars(a_mort), cols = vars(j_mort))
 # Problem with dispersal function??
 
 # Transmission Rates: Wide Sweep -----------
