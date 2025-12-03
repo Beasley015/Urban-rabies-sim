@@ -98,7 +98,7 @@ function initialize_land(;land_size = 60, barrier_strength=0)
 end
 
 # Initialize raccoon populations
-function populate_landscape(;guy_density = 1.5, seros, land_size)
+function populate_landscape(;guy_density = 3, seros, land_size)
     # Define main area of simulation
     xmin = 6; xmax = land_size-5
     ymin = 6; ymax = land_size-5

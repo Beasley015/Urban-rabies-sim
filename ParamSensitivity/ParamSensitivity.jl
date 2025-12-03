@@ -134,7 +134,7 @@ reps = 10
 
 a_morts = [0.005, 0.0075, 0.01]
 j_morts = [0.015, 0.02, 0.025]
-Ks = [12, 15, 18]
+Ks = [18, 21, 24]
 
 for i in 1:length(a_morts)
     for j in 1:length(j_morts)

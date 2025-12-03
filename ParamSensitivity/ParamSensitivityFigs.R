@@ -27,6 +27,16 @@ likely.combos <- seasonal.summary %>%
   mutate(likely = case_when(season=="Summer" & mean_dens>12 & mean_dens<18 ~ "YES",
                             TRUE ~ "NO"))
 
+k_18 <- seasonal %>%
+  filter(maxK==18) %>%
+  group_by(a_mort, j_mort, nweek) %>%
+  summarise(mean_pop = mean(total_pop))
+
+ggplot(k_18, aes(x = nweek, y = mean_pop))+
+  geom_line()+
+  geom_vline(xintercept = c(18, 18+52))
+# Problem with dispersal function??
+
 # Transmission Rates: Wide Sweep -----------
 # dis.wide <- read.csv("disease_test_widenet.csv") %>%
 dis.wide <- read.csv("disease_test_l1.csv") %>%
