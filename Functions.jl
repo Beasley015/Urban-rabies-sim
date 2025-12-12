@@ -439,84 +439,53 @@ function juvies_leave(dat, home, land_size)
     # Get Juveniles
     juvies = dat[findall(x -> x<52, dat.age),:]
 
-    # Create break point so it doesn't get stuck
-    niter = 0
-
-    while size(juvies,1) > 0
-        niter = niter + 1
-
-        # Pick a direction from list of inline functions
-        upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
-        left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
-        downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
-        directions = rand([upleft, up, upright, left, right, 
+    # Pick a direction from list of inline functions
+    upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
+    left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
+    downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
+    directions = rand([upleft, up, upright, left, right, 
                         downleft, down, downright], size(juvies,1))
 
-        # Get dispersal distance
-        distances = rand(Poisson(3), size(juvies,1))
-
-        # RUN!
-        coords = Vector(undef, size(juvies,1))
-
-        for i in 1:length(distances)
-            coords[i] = [juvies.x[i], juvies.y[i]]
-                for j in 1:distances[i]
-                coords[i] = directions[i](coords[i][1], coords[i][2])
-            end
-        end
-
-        juvies.x = [x[1] for x in coords]
-        juvies.y = [x[2] for x in coords]
-
-        # Get indices of agents that left the landscape
-        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, juvies.x),
-                                        findall(x-> x .< 0 || x .> land_size, juvies.y)]...)))
-
-        # Remove adults that left the landscape
-        gone_id = juvies.id[gone_indices]
-        deleteat!(juvies, gone_indices)
-
-        # Update full data frame
-        juvies_indices=findall(x-> x in(juvies.id), dat.id)
-        dat[juvies_indices,:] = juvies
-        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
-
-        # Update home coords data frame
-        home.x[juvies_indices] = juvies.x
-        home.y[juvies_indices] = juvies.y
-        home.id[juvies_indices] = juvies.id
-        deleteat!(home, findall(x-> x in(gone_id), home.id))
+    # Get dispersal distance
+    distances = rand(Poisson(0.75), size(juvies,1))
     
-        # Find coordinates with multiple guys
-        new_location = Vector(undef, size(dat,1))
-        for i in 1:size(dat,1)
-            new_location[i] = (dat.x[i], dat.y[i]) 
-        end
-    
-        many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
-        indices = [findall(==(x), new_location) for x in many_guys]
-    
-        # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 10) #can adjust this number
-    
-        good_spots = many_guys[enough_guys]
-    
-        good_indices = Vector(undef, length(good_spots))
-        for i in 1:length(good_spots)
-            good_indices[i] = intersect(findall(x -> x == good_spots[i][1], juvies.x), findall(x -> x == good_spots[i][2], juvies.y))
-        end    
+    # RUN!
+    coords = Vector(undef, size(juvies,1))
 
-        deleteat!(juvies,sort(unique(vcat(good_indices...))))
-
-        if niter > 2
-            break
+    for i in 1:length(distances)
+        coords[i] = [juvies.x[i], juvies.y[i]]
+        for j in 1:distances[i]
+            coords[i] = directions[i](coords[i][1], coords[i][2])
         end
     end
+
+    juvies.x = [x[1] for x in coords]
+    juvies.y = [x[2] for x in coords]
+
+    # Get indices of agents that left the landscape
+    gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, juvies.x),
+                                    findall(x-> x .< 0 || x .> land_size, juvies.y)]...)))
+
+    # Remove agents that left the landscape
+    gone_id = juvies.id[gone_indices]
+    deleteat!(juvies, gone_indices)
+
+    # Update full data frame
+    juvies_indices=findall(x-> x in(juvies.id), dat.id)
+    dat[juvies_indices,:] = juvies
+    deleteat!(dat, findall(x-> x in(gone_id), dat.id))
+
+     # Update home coords data frame
+    home.x[juvies_indices] = juvies.x
+    home.y[juvies_indices] = juvies.y
+    home.id[juvies_indices] = juvies.id
+    deleteat!(home, findall(x-> x in(gone_id), home.id))
+
 end
 
 # Adult dispersal
 function adults_move(dat, home, land_size, year)
-    if year < 5
+    if year < 3
         # Place home range attractor at current position-
         # Helps center the rare wandering raccoon while population stabilizes
         home = deepcopy(dat[:,[1,2,3]])
@@ -548,80 +517,48 @@ function adults_move(dat, home, land_size, year)
     # Adults in a non-crowded cell do not disperse
     deleteat!(adults,sort(unique(vcat(good_indices...))))
 
-    # Create break point so it doesn't get stuck
-    niter = 0
+    # Pick a direction from list of inline functions
+    upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
+    left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
+    downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
+    directions = rand([upleft, up, upright, left, right, 
+                    downleft, down, downright], size(adults,1))
 
-    while size(adults,1) > 0
-        niter = niter + 1
+    # Get dispersal distance (shorter for adults)
+    distances = rand(Poisson(0.5), size(adults,1))
 
-        # Pick a direction from list of inline functions
-        upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
-        left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
-        downleft(x,y)=[x-1, y-1]; down(x,y)=[x, y-1]; downright(x,y)=[x+1, y-1]
-        directions = rand([upleft, up, upright, left, right, 
-                        downleft, down, downright], size(adults,1))
+    # RUN!
+    coords = Vector(undef, size(adults,1))
 
-        # Get dispersal distance (shorter for adults)
-        distances = rand(Poisson(2), size(adults,1))
-
-        # RUN!
-        coords = Vector(undef, size(adults,1))
-
-        for i in 1:length(distances)
-            coords[i] = [adults.x[i], adults.y[i]]
-                for j in 1:distances[i]
-                coords[i] = directions[i](coords[i][1], coords[i][2])
-            end
-        end
-
-        adults.x = [x[1] for x in coords]
-        adults.y = [x[2] for x in coords]
-
-        # Get indices of adults that left the landscape
-        gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, adults.x),
-                                        findall(x-> x .< 0 || x .> land_size, adults.y)]...)))
-
-        # Remove adults that left the landscape
-        gone_id = adults.id[gone_indices]
-        deleteat!(adults, gone_indices)
-
-        # Update full data frame
-        adults_indices=findall(x-> x in(adults.id), dat.id)
-        dat[adults_indices,:] = adults
-        deleteat!(dat, findall(x-> x in(gone_id), dat.id))
-
-        # Update home coords data frame
-        home.x[adults_indices] = adults.x
-        home.y[adults_indices] = adults.y
-        home.id[adults_indices] = adults.id
-        deleteat!(home, findall(x-> x in(gone_id), home.id))
-    
-        # Find coordinates with multiple guys
-        new_location = Vector{Tuple{Int64, Int64}}(undef, size(dat,1))
-        for i in 1:size(dat,1)
-            new_location[i] = (dat.x[i], dat.y[i]) 
-        end
-    
-        many_guys = collect(keys(filter(kv -> kv.second > 1, countmap(new_location))))
-        indices = [findall(==(x), new_location) for x in many_guys]
-    
-        # Find cells with less than max number of guys
-        enough_guys = findall(length.(indices) .<= 10) #can adjust this number
-    
-        good_spots = many_guys[enough_guys]
-    
-        good_indices = Vector{Vector{Int64}}(undef, length(good_spots))
-        for i in 1:length(good_spots)
-            good_indices[i] = intersect(findall(x -> x == good_spots[i][1], adults.x), 
-                                        findall(x -> x == good_spots[i][2], adults.y))
-        end    
-
-        deleteat!(adults,sort(unique(vcat(good_indices...))))
-
-        if niter > 2
-            break
+    for i in 1:length(distances)
+        coords[i] = [adults.x[i], adults.y[i]]
+        for j in 1:distances[i]
+            coords[i] = directions[i](coords[i][1], coords[i][2])
         end
     end
+
+    adults.x = [x[1] for x in coords]
+    adults.y = [x[2] for x in coords]
+
+    # Get indices of adults that left the landscape
+    gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, adults.x),
+                                    findall(x-> x .< 0 || x .> land_size, adults.y)]...)))
+
+    # Remove adults that left the landscape
+    gone_id = adults.id[gone_indices]
+    deleteat!(adults, gone_indices)
+
+    # Update full data frame
+    adults_indices=findall(x-> x in(adults.id), dat.id)
+    dat[adults_indices,:] = adults
+    deleteat!(dat, findall(x-> x in(gone_id), dat.id))
+
+    # Update home coords data frame
+    home.x[adults_indices] = adults.x
+    home.y[adults_indices] = adults.y
+    home.id[adults_indices] = adults.id
+    deleteat!(home, findall(x-> x in(gone_id), home.id))
+    
 end
 
 # Immigration function

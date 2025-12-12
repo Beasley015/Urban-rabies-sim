@@ -71,7 +71,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             =#
 
             # Dispersal
-            if step == 43
+            if 41 <= step <= 45
                 # all juveniles go through the dispersal function, but a dispersal distance of 0 is possible
                 juvies_leave(lil_guys, home_coords, land_size)
             
@@ -130,28 +130,29 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
                     "a_mort", "j_mort", "total_pop", "n_infected", "n_symptomatic", "actual_sero", "elim"])
 
 
-reps = 10
+reps = 1
+
 
 a_morts = [0.005, 0.0075, 0.01]
 j_morts = [0.015, 0.02, 0.025]
 Ks = [20, 25, 30]
 
-for i in 1:length(a_morts)
-    for j in 1:length(j_morts)
-        for k in 1:length(Ks)
+#for i in 1:length(a_morts)
+    #for j in 1:length(j_morts)
+        #for k in 1:length(Ks)
             for rep in 1:reps
-                the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=Ks[k], l1=0.035,
-                             l2=0.02, start_cases=10, amort = a_morts[i], jmort=j_morts[j])
+                the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=Ks[1], l1=0.035,
+                             l2=0.02, start_cases=10, amort = a_morts[1], jmort=j_morts[1])
 
         println(string("K = ", Ks[k], ", AdultMortality = ", a_morts[i], ", JuvieMortality = ", j_morts[j], 
                 ", rep = ", rep))
             end
-        end
-    end
-end
+        #end
+    #end
+#end
 
 # Create filename
 filename = string("K_mortality_sensitivity.csv")
 
 # Save results
-CSV.write(filename, outputs)
+#CSV.write(filename, outputs)

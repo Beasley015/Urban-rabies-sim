@@ -72,7 +72,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
 
             # Dispersal
-            if step == 43
+            if 41 <= step <= 45
                 # all juveniles go through the dispersal function, but a dispersal distance of 0 is possible
                 juvies_leave(lil_guys, home_coords, land_size)
             
