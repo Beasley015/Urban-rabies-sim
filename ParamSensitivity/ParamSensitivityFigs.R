@@ -1,4 +1,5 @@
 library(tidyverse)
+library(patchwork)
 library(viridis)
 library(DescTools)
 library(R0)
@@ -25,19 +26,81 @@ seasonal.summary <- seasonal %>%
 
 likely.combos <- seasonal.summary %>%
   mutate(likely = case_when(season=="Summer" & mean_dens>12 & mean_dens<18 ~ "YES",
-                            TRUE ~ "NO"))
+                            season=="Fall" & mean_dens>8 & mean_dens<14 ~ "YES",
+                            TRUE ~ "NO")) %>%
+  filter(likely == "YES") 
+  # Drop combos that are not realistic in both seasons:
+  
+best.combos <- likely.combos %>%
+  group_by(maxK, a_mort, j_mort) %>%
+  summarise(nlikely = n()) %>%
+  filter(nlikely == 2) %>%
+  select(-nlikely)
+  
+# Filter best combos from full output
+kmort.best <- best.combos %>%
+  left_join(kmort, by = c('maxK', 'a_mort', 'j_mort'))
 
-k_18 <- kmort %>%
-  filter(maxK==18) %>%
-  group_by(a_mort, j_mort, nweek, rep) %>%
-  summarise(mean_pop = mean(total_pop))
+# Make figures: seasonal comparisons
+season.allreps <- seasonal %>%
+  group_by(maxK, a_mort, j_mort, season, rep) %>%
+  summarise(mean_dens = mean(total_pop)/625, min = min(total_pop)/625,
+            max = max(total_pop)/625)
 
-ggplot(k_18, aes(x = nweek, y = mean_pop, color = factor(rep)))+
-  geom_line()+
-  # geom_vline(xintercept = c(18, 18+52))+
-  scale_color_viridis_d()+
-  facet_grid(rows=vars(a_mort), cols = vars(j_mort))
-# Problem with dispersal function??
+best.season <- best.combos %>%
+  left_join(season.allreps, by = c('maxK', 'a_mort', 'j_mort'))
+
+dens_fig_list <- list()
+for(i in 1:nrow(best.combos)){
+  row <- best.combos[i,]
+  
+  test <- filter(best.season, maxK==row[1], a_mort==row[2], j_mort==row[3])
+  
+  dens_fig_list[[i]] <- ggplot(data=test, aes(x = season, y = mean_dens))+
+    geom_boxplot(fill = 'lightgray')+
+    geom_segment(aes(x = 0.65, xend = 1.35, y = 11, yend = 11),
+                 linewidth = 1.5, linetype = "dashed")+
+    geom_segment(aes(x = 1.65, xend = 2.35, y = 15, yend = 15),
+                 linewidth = 1.5, linetype = "dashed")+
+    labs(x = "Season", y = "Mean Density",
+         title = paste("Max K = ", row[1], ", Adult Mortality = ", row[2],
+                       ", Juvenile Mortality = ", row[3], sep = ""))+
+    theme_bw(base_size = 12)+
+    theme(panel.grid = element_blank()) 
+}
+
+layout <- "
+AABB
+CCDD
+EEFF
+"
+
+dens_fig_list[[1]]+dens_fig_list[[2]]+dens_fig_list[[3]]+dens_fig_list[[4]]+
+  dens_fig_list[[5]]+dens_fig_list[[6]]+
+  plot_layout(design=layout)
+
+ggsave(filename="density_sens.jpeg", width = 14, height = 10, units = "in")
+
+# Make figures: total population
+pop_fig_list <- list()
+for(i in 1:nrow(best.combos)){
+  row <- best.combos[i,]
+  
+  test <- filter(kmort.best, maxK==row[1], a_mort==row[2], j_mort==row[3])
+  
+  pop_fig_list[[i]] <- ggplot(data=test, aes(x = nweek, y = total_pop))+
+    stat_summary(geom = "ribbon", fun.data = mean_cl_normal, fill = 'lightgray')+
+    stat_summary(geom = "line", fun = mean)+
+    labs(x = "Week", y = "Population Size",
+         title = paste("Max K = ", row[1], ", Adult Mortality = ", row[2],
+                       ", Juvenile Mortality = ", row[3], sep = ""))+
+    theme_bw(base_size = 12)+
+    theme(panel.grid=element_blank()) 
+}
+
+pop_fig_list[[3]]/pop_fig_list[[5]]/pop_fig_list[[6]]
+
+# ggsave(filename="K_sens.jpeg", width = 14, height = 7, units = "in")
 
 # Transmission Rates: Wide Sweep -----------
 # dis.wide <- read.csv("disease_test_widenet.csv") %>%
