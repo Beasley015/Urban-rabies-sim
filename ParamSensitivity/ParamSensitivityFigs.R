@@ -102,67 +102,149 @@ pop_fig_list[[3]]/pop_fig_list[[5]]/pop_fig_list[[6]]
 
 # ggsave(filename="K_sens.jpeg", width = 14, height = 7, units = "in")
 
-# Transmission Rates: Wide Sweep -----------
-# dis.wide <- read.csv("disease_test_widenet.csv") %>%
-dis.wide <- read.csv("disease_test_l1.csv") %>%
+# Transmission Rates: lambda1 Wide Sweep -----------
+# Combine files into 1, if needed
+# filenames <- list.files(pattern = "broadsweep.csv")
+# 
+# file.list <- list()
+# for(i in 1:length(filenames)){
+#   file.list[[i]] <- read.csv(filenames[i])
+# }
+# 
+# lambda1.frame <- do.call(rbind, file.list)
+# 
+# write.csv(lambda1.frame, "l1_sens_wide.csv")
+# file.remove(filenames)
+
+# Read in data
+dis.wide <- read.csv("l1_sens_wide.csv") %>%
   select(rep, year, week, total_pop, n_infected, 
-         n_symptomatic, elim, l1) %>%
+         n_symptomatic, elim, lambda1) %>%
   mutate(nweek = ((year-1)*52)+week)
 
 # proportion eliminated
 prop_eliminated <- dis.wide %>%
   filter(year >= 2, elim == "True") %>%
-  select(rep, l1) %>%
-  group_by(l1) %>%
+  select(rep, lambda1) %>%
+  group_by(lambda1) %>%
   distinct() %>%
   summarise(prop = n()/10)
+# 0.0224 has lowest elimination rate at 60%
 
 unique(prop_eliminated$prop)
 
 # Time to elimination
 time_to_elim <- dis.wide %>%
-  group_by(l1, rep) %>%
+  group_by(lambda1, rep) %>%
   filter(year >= 2, elim == "True") %>%
   filter(nweek == min(nweek)) %>%
+  # Filter trials with no persistence:
+  filter(lambda1 > 0.005 & lambda1 < 0.13) %>% 
   distinct() %>%
-  mutate(l1 = factor(l1))
+  mutate(lambda1 = factor(lambda1))
+
+all_combos <- expand_grid(unique(time_to_elim$lambda1), 
+                          unique(time_to_elim$rep))
+colnames(all_combos) <- c("lambda1", "rep")
+
+time_to_elim <- time_to_elim %>%
+  right_join(all_combos, by=c("rep", "lambda1")) %>%
+  mutate(nweek = case_when(is.na(nweek)==T ~ 52*11,
+                           TRUE ~ nweek))
 
 time_to_elim %>%
   ungroup() %>%
-  group_by(l1) %>%
+  group_by(lambda1) %>%
   summarise(meantime = median(nweek))
 
-elim_l1 <- ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
+ggplot(data = time_to_elim, aes(x = lambda1, y = nweek))+
   geom_boxplot(fill = "lightgray")+
   labs(x = "Transmission Rate", y = "Week of Elimination")+
-  theme_bw()+
+  theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-(elim_wide/elim_l1)+
-  plot_annotation(tag_levels = "a")
+ggsave("weekelim_wide.jpeg", width = 8, height = 6,
+       units = "in")
 
-# ggsave("weekelim_wide.jpeg", width = 10, height = 4,
-#        units = "in")
-
+# Weekly cases
 mean_cases <- dis.wide %>%
   filter(nweek > 70, elim == "False") %>%
-  mutate(l1 = factor(l1, levels = sort(unique(l1)))) %>%
-  group_by(rep, l1) %>%
+  filter(lambda1 > 0.005 & lambda1 < 0.13) %>% 
+  mutate(lambda1 = factor(lambda1, levels = sort(unique(lambda1)))) %>%
+  group_by(rep, lambda1) %>%
   summarise(mean.cases = median(n_symptomatic))
 
 mean_cases %>%
   ungroup() %>%
-  group_by(l1) %>%
+  group_by(lambda1) %>%
   summarise(meancases = median(mean.cases))
 
-ggplot(data=mean_cases, aes(x=l1, y = mean.cases))+
+ggplot(data=mean_cases, aes(x=lambda1, y = mean.cases))+
   geom_boxplot(fill = 'lightgray')+
   labs(x = "Transmission Rate", y = "Median Weekly Cases")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-# ggsave("medcase_wide_10rep.jpeg", width = 6, height = 4,
+# ggsave("medcase_wide.jpeg", width = 8, height = 6,
 #        units = "in")
+
+# R_e calculation
+dis.wide <- dis.wide %>%
+  filter(lambda1 > 0.005 & lambda1 < 0.13)
+
+first_elim <- dis.wide %>%
+  filter(year >= 2) %>%
+  filter(elim == "True") %>%
+  group_by(rep, lambda1) %>%
+  summarise(first = min(nweek))
+
+r.list.l1 <- list()
+for(i in 1:length(unique(dis.wide$rep))){
+  for(j in 1:length(unique(dis.wide$lambda1))){
+    test <- filter(dis.wide, rep==i & 
+                     lambda1==unique(dis.wide$lambda1)[j]) %>%
+      filter(year >= 2)
+    
+    elim_test <- filter(first_elim, 
+                        rep==i & lambda1==unique(dis.wide$lambda1)[j]) 
+    
+    if(nrow(elim_test) != 1){next}
+    
+    start <- as.numeric(min(which(test$n_symptomatic>0)))
+    end <- elim_test$first-53
+    
+    re.test <- try(re <- estimate.R(epid = 
+                                      test$n_symptomatic[start:end], 
+                                    GT=generation.time("gamma", c(4.5, 1)),
+                                    method = 'TD', nsim = 1000))
+    
+    if(class(re.test) %in% 'try-error') {next} else {
+      re <- estimate.R(epid = 
+                         test$n_symptomatic[start:end], 
+                       GT=generation.time("gamma", c(4.5, 1)),
+                       method = 'TD', nsim = 1000)
+    }
+    
+    vec <- c(unique(test$rep), unique(test$lambda1),
+             median(re$estimates$TD$R))
+    
+    len <- length(r.list.l1)
+    r.list.l1[[len+1]] <- vec
+  }
+}
+
+re.df <- as.data.frame(do.call(rbind, r.list.l1))
+colnames(re.df) <- c("rep", "lambda1", "Re")
+
+ggplot(data = re.df, aes(x = factor(lambda1), y = Re))+
+  geom_boxplot(fill = 'lightgray')+
+  geom_hline(yintercept = 1.13, linetype = "dashed",
+             linewidth = 1)+
+  labs(x = expression(lambda[1]), y = expression(R[e]))+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# ggsave("re_l1_wide.jpeg", width = 8, height = 6, units = "in")
 
 # Transmission Rates: l2 wide sweep -------------
 dis.wide <- read.csv("disease_test_l2wide.csv") %>%
