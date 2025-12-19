@@ -21,8 +21,16 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 # Load in functions
 include("Functions_sensitivity.jl")
 
-# Assign job #
-job = 1#parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+# Create table of param combinations
+lambda1 = [0.01, 0.015, 0.02, 0.025, 0.03]
+lambda2 = [0.004, 0.005, 0.006, 0.007]
+
+all_combos = DataFrame(Iterators.product(lambda1, lambda2))
+
+# Assign job 
+job = 1 #parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+
+params = [all_combos[job,1], all_combos[job,2]]
 
 # Simulation function
 function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, amort, jmort)
@@ -119,7 +127,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
 
             push!(outputs, row)
         end
-        println(string("year = ", year))
+        #println(string("year = ", year))
     end
 end
 
@@ -131,17 +139,15 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
                     "a_mort", "j_mort", "total_pop", "n_infected", "n_symptomatic", "actual_sero", "elim"])
 
 
-reps = 10
-
-lambda2 = [0.001, 0.00197, 0.0039, 0.0077, 0.0152, 0.03]
+reps = 20
 
 for rep in 1:reps
-    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=0.0275,
-                    l2=lambda2[job], start_cases=10, amort = 0.0075, jmort=0.015)
+    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=params[1],
+                    l2=params[2], start_cases=10, amort = 0.0075, jmort=0.015)
 end
 
 # Create filename
-filename = string("lambda2", lambda2[job], "_broadsweep.csv")
+filename = string("l1", params[1], "l2", params[2], ".csv")
 
 # Save results
 CSV.write(filename, outputs)
