@@ -28,7 +28,7 @@ lambda2 = [0.004, 0.005, 0.006, 0.007]
 all_combos = DataFrame(Iterators.product(lambda1, lambda2))
 
 # Assign job 
-job = 1 #parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 
 params = [all_combos[job,1], all_combos[job,2]]
 
