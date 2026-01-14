@@ -127,7 +127,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
 
             push!(outputs, row)
         end
-        #println(string("year = ", year))
+        println(string("year = ", year))
     end
 end
 

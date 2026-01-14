@@ -100,7 +100,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.001)
     dist_weights = Vector{Vector{Float64}}(undef, length(coords))
     cons = Vector{Vector{Float64}}(undef, length(coords))
 
-    for i in 1:length(coords)
+    for i in eachindex(coords)
         # Get habitat type to create weights
         habs = landscape[CartesianIndex.([x[1] for x in coords[i]], [x[2] for x in coords[i]])]
     
@@ -290,7 +290,7 @@ function dont_fear_the_reaper(;dat, home, k, amort, jmort)
     no_mom = findall(x -> !(x in dat.id), dat.mom[findall(dat.age .< 20)])
 
     deleteat!(home, no_mom)
-    filter!(:mom => !in(dat.mom[findall(dat.age .< 30)][no_mom]), dat)
+    filter!(:mom => !in(dat.mom[findall(dat.age .< 20)][no_mom]), dat)
     
     # Density-related mortality
     # get coordinates where there are multiple guys
