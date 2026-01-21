@@ -308,7 +308,7 @@ function dont_fear_the_reaper(;dat, home, k, amort, jmort)
     crowded_spots = many_guys[too_many_guys]
 
     crowded_indices = Vector{Vector{Int64}}(undef, length(crowded_spots))
-    for i in 1:length(crowded_spots)
+    for i in eachindex(crowded_spots)
         # Another slowdown
         crowded_indices[i] = findall(x -> x.x == crowded_spots[i][1] && x.y == crowded_spots[i][2], eachrow(dat))
     end

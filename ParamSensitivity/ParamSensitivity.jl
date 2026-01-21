@@ -4,8 +4,6 @@ using Distributions
 using Random
 using NeutralLandscapes 
 using CSV
-#using Dates
-#using PProf
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
@@ -28,7 +26,7 @@ lambda2 = [0.004, 0.005, 0.006, 0.007]
 all_combos = DataFrame(Iterators.product(lambda1, lambda2))
 
 # Assign job 
-job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+job = 20 #parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 
 params = [all_combos[job,1], all_combos[job,2]]
 
@@ -144,6 +142,8 @@ reps = 20
 for rep in 1:reps
     the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=params[1],
                     l2=params[2], start_cases=10, amort = 0.0075, jmort=0.015)
+
+    println(string("rep = ", rep))
 end
 
 # Create filename

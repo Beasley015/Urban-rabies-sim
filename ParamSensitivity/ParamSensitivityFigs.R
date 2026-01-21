@@ -393,116 +393,167 @@ re.df %>%
   summarise(re = median(Re))
 # All are *slightly* too high... but the 0.004-0.008 range is closest
 
-# Transmission Rates -----------------------
-# Note: pop immunity set at 0, immigration rate low, no imm disease
-dis <- read.csv("disease_test.csv") %>%
-  select(rep, year, week, total_pop, n_infected, n_symptomatic, elim,
-         l1, l2) %>%
+# Transmission Rates: full sweep -----------------------
+# Combine files 
+# filenames <- list.files(pattern = "l1\\d+")
+# 
+# file.list <- list()
+# for(i in 1:length(filenames)){
+#   file.list[[i]] <- read.csv(filenames[i])
+# }
+# 
+# lambda.frame <- do.call(rbind, file.list)
+# 
+# write.csv(lambda.frame, "lambda_full.csv")
+# file.remove(filenames)
+
+# Read in data
+dis.wide <- read.csv("lambda_full.csv") %>%
+  select(rep, year, week, total_pop, n_infected, 
+         n_symptomatic, elim, lambda1, lambda2) %>%
   mutate(nweek = ((year-1)*52)+week)
 
-# Compare proportion of outbreaks eliminated
-prop_eliminated <- dis %>%
+# proportion eliminated
+prop_eliminated <- dis.wide %>%
   filter(year >= 2, elim == "True") %>%
-  select(rep, l1, l2) %>%
-  group_by(l1, l2) %>%
+  select(rep,lambda1,lambda2) %>%
+  group_by(lambda1,lambda2) %>%
   distinct() %>%
-  summarise(prop = n()/5)
+  summarise(prop = n()/20)
+# Elimination ranges from 20% to 70%
 
 unique(prop_eliminated$prop)
 
-# Some combos had 0% elimination, add to data
-combos <- expand_grid(prop_eliminated$l1, prop_eliminated$l2)
-colnames(combos) <- c("l1", "l2")
-
-prop_eliminated <- prop_eliminated %>%
-  right_join(combos, by = c("l1", "l2")) %>%
-  distinct() %>%
-  mutate(prop = case_when(is.na(prop) == T ~ 0,
-                          TRUE ~ prop))
-
-# Proportion eliminated: figs
-ggplot(prop_eliminated, aes(x = factor(l1), 
-                            y = factor(l2),
-                            fill = factor(prop)))+
+ggplot(data=prop_eliminated, aes(x=factor(lambda1), y=factor(lambda2),
+                                 fill=prop))+
   geom_tile()+
-  scale_fill_viridis_d(name = "Proportion eliminated")+
-  labs(x = "Within-cell transmission", y = "Between-cell transmission")+
-  theme_bw()
+  scale_fill_viridis(name = "Proportion Eliminated")+
+  labs(x = "Lambda 1", y = "Lambda 2")+
+  theme_bw(base_size=12)
+# no clear pattern
 
-# ggsave(filename = "propelimheat.jpeg", width = 5, height = 4,
-#        units = "in")
+# ggsave("full_lambda_elim.jpeg", height = 6, width = 7, units = "in")
 
-# Weeks to elimination
-time_to_elim <- dis %>%
-  group_by(l1, rep, l2) %>%
+# Time to elimination
+time_to_elim <- dis.wide %>%
+  group_by(lambda1, lambda2, rep) %>%
   filter(year >= 2, elim == "True") %>%
   filter(nweek == min(nweek)) %>%
-  # right_join(combos, by = c("l1", "l2")) %>%
   distinct() %>%
-  mutate(l1 = factor(l1), 
-         l2 = factor(l2, levels = c(0.007, 0.008, 0.009, 0.01,
-                                    0.011)))
+  mutate(lambda2 = factor(lambda2), lambda1=factor(lambda1))
 
-ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Within-cell transmission", y = "Week")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
+# all_combos <- expand_grid(unique(time_to_elim$lambda1), 
+#                           unique(time_to_elim$lambda2), 
+#                           unique(time_to_elim$rep))
+# colnames(all_combos) <- c("lambda1", "lambda2", "rep")
 
-# ggsave(filename = "celltransmissionbox.jpeg", width = 5,
-#        height = 4, units = "in")
+time_to_elim <- time_to_elim %>%
+  # right_join(all_combos, by=c("rep", "lambda1", "lambda2")) %>%
+  mutate(nweek = case_when(is.na(nweek)==T ~ 52*11,
+                           TRUE ~ nweek)) %>%
+  group_by(lambda1, lambda2) %>%
+  summarise(meantime = median(nweek))
 
-ggplot(data = time_to_elim, aes(x = l2, y = nweek))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Home Range Transmission", y = "Week")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "hrtransmissionbox.jpeg", width = 5, 
-#        height = 4, units = "in")
-
-ggplot(data = time_to_elim, aes(x = l1, y = l2,
-                                fill = nweek))+
+ggplot(data = time_to_elim, aes(x = lambda1, y = lambda2,
+                                fill=meantime))+
   geom_tile()+
-  scale_fill_viridis_c(name = "Week")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
-  theme_bw()
+  scale_fill_viridis(name = "Week of Elimination")+
+  labs(x = "Lambda 1", y = "Lambda 2")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+# Lowest l1 and l2 eliminate very quickly
 
-# ggsave(filename = "transmissionheatmap.jpeg", width = 5,
-#        height = 4, units = "in")
-
-# Check with cases per week
-ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
-                       color = factor(rep)))+
-  geom_line()+
-  geom_hline(yintercept = 50, linetype = "dashed")+
-  facet_grid(rows = vars(l1), cols = vars(l2))+
-  scale_color_viridis_d(end = 0.9, name = "Rep")+
-  xlim(c(52+1, 600))+
-  theme_bw()+
-  theme(panel.grid=element_blank())
-
-# ggsave(filename = "facet_disease.jpeg", width = 10, height = 9,
+# ggsave("TimeToElim_full.jpeg", width = 8, height = 6,
 #        units = "in")
 
-mean_cases <- dis %>%
-  filter(nweek > 100, elim == "False") %>%
-  group_by(rep, l1,l2) %>%
+# Weekly cases
+mean_cases <- dis.wide %>%
+  filter(nweek > 70, elim == "False") %>%
+  mutate(lambda1 = factor(lambda1, levels = sort(unique(lambda1))), 
+         lambda2 = factor(lambda2, levels = sort(unique(lambda2)))) %>%
+  group_by(rep, lambda1, lambda2) %>%
   summarise(mean.cases = median(n_symptomatic)) %>%
-  mutate(l1 = factor(l1),l2 = factor(l2))
+  ungroup() %>%
+  group_by(lambda1, lambda2) %>%
+  summarise(meancases = median(mean.cases))
 
-ggplot(data=mean_cases, aes(x=l1, y = mean.cases))+
-  geom_boxplot()
-
-ggplot(data=mean_cases, aes(x = l1, y = l2,
-                           fill = mean.cases))+
+ggplot(data=mean_cases, aes(x=lambda1, y = lambda2,
+                            fill = meancases))+
   geom_tile()+
   scale_fill_viridis(name = "Median Weekly Cases")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
-  theme_bw()
+  labs(x = "Lambda 1", y = "Lambda 2")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+# Highest l2 generally hass to many
 
-# ggsave(filename = "meancases_heatmap.jpeg", width = 5,
-#        height = 4, units = "in")
+# ggsave("medcase_full.jpeg", width = 8, height = 6,
+#        units = "in")
+
+# Re calculation
+dis <- dis.wide %>%
+  filter(year > 1)
+
+first_elim <- dis %>%
+  filter(elim == "True") %>%
+  group_by(rep, lambda1, lambda2) %>%
+  summarise(first = min(nweek))
+
+r0.list <- list()
+for(i in 1:length(unique(dis$rep))){
+  for(j in 1:length(unique(dis$lambda1))){
+    for(k in 1:length(unique(dis$lambda2))){
+      test <- filter(dis, rep==i & lambda1==unique(dis$lambda1)[j] & lambda2==unique(dis$lambda2)[k]) 
+      elim_test <- filter(first_elim, 
+                        rep==i & lambda1==unique(dis$lambda1)[j] & lambda2==unique(dis$lambda2)[k]) 
+    
+      if(nrow(elim_test) != 1){next}
+    
+      start <- as.numeric(min(which(test$n_symptomatic>0)))
+      end <- elim_test$first-53
+    
+      r0.test <- try(r0 <- estimate.R(epid = 
+                                        test$n_symptomatic[start:end], 
+                                      GT=generation.time("gamma", c(4.5, 1)),
+                                      method = 'TD', nsim = 1000))
+    
+      if(class(r0.test) %in% 'try-error') {next} else {
+        r0 <- estimate.R(epid = 
+                           test$n_symptomatic[start:end], 
+                         GT=generation.time("gamma", c(4.5, 1)),
+                         method = 'TD', nsim = 1000)
+      }
+    
+      vec <- c(unique(test$rep), unique(test$lambda1), unique(test$lambda2), median(r0$estimates$TD$R))
+    
+      len <- length(r0.list)
+      r0.list[[len+1]] <- vec
+    }
+  }
+}
+
+r0.df <- as.data.frame(do.call(rbind, r0.list))
+colnames(r0.df) <- c("rep", "lambda1", "lambda2", "Re")
+
+r0.df <- r0.df %>%
+  group_by(lambda1, lambda2) #%>%
+  # filter(Re < quantile(Re, 0.975) & Re > quantile(Re, 0.025))
+
+re.means <- r0.df %>%
+  ungroup() %>%
+  group_by(lambda1, lambda2) %>%
+  summarise(mean.re = median(Re))
+
+ggplot(data=re.means, aes(x=lambda1, y = lambda2, fill = mean.re))+
+  geom_tile()+
+  scale_fill_viridis(name=expression(R[e]))+
+  labs(x = "Lambda 1", y = "Lambda 2")+
+  theme_bw(base_size=12)
+
+# ggsave("re_full.jpeg", width = 8, height = 6,
+#        units = "in")
+
+re.tab <-filter(re.means, mean.re > 1.1 & mean.re < 1.25)
+write.table(re.tab, file="re_table.csv", sep = ",")
 
 # Population sizes with disease ------------------
 dis_pop <- dis %>%

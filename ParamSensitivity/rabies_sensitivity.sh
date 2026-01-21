@@ -1,10 +1,10 @@
 #! /bin/bash
 #SBATCH --array=1-20
-#SBATCH --time=9:00:00
+#SBATCH --time=12:00:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=ctb-tpoisot
 #SBATCH --output=slurm\%x-%a.out 
-#SBATCH --mem-per-cpu=150G
+#SBATCH --mem-per-cpu=175G
 #SBATCH --mail-user=ebeasley@bu.edu
 #SBATCH --mail-type=ALL
 
