@@ -53,6 +53,9 @@ best.season <- best.combos %>%
 dens_fig_list <- list()
 for(i in 1:nrow(best.combos)){
   row <- best.combos[i,]
+  row1 <- as.vector(row[1])[[1]]
+  row2 <- as.vector(row[2])[[1]]
+  row3 <- as.vector(row[3])[[1]]
   
   test <- filter(best.season, maxK==row[1], a_mort==row[2], j_mort==row[3])
   
@@ -63,8 +66,9 @@ for(i in 1:nrow(best.combos)){
     geom_segment(aes(x = 1.65, xend = 2.35, y = 15, yend = 15),
                  linewidth = 1.5, linetype = "dashed")+
     labs(x = "Season", y = "Mean Density",
-         title = paste("Max K = ", row[1], ", Adult Mortality = ", row[2],
-                       ", Juvenile Mortality = ", row[3], sep = ""))+
+         title = bquote(expr = ~ K[max] == .(row1) ~ ", Adult Mortality =" ~
+                          .(row2) ~ ", Juvenile Mortality =" ~ .(row3),
+                        where = globalenv()))+
     theme_bw(base_size = 12)+
     theme(panel.grid = element_blank()) 
 }
@@ -85,6 +89,9 @@ ggsave(filename="density_sens.jpeg", width = 14, height = 10, units = "in")
 pop_fig_list <- list()
 for(i in 1:nrow(best.combos)){
   row <- best.combos[i,]
+  row1 <- as.vector(row[1])[[1]]
+  row2 <- as.vector(row[2])[[1]]
+  row3 <- as.vector(row[3])[[1]]
   
   test <- filter(kmort.best, maxK==row[1], a_mort==row[2], j_mort==row[3])
   
@@ -92,8 +99,9 @@ for(i in 1:nrow(best.combos)){
     stat_summary(geom = "ribbon", fun.data = mean_cl_normal, fill = 'lightgray')+
     stat_summary(geom = "line", fun = mean)+
     labs(x = "Week", y = "Population Size",
-         title = paste("Max K = ", row[1], ", Adult Mortality = ", row[2],
-                       ", Juvenile Mortality = ", row[3], sep = ""))+
+         title = bquote(expr = ~ K[max] == .(row1) ~ ", Adult Mortality =" ~
+                          .(row2) ~ ", Juvenile Mortality =" ~ .(row3),
+                        where = globalenv()))+
     theme_bw(base_size = 12)+
     theme(panel.grid=element_blank()) 
 }
@@ -159,12 +167,13 @@ time_to_elim %>%
 
 ggplot(data = time_to_elim, aes(x = lambda1, y = nweek))+
   geom_boxplot(fill = "lightgray")+
-  labs(x = "Transmission Rate", y = "Week of Elimination")+
+  labs(x = bquote("Transmission Rate (" ~ lambda[1] ~ ")"), 
+       y = "Week of Elimination")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-ggsave("weekelim_wide.jpeg", width = 8, height = 6,
-       units = "in")
+ggsave("weekelim_wide.jpeg", width = 10, height = 6,
+       units = "in", dpi = 300)
 
 # Weekly cases
 mean_cases <- dis.wide %>%
@@ -181,7 +190,8 @@ mean_cases %>%
 
 ggplot(data=mean_cases, aes(x=lambda1, y = mean.cases))+
   geom_boxplot(fill = 'lightgray')+
-  labs(x = "Transmission Rate", y = "Median Weekly Cases")+
+  labs(x = bquote("Transmission Rate (" ~ lambda[1] ~ ")"), 
+       y = "Median Weekly Cases")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
@@ -240,7 +250,8 @@ ggplot(data = re.df, aes(x = factor(lambda1), y = Re))+
   geom_boxplot(fill = 'lightgray')+
   geom_hline(yintercept = 1.13, linetype = "dashed",
              linewidth = 1)+
-  labs(x = expression(lambda[1]), y = expression(R[e]))+
+  labs(x = bquote("Transmission Rate (" ~ lambda[1] ~ ")"),
+       y = expression(R[e]))+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
@@ -301,8 +312,9 @@ time_to_elim %>%
 
 ggplot(data = time_to_elim, aes(x = lambda2, y = nweek))+
   geom_boxplot(fill = "lightgray")+
-  labs(x = "Transmission Rate", y = "Week of Elimination")+
-  theme_bw(base_size = 14)+
+  labs(x = bquote("Transmission Rate (" ~ lambda[2] ~ ")"), 
+       y = "Week of Elimination")+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 ggsave("weekelim_wide_l2.jpeg", width = 8, height = 6,
@@ -324,8 +336,8 @@ mean_cases %>%
 
 ggplot(data=mean_cases, aes(x=lambda2, y = mean.cases))+
   geom_boxplot(fill = 'lightgray')+
-  labs(x = "Transmission Rate", y = "Median Weekly Cases")+
-  theme_bw(base_size = 14)+
+  labs(x = bquote("Transmission Rate (" ~ lambda[2] ~ ")"), y = "Median Weekly Cases")+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 # ggsave("medcase_wide_l2.jpeg", width = 8, height = 6,
@@ -381,8 +393,8 @@ ggplot(data = re.df, aes(x = factor(lambda2), y = Re))+
   geom_boxplot(fill = 'lightgray')+
   geom_hline(yintercept = 1.13, linetype = "dashed",
              linewidth = 1)+
-  labs(x = expression(lambda[2]), y = expression(R[e]))+
-  theme_bw(base_size = 14)+
+  labs(x = bquote("Transmission Rate (" ~ lambda[2] ~ ")"), y = expression(R[e]))+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
 # ggsave("re_l2_wide.jpeg", width = 8, height = 6, units = "in")
@@ -432,7 +444,7 @@ ggplot(data=prop_eliminated, aes(x=factor(lambda1), y=factor(lambda2),
   theme_bw(base_size=12)
 # no clear pattern
 
-# ggsave("full_lambda_elim.jpeg", height = 6, width = 7, units = "in")
+# ggsave("full_lambda_elim.jpeg", height = 5, width = 7, units = "in")
 
 # Time to elimination
 time_to_elim <- dis.wide %>%
@@ -458,10 +470,14 @@ ggplot(data = time_to_elim, aes(x = lambda1, y = lambda2,
                                 fill=meantime))+
   geom_tile()+
   scale_fill_viridis(name = "Week of Elimination")+
-  labs(x = "Lambda 1", y = "Lambda 2")+
-  theme_bw(base_size = 14)+
+  labs(x = expression(lambda[1]), y = expression(lambda[2]))+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 # Lowest l1 and l2 eliminate very quickly
+
+# Start filtering values
+poss.combos <- time_to_elim %>%
+  filter(meantime > 52*7) # want rabies to last at least half of the sim
 
 # ggsave("TimeToElim_full.jpeg", width = 8, height = 6,
 #        units = "in")
@@ -481,10 +497,14 @@ ggplot(data=mean_cases, aes(x=lambda1, y = lambda2,
                             fill = meancases))+
   geom_tile()+
   scale_fill_viridis(name = "Median Weekly Cases")+
-  labs(x = "Lambda 1", y = "Lambda 2")+
-  theme_bw(base_size = 14)+
+  labs(x = expression(lambda[1]), y = expression(lambda[2]))+
+  theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
-# Highest l2 generally hass to many
+# Highest l2 generally has too many
+
+poss.combos <- poss.combos %>%
+  left_join(mean_cases, by = c("lambda1", "lambda2")) %>%
+  filter(meancases < 10) # remove cases that are too high
 
 # ggsave("medcase_full.jpeg", width = 8, height = 6,
 #        units = "in")
@@ -541,12 +561,17 @@ r0.df <- r0.df %>%
 re.means <- r0.df %>%
   ungroup() %>%
   group_by(lambda1, lambda2) %>%
-  summarise(mean.re = median(Re))
+  summarise(mean.re = median(Re)) %>%
+  mutate(lambda1=factor(lambda1), lambda2=factor(lambda2))
+
+poss.combos <- poss.combos %>%
+  left_join(re.means, by=c("lambda1", "lambda2")) %>%
+  filter(mean.re < 1.3)
 
 ggplot(data=re.means, aes(x=lambda1, y = lambda2, fill = mean.re))+
   geom_tile()+
   scale_fill_viridis(name=expression(R[e]))+
-  labs(x = "Lambda 1", y = "Lambda 2")+
+  labs(x = expression(lambda[1]), y = expression(lambda[2]))+
   theme_bw(base_size=12)
 
 # ggsave("re_full.jpeg", width = 8, height = 6,
@@ -557,161 +582,24 @@ write.table(re.tab, file="re_table.csv", sep = ",")
 
 # Population sizes with disease ------------------
 dis_pop <- dis %>%
-  group_by(nweek,l1) %>%
-  summarise(mean_pop = mean(total_pop))
+  group_by(nweek,lambda1, lambda2) %>%
+  mutate(lambda1=factor(lambda1), lambda2=factor(lambda2)) %>%
+  filter(lambda1 %in% c(0.015, 0.03) & lambda2 %in% c(0.006, 0.007)) %>%
+  filter(!(lambda1 == 0.03 & lambda2 == 0.007))
 
-ggplot(data = dis_pop, aes (x = nweek, y = mean_pop))+
-  geom_line()+
+ggplot(data = dis_pop, aes (x = nweek, y = total_pop,
+                            color = lambda1))+
+  stat_summary(geom = "line", fun = mean)+
   geom_vline(xintercept = 53, linetype = 'dashed')+
-  # scale_color_viridis_d(name = "Within-cell transmission",
-  #                       end = 0.9)+
-  # facet_grid(rows = vars(l2))+
+  scale_color_viridis_d(name = "Within-cell transmission",
+                        end = 0.9)+
+  facet_grid(rows = vars(lambda2))+
   labs(x="Week", y = "Mean Population Size")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-# ggsave(filename = "pop_direct.jpeg", width = 8, height = 6,
+# ggsave(filename = "pop_change.jpeg", width = 8, height = 6,
 #        units = "in")
-
-ggplot(data = dis_pop, aes (x = nweek, y = mean_pop, 
-                            color = factor(l2)))+
-  geom_line()+
-  geom_vline(xintercept = 53, linetype = 'dashed')+
-  scale_color_viridis_d(name = "Between-cell transmission",
-                        end = 0.9)+
-  labs(x = "Week", y = "Mean Population Size")+
-  # facet_grid(rows = vars(l1))+
-  theme_bw()+
-  theme(panel.grid.minor = element_blank())
-
-# ggsave(filename = "pop_indirect.jpeg", width = 8, height = 6,
-#        units = "in")
-
-# Disease: fewer params, more reps per param -----------
-dis <- read.csv("disease_test_smol.csv") %>%
-  select(rep, year, week, total_pop, n_infected, n_symptomatic,
-         elim, l1, l2) %>%
-  mutate(nweek = ((year-1)*52)+week)
-
-# Compare proportion of outbreaks eliminated
-prop_eliminated <- dis %>%
-  filter(year >= 2, elim == "True") %>%
-  select(rep, l1, l2) %>%
-  group_by(l1, l2) %>%
-  distinct() %>%
-  summarise(prop = n()/20)
-
-unique(prop_eliminated$prop) #ok not bad
-
-prop_eliminated <- prop_eliminated %>%
-  # right_join(combos, by = c("l1", "l2")) %>%
-  distinct() %>%
-  mutate(prop = case_when(is.na(prop) == T ~ 0,
-                          TRUE ~ prop))
-
-# Proportion eliminated: figs
-ggplot(prop_eliminated, aes(x = factor(l1), 
-                            y = factor(l2),
-                            fill = factor(prop)))+
-  geom_tile()+
-  scale_fill_viridis_d(name = "Proportion eliminated")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
-  theme_bw()
-
-# ggsave(filename = "propelimheat_smol.jpeg", width = 5,
-#        height = 4, units = "in")
-
-# Weeks to elimination
-time_to_elim <- dis %>%
-  group_by(l1, l2, rep) %>%
-  filter(year >= 2, elim == "True") %>%
-  filter(nweek == min(nweek)) %>%
-  mutate(l1 = factor(l1), 
-         l2 = factor(l2))
-
-ggplot(data = time_to_elim, aes(x = l1, y = nweek))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Within-cell transmission", y = "Week")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-# ggsave(filename = "celltransmissionbox_smol.jpeg", width = 5,
-#        height = 4, units = "in")
-
-ggplot(data = time_to_elim, aes(x = l2, y = nweek))+
-  geom_boxplot(fill = "lightgray")+
-  labs(x = "Home Range Transmission", y = "Week")+
-  theme_bw()+
-  theme(panel.grid = element_blank())
-
-time_to_elim %>%
-  group_by(l2) %>%
-  summarise(median = median(nweek))
-
-# ggsave(filename = "hrtransmissionbox_smol.jpeg", width = 5,
-#        height = 4,units = "in")
-
-ggplot(data = time_to_elim, aes(x = l1, y = l2,
-                                fill = nweek))+
-  geom_tile()+
-  scale_fill_viridis_c(name = "Week")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
-  theme_bw()
-
-# ggsave(filename = "transmissionheatmap_smol.jpeg", width = 5,
-#        height = 4, units = "in")
-
-# Check with cases per week
-ggplot(data = dis, aes(x = nweek, y = n_symptomatic, 
-                       color = factor(rep)))+
-  geom_line()+
-  geom_hline(yintercept = 50, linetype = "dashed")+
-  facet_grid(rows = vars(l1), cols = vars(l2))+
-  scale_color_viridis_d(end = 0.9, name = "Rep")+
-  xlim(c(53, 600))+
-  theme_bw()+
-  theme(panel.grid=element_blank())
-
-# ggsave(filename = "facet_disease.jpeg", width = 10, height = 9,
-#        units = "in")
-
-mean_cases <- dis %>%
-  filter(nweek > 100, elim == "False") %>%
-  group_by(rep, l2, l1) %>%
-  summarise(mean.cases = mean(n_symptomatic)) %>%
-  mutate(l1 = factor(l1), 
-         l2 = factor(l2))
-
-ggplot(data=mean_cases, aes(x = l2, y = mean.cases))+
-  geom_boxplot(fill='lightgray')+
-  scale_fill_viridis(name = "Mean Weekly Cases")+
-  labs(x = "Within-cell transmission", y = "Home range transmission")+
-  theme_bw()+
-  theme(panel.grid=element_blank())
-
-# ggsave(filename = "meancases_heatmap_smol.jpeg", width = 5,
-#        height = 4,units = "in")
-
-# One transmission value, just to look -----------------
-dis <- read.csv("disease_test_035.csv") %>%
-  select(rep, year, week, total_pop, n_infected, n_symptomatic,
-         elim) %>%
-  mutate(nweek = ((year-1)*52)+week)
-
-# Proportion eliminated
-dis %>%
-  filter(year >= 2, elim == "True") %>%
-  select(rep) %>%
-  distinct() %>%
-  summarise(prop = n()/20) #90%: not great, no worse than others
-
-time_to_elim <- dis %>%
-  group_by(rep) %>%
-  filter(year >= 2, elim == "True") %>%
-  filter(nweek == min(nweek)) 
-
-summary(time_to_elim$nweek) # Mean 215, again no worse than others
-# median is slightly lower than with an l2
 
 # Birth pulse ---------
 births <- pop %>%
@@ -727,98 +615,3 @@ end.year <- pop %>%
   filter(amort == 0.005 & jmort == 0.02)
 
 summary(end.year$mean_growth)
-
-# R-naught -------------------
-dis <- read.csv("disease_test_l2wide.csv") %>%
-  select(rep, year, week, total_pop, n_infected, 
-         n_symptomatic, elim, l2) %>%
-  mutate(nweek = ((year-1)*52)+week) %>%
-  filter(year > 1)
-
-dis <- read.csv("disease_test_smol.csv") %>%
-  select(rep, year, week, total_pop, n_infected, n_symptomatic,
-         elim, l2) %>%
-  mutate(nweek = ((year-1)*52)+week) %>%
-  # filter(l1 == 0.09 & l2 == 0.01) %>%
-  filter(year > 1)
-
-first_elim <- dis %>%
-  filter(elim == "True") %>%
-  group_by(rep, l2) %>%
-  summarise(first = min(nweek))
-
-r0.list <- list()
-for(i in 1:length(unique(dis$rep))){
-  # for(j in 1:length(unique(dis$l1))){
-    for(k in 1:length(unique(dis$l2))){
-      test <- filter(dis, rep==i & l2==unique(dis$l2)[k]) 
-      elim_test <- filter(first_elim, 
-                          rep==i & l2==unique(dis$l2)[k]) 
-    
-      if(nrow(elim_test) != 1){next}
-  
-      start <- as.numeric(min(which(test$n_symptomatic>0)))
-      end <- elim_test$first-53
-
-      r0.test <- try(r0 <- estimate.R(epid = 
-                               test$n_symptomatic[start:end], 
-                  GT=generation.time("gamma", c(4.5, 1)),
-                  method = 'TD', nsim = 1000))
-    
-      if(class(r0.test) %in% 'try-error') {next} else {
-            r0 <- estimate.R(epid = 
-                               test$n_symptomatic[start:end], 
-                  GT=generation.time("gamma", c(4.5, 1)),
-                  method = 'SB', nsim = 1000)
-      }
-    
-      vec <- c(unique(test$rep), unique(test$l2),
-              median(r0$estimates$TD$R))
-             
-      len <- length(r0.list)
-      r0.list[[len+1]] <- vec
-     }
-   # }
-}
-
-r0.df <- as.data.frame(do.call(rbind, r0.list))
-colnames(r0.df) <- c("rep", "l1", "R0")
-
-r0.df <- r0.df %>%
-  group_by(rep, l1) %>%
-  filter(R0 < quantile(.$R0, 0.975) && 
-           Re > quantile(.$R0, 0.025))
-
-r0.df %>%
-  ungroup() %>%
-  group_by(l1) %>%
-  summarise(mean.r0 = median(R0))
-
-ggplot(data = r0.df, aes(x = factor(l1), y = R0))+
-  geom_boxplot(fill='lightgray')+
-  labs(x = "Core Transmission", y = bquote(R[0]))+
-  theme_bw(base_size = 14)+
-  theme(panel.grid=element_blank())
-
-# ggsave(filename="R_0_sensitivity.jpeg", width = 5,
-# height = 3.5, units = 'in')
-
-# Epicurves, just for fun ----------------------
-curve.df <- dis %>%
-  filter(l1 == 0.035, l2 ==0.007) %>%
-  mutate(nweek = (year-1)*52+week) %>%
-  select(rep, nweek, n_symptomatic)
-
-
-ggplot(data = curve.df, aes(x=nweek, y = n_symptomatic,
-                            group = rep, color = factor(rep)))+
-  geom_smooth(se = F, span = 0.2)+
-  scale_y_continuous(limits = c(0, NA))+
-  scale_x_continuous(limits = c(NA, 350))+
-  scale_color_viridis_d(end = 0.9)+
-  labs(x = "Week", y = "Cases")+
-  theme_bw(base_size = 15)+
-  theme(panel.grid=element_blank(), legend.position = "None")
-
-ggsave(filename="example_epicurve.jpeg", width = 5, height = 4, 
-       units = "in")
