@@ -20,6 +20,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions_sensitivity.jl")
 
 # Create table of param combinations
+#=
 lambda1 = [0.01, 0.015, 0.02, 0.025, 0.03]
 lambda2 = [0.004, 0.005, 0.006, 0.007]
 
@@ -29,6 +30,7 @@ all_combos = DataFrame(Iterators.product(lambda1, lambda2))
 job = 20 #parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 
 params = [all_combos[job,1], all_combos[job,2]]
+=#
 
 # Simulation function
 function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, amort, jmort)
@@ -138,16 +140,19 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 
 
 reps = 20
+cases = [5, 10, 20, 40]
 
 for rep in 1:reps
-    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=params[1],
-                    l2=params[2], start_cases=10, amort = 0.0075, jmort=0.015)
+    for i in 1:length(cases)
+        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=0.015,
+                        l2=0.006, start_cases=cases[i], amort = 0.0075, jmort=0.015)
 
-    println(string("rep = ", rep))
+        println(string("starting cases = ", cases[i], ", rep = ", rep))
+    end
 end
 
 # Create filename
-filename = string("l1", params[1], "l2", params[2], ".csv")
+filename = "starting_cases.csv"
 
 # Save results
 CSV.write(filename, outputs)
