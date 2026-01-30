@@ -615,3 +615,119 @@ end.year <- pop %>%
   filter(amort == 0.005 & jmort == 0.02)
 
 summary(end.year$mean_growth)
+
+# Starting cases ------------------
+# Read it in
+stcase <- read.csv("starting_cases.csv") %>%
+  filter(year > 1) %>%
+  select(rep, year, week, starting_cases, total_pop, n_infected,
+         n_symptomatic, elim) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+# Differences in elimination probability?
+stcase.elim <- stcase %>%
+  filter(elim == "True") %>%
+  select(rep,starting_cases) %>%
+  group_by(starting_cases) %>%
+  distinct() %>%
+  summarise(prop = n()/20)
+# Not really- 40-55% probability with no clear pattern
+
+# Time to elimination
+stcase.time <- stcase %>%
+  group_by(starting_cases, rep) %>%
+  filter(elim == "True") %>%
+  filter(nweek == min(nweek)) %>%
+  distinct() %>%
+  mutate(starting_cases=factor(starting_cases))
+
+ggplot(stcase.time, aes(x = starting_cases, y = nweek))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Starting Cases", y = "Week of Elimination")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+summary(aov(nweek~starting_cases, data=stcase.time))
+
+# Weekly cases, max and median
+stcase.cases <- stcase %>%
+  select(starting_cases, rep, n_symptomatic) %>%
+  mutate(starting_cases=factor(starting_cases)) %>%
+  group_by(starting_cases, rep) %>%
+  summarise(medcase = median(n_symptomatic), maxcase = max(n_symptomatic))
+  
+ggplot(stcase.cases, aes(x = starting_cases, y=medcase))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Starting Cases", y = "Median Weekly Cases")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+ggplot(stcase.cases, aes(x = starting_cases, y=maxcase))+
+  geom_boxplot(fill = 'lightgray')+
+  labs(x = "Starting Cases", y = "Maximum Weekly Cases")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+maxcase.mod <- aov(maxcase~starting_cases, data=stcase.cases)
+TukeyHSD(maxcase.mod)
+# 10 & 5 are equivalent; 20 and 40 lead to increase
+
+# Re
+first_elim <- stcase %>%
+  filter(year >= 2) %>%
+  filter(elim == "True") %>%
+  group_by(rep, starting_cases) %>%
+  summarise(first = min(nweek))
+
+r.list <- list()
+for(i in 1:length(unique(stcase$rep))){
+  for(j in 1:length(unique(stcase$starting_cases))){
+    test <- filter(stcase, rep==i & 
+                     starting_cases==unique(stcase$starting_cases)[j]) %>%
+      filter(year >= 2)
+    
+    elim_test <- filter(first_elim, 
+                        rep==i & 
+                          starting_cases==unique(stcase$starting_cases)[j]) 
+    
+    start <- as.numeric(min(which(test$n_symptomatic>0)))
+    end <- ifelse(nrow(elim_test) != 1,
+                  52*11,
+                  elim_test$first-53)
+    
+    re.test <- try(re <- estimate.R(epid = 
+                                      test$n_symptomatic[start:end], 
+                                    GT=generation.time("gamma", c(4.5, 1)),
+                                    method = 'TD', nsim = 1000))
+    
+    if(class(re.test) %in% 'try-error') {next} else {
+      re <- estimate.R(epid = 
+                         test$n_symptomatic[start:end], 
+                       GT=generation.time("gamma", c(4.5, 1)),
+                       method = 'TD', nsim = 1000)
+    }
+    
+    vec <- c(unique(test$rep), unique(test$starting_cases),
+             median(re$estimates$TD$R))
+    
+    len <- length(r.list)
+    r.list[[len+1]] <- vec
+  }
+}
+
+re.df <- as.data.frame(do.call(rbind, r.list))
+colnames(re.df) <- c("rep", "starting_cases", "Re")
+
+ggplot(data = re.df, aes(x = factor(starting_cases), y = Re))+
+  geom_boxplot(fill = 'lightgray')+
+  geom_hline(yintercept = 1.13, linetype = "dashed",
+             linewidth = 1)+
+  labs(x = "Starting Cases",
+       y = expression(R[e]))+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+summary(aov(Re~starting_cases, data=re.df))
+re.mod <- aov(Re~factor(starting_cases), data=re.df) 
+TukeyHSD(re.mod)
+# it's a gradient, slowly increasing
