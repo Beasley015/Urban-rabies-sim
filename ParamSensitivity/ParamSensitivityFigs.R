@@ -672,6 +672,18 @@ maxcase.mod <- aov(maxcase~starting_cases, data=stcase.cases)
 TukeyHSD(maxcase.mod)
 # 10 & 5 are equivalent; 20 and 40 lead to increase
 
+maxcase.week <- stcase %>%
+  select(starting_cases, rep, n_symptomatic, nweek) %>%
+  mutate(starting_cases=factor(starting_cases)) %>%
+  group_by(starting_cases, rep) %>%
+  filter(n_symptomatic==max(n_symptomatic))
+
+ggplot(data = maxcase.week, aes(x = starting_cases, y = nweek))+
+  geom_boxplot(fill='lightgray')+
+  labs(x = "Starting Cases", y = "Week of Max Cases")+
+  theme_bw(base_size=12)+
+  theme(panel.grid = element_blank())
+
 # Re
 first_elim <- stcase %>%
   filter(year >= 2) %>%

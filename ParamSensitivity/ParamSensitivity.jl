@@ -145,7 +145,7 @@ cases = [5, 10, 20, 40]
 for rep in 1:reps
     for i in 1:length(cases)
         the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=0.015,
-                        l2=0.006, start_cases=cases[i], amort = 0.0075, jmort=0.015)
+                        l2=0.006, start_cases=10, amort = 0.0075, jmort=0.015)
 
         println(string("starting cases = ", cases[i], ", rep = ", rep))
     end
