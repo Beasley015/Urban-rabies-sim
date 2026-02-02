@@ -9,9 +9,9 @@ function initialize_land(;land_size = 60, barrier_strength=0)
 
     # Add buffer habitat (comment out for movement functionality tests)
     landscape[1:5,:] .= 10
-    landscape[56:60,:] .= 10
+    landscape[(land_size-5):land_size,:] .= 10
     landscape[:,1:5] .= 10
-    landscape[:,56:60] .= 10
+    landscape[:,(land_size-5):land_size] .= 10
 
     return landscape
 end
@@ -37,8 +37,8 @@ function populate_landscape(;guy_density = 3, seros, land_size)
     lil_guys.y[lil_guys.y .== 0] .= 1
 
     # Repeat at a low density to populate the buffer
-    xpossible = vcat(1:5, 56:60)
-    ypossible = vcat(1:5, 56:60)
+    xpossible = vcat(1:5, (land_size-5):land_size)
+    ypossible = vcat(1:5, (land_size-5):land_size)
 
     buffer_area = 100
 

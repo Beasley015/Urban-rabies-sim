@@ -45,9 +45,9 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
 
     # Fill in buffer zone
     vaxprob[1:5,:] .= 0.6
-    vaxprob[56:60,:] .= 0.6
+    vaxprob[(land_size-5):land_size,:] .= 0.6
     vaxprob[:,1:5] .= 0.6
-    vaxprob[:,56:60] .= 0.6
+    vaxprob[:,(land_size-5):land_size] .= 0.6
 
     # Populate landscape
     lil_guys = populate_landscape(seros=seroprev, land_size=land_size)
@@ -140,19 +140,19 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 
 
 reps = 20
-cases = [5, 10, 20, 40]
+lsize = [40, 60, 80, 100]
 
 for rep in 1:reps
-    for i in 1:length(cases)
-        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=0.015,
+    for i in 1:length(lsize)
+        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=lsize[i], maxK=30, l1=0.015,
                         l2=0.006, start_cases=10, amort = 0.0075, jmort=0.015)
 
-        println(string("starting cases = ", cases[i], ", rep = ", rep))
+        println(string("land size = ", lsize[i], ", rep = ", rep))
     end
 end
 
 # Create filename
-filename = "starting_cases.csv"
+filename = "land_size.csv"
 
 # Save results
 CSV.write(filename, outputs)
