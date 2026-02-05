@@ -111,7 +111,8 @@ function populate_landscape(;guy_density = 1.5, seros)
     # Create data frame of guys
     lil_guys = DataFrame(id = string.(collect(1:nguys)), x = convert.(Int64,trunc.(xmax*rand(nguys,1)))[:,1],
         y = convert.(Int64,trunc.(ymax*rand(nguys,1)))[:,1], incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0,
-        sex = Int.(rand(Bernoulli(0.5), nguys)), mom = NaN, vaccinated = rand(Bernoulli(seros), nguys), age = rand(52:(52*8), nguys))
+        sex = Int.(rand(Bernoulli(0.5), nguys)), mom = NaN, vaccinated = ifelse(seros==0, rand(Bernoulli(0.1, nguys)),rand(Bernoulli(seros), nguys)), 
+        age = rand(52:(52*8), nguys))
 
     # Remove 0's 
     lil_guys.x[lil_guys.x .== 0] .= 1

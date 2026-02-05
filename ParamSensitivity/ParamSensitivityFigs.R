@@ -743,3 +743,42 @@ summary(aov(Re~starting_cases, data=re.df))
 re.mod <- aov(Re~factor(starting_cases), data=re.df) 
 TukeyHSD(re.mod)
 # it's a gradient, slowly increasing
+
+# Landscape size --------------------
+# Read in outputs
+landsims <- read.csv("land_size.csv") %>%
+  filter(year > 1) %>%
+  select(rep, year, week, land_size, total_pop, n_infected,
+         n_symptomatic, elim) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+# Differences in elimination probability
+landsims.elim <- landsims %>%
+  filter(elim == "True") %>%
+  select(rep,land_size) %>%
+  group_by(land_size) %>%
+  distinct() %>%
+  summarise(prop = n()/20)
+# Strong decreases in elim probability until 80x80
+
+# Prevalence
+land.prev <- landsims %>%
+  filter(elim == "False") %>%
+  select(rep, land_size, nweek, n_symptomatic, total_pop) %>%
+  mutate(prev = n_symptomatic/total_pop) %>%
+  mutate(land_size = case_when(land_size == 40 ~ "40x40",
+                               land_size == 60 ~ "60x60",
+                               land_size == 80 ~ "80x80",
+                               TRUE ~ "100x100")) %>%
+  mutate(land_size = factor(land_size, 
+                            levels = c("40x40", "60x60", "80x80", 
+                                       "100x100"))) %>%
+  group_by(rep, land_size) %>%
+  summarise(med_prev = median(prev))
+
+ggplot(land.prev, aes(x = factor(land_size), y = med_prev))+
+  geom_boxplot(fill = 'lightgray') +
+  labs(x = "Landscape size (# cells)", y = "Median Rabies Prevalence")+
+  theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+  
