@@ -111,7 +111,7 @@ function populate_landscape(;guy_density = 1.5, seros)
     # Create data frame of guys
     lil_guys = DataFrame(id = string.(collect(1:nguys)), x = convert.(Int64,trunc.(xmax*rand(nguys,1)))[:,1],
         y = convert.(Int64,trunc.(ymax*rand(nguys,1)))[:,1], incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0,
-        sex = Int.(rand(Bernoulli(0.5), nguys)), mom = NaN, vaccinated = ifelse(seros==0, rand(Bernoulli(0.1, nguys)),rand(Bernoulli(seros), nguys)), 
+        sex = Int.(rand(Bernoulli(0.5), nguys)), mom = NaN, vaccinated = ifelse(seros==0, rand(Bernoulli(0.1), nguys),rand(Bernoulli(seros), nguys)), 
         age = rand(52:(52*8), nguys))
 
     # Remove 0's 
@@ -263,7 +263,7 @@ function spread_disease(;dat, home)
         HR_exposure = HR_exposure[dat.vaccinated[HR_exposure] .== 0]
 
         # Infect with set probability
-        infections = rand(Bernoulli(0.035), length(HR_exposure))
+        infections = rand(Bernoulli(0.015), length(HR_exposure))
         HR_exposure = HR_exposure[infections .== 1]
 
         dat.incubation[HR_exposure] .= 1
@@ -296,7 +296,7 @@ function spread_disease(;dat, home)
         indirect_exposure = indirect_exposure[dat.vaccinated[indirect_exposure] .== 0]
     
         # Infect with set probability
-        infections = rand(Bernoulli(0.02), length(indirect_exposure))
+        infections = rand(Bernoulli(0.006), length(indirect_exposure))
         indirect_exposure = indirect_exposure[infections .== 1]
 
         dat.incubation[indirect_exposure] .= 1
@@ -385,7 +385,7 @@ function dont_fear_the_reaper(;dat, home)
     indices = [findall(==(x), new_location) for x in many_guys] # This is a major slowdown
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 10) 
+    too_many_guys = findall(length.(indices) .> 30) 
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -401,8 +401,8 @@ function dont_fear_the_reaper(;dat, home)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.02), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(0.0075), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(0.015), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 
@@ -575,7 +575,7 @@ function immigration(;dat, home, land_size, immigration_rate=5, sero_rate=0, dis
         # Data frame of immigrants
         immigrants = DataFrame(id = string.(collect((maximum(parse.(Int64,dat.id))+1):(maximum(parse.(Int64,dat.id))+n_new))), 
                             x = 0, y = 0, incubation = 0, time_since_inf = 0, infectious = 0, time_since_disease = 0, 
-                            sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = 0, age = rand(52:(52*8), n_new))
+                            sex = Int.(rand(Bernoulli(0.5), n_new)), mom = NaN, vaccinated = rand(Bernoulli(0.1), n_new), age = rand(52:(52*8), n_new))
 
         # Initialize disease
         if year > 1

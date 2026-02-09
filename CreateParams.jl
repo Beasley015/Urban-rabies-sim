@@ -4,7 +4,7 @@ using DataAPI
 
 # Write csv of parameters
 serovals = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-imm_rate = [1, 2, 3, 4, 5]
+imm_rate = [0.5, 1, 1.5, 2, 2.5]
 imm_disease = [0, 0.015, 0.03, 0.045, 0.06]
 imm_type = ["propagule","wave"]
 

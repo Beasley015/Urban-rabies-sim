@@ -4,8 +4,6 @@ using Distributions
 using Random
 using NeutralLandscapes 
 using CSV
-#using Dates
-#using PProf
 
 # Land proportions calculated from Burlington raster data
 land_proportions =  [0.2585, 0.2337, 0.1915, 0.1266, 0.0899, 0.0619, 0.0267, 0.0079, 0, 0]
@@ -136,7 +134,7 @@ for rep in 1:reps
 end
 
 # Create filename
-filename = string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = string("/projects/def-tpoisot/ebeasley/outs/sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                     "im_type",string(Params[!,4][1]),".csv")
 
 # Save results
