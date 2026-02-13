@@ -134,7 +134,7 @@ for rep in 1:reps
 end
 
 # Create filename
-filename = string("/projects/def-tpoisot/ebeasley/outs/sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
+filename = string("sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
                     "im_type",string(Params[!,4][1]),".csv")
 
 # Save results
