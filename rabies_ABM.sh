@@ -8,5 +8,5 @@
 #SBATCH --mail-user=ebeasley@bu.edu
 #SBATCH --mail-type=ALL
 
-module load StdEnv/2020 julia/1.9.1 
+module load StdEnv/2023 julia/1.9.3
 julia --project RunTheSim.jl 
