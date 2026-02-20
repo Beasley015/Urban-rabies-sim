@@ -134,8 +134,8 @@ for rep in 1:reps
 end
 
 # Create filename
-filename = string("/home/ebeasley/outputs/sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",string(Params[!,3][1]),
-                    "im_type",string(Params[!,4][1]),".csv")
+filename = string("/home/ebeasley/projects/def-tpoisot/ebeasley/outputs/sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",
+                    string(Params[!,3][1]), "im_type",string(Params[!,4][1]),".csv")
 
 # Save results
 CSV.write(filename, outputs)

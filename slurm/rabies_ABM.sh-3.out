@@ -1,4 +1,4 @@
-ERROR: LoadError: SystemError: opening file "/home/ebeasley/projects/def-tpoisot/ebeasley/outputs/sero0.0im_rate0.5im_dis0.0im_typepropagule.csv": No such file or directory
+ERROR: LoadError: SystemError: opening file "/home/ebeasley/projects/def-tpoisot/ebeasley/outputs/sero0.2im_rate0.5im_dis0.0im_typepropagule.csv": No such file or directory
 Stacktrace:
   [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
     @ Base ./error.jl:176
