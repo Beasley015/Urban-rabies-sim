@@ -1,4 +1,4 @@
-ERROR: LoadError: SystemError: opening file "/home/ebeasley/projects/def-tpoisot/ebeasley/outputs/sero0.3im_rate0.5im_dis0.0im_typepropagule.csv": No such file or directory
+ERROR: LoadError: SystemError: opening file "/outputs/sero0.3im_rate0.5im_dis0.0im_typepropagule.csv": No such file or directory
 Stacktrace:
   [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
     @ Base ./error.jl:176
@@ -15,13 +15,13 @@ Stacktrace:
   [7] open(fname::String, mode::String)
     @ Base ./iostream.jl:355
   [8] with(f::CSV.var"#107#108"{Bool, Bool, Tables.Schema{(:rep, :year, :week, :sero, :disease, :rate, :type, :total_pop, :n_infected, :n_symptomatic, :actual_sero, :elim), NTuple{12, Any}}, DataFrames.DataFrameRows{DataFrame}, CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}, Vector{UInt8}, Int64, Int64, NTuple{12, Symbol}}, io::Any, append::Bool, compress::Bool)
-    @ CSV /project/def-tpoisot/ebeasley/julia/packages/CSV/XLcqT/src/write.jl:286
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:287
   [9] #write#106
-    @ /project/def-tpoisot/ebeasley/julia/packages/CSV/XLcqT/src/write.jl:215 [inlined]
+    @ ~/.julia/packages/CSV/LiiJM/src/write.jl:215 [inlined]
  [10] write(file::String, itr::DataFrame; append::Bool, compress::Bool, writeheader::Nothing, partition::Bool, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
-    @ CSV /project/def-tpoisot/ebeasley/julia/packages/CSV/XLcqT/src/write.jl:199
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:199
  [11] write(file::String, itr::DataFrame)
-    @ CSV /project/def-tpoisot/ebeasley/julia/packages/CSV/XLcqT/src/write.jl:162
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:162
  [12] top-level scope
     @ ~/RunTheSim.jl:141
 in expression starting at /home/ebeasley/RunTheSim.jl:141
