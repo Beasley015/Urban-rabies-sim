@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=def-tpoisot
 #SBATCH --output=/home/ebeasley/slurm/%x-%a.out 
-#SBATCH --mem-per-cpu=180G
+#SBATCH --mem-per-cpu=200G
 #SBATCH --mail-user=ebeasley@bu.edu
 #SBATCH --mail-type=ALL
 
