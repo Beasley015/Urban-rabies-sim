@@ -15,12 +15,57 @@ library(R0)
 library(patchwork)
 
 options(dplyr.summarise.inform = FALSE)
-dir <- "./Outputs" 
+dir <- "./outputs" 
+
+# Condense model outputs -----------------------
+condense <- function(){
+  # Get names of files
+  filenames <- list.files(path = dir, pattern = "*.csv")
+  
+  # Progress bar
+  pb = progressBar(min = 1, max = length(filenames), initial = 1,
+                   style = "ETA") 
+  
+  for(i in 1:length(filenames)){
+    # Read 'em in
+    testfile <- read.csv(paste(getwd(), 
+                               str_replace(dir, ".", ""), "/",
+                               filenames[i],sep = ""))
+   
+    # Append to large df
+    if(i == 1){
+      big.ass.frame <- testfile
+    } else{
+      big.ass.frame <- bind_rows(big.ass.frame, testfile)
+    }
+    
+    setTxtProgressBar(pb,i)
+  }
+    
+  # Split into list of dfs
+  print("Creating list...")
+    
+  big.ass.list <- big.ass.frame %>%
+    group_by(sero, disease, rate, type) %>%
+    group_split()
+    
+  # Save each new csv
+  print("Writing csv's...")
+  lapply(big.ass.list,
+        function(x) write.csv(x, file = paste(dir, "/sero", unique(x$sero), 
+                                              "_disease", unique(x$disease), 
+                                              "_rate", unique(x$rate), "_type",
+                                              unique(x$type), ".csv", 
+                                              sep = "")))
+}
+
+# condense()
 
 # Function: Check immunity rates ------------------
 immune <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
+  filenames <- filenames[str_detect(filenames, "rep")==F]
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -42,11 +87,12 @@ immune <- function(){
     if(i==1){
       vax_frame <- immun_rate
     } else{
-      vax_frame <- rbind(vax_frame, immun_rate)
+      vax_frame <- bind_rows(vax_frame, immun_rate)
     }
     
     setTxtProgressBar(pb,i)
   }
+  
   return(vax_frame)
 }
 
@@ -67,6 +113,7 @@ ggplot(data = vax_frame, aes(x = nweek, y = mean_vax_rate,
 prop_elim <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
+  filenames <- filenames[str_detect(filenames, "rep")==F]
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -106,6 +153,7 @@ prop_elim <- prop_elim() %>%
 # Figs: Proportion of outbreaks eliminated ---------
 # Quick glance
 summary(lm(data=prop_elim, prop~sero+rate+disease+type))
+# 1% increase in sero is approx. 8% increase in elim prob
 
 # dev.new(width = 80, height = 60, unit = "mm", res=600,
 #         noRStudioGD=TRUE)
@@ -122,7 +170,7 @@ ggplot(data=prop_elim, aes(x=factor(sero),
   geom_hline(yintercept=0.95, linetype="dashed") +
   labs(x = "Adult Vaccination Rate", 
        y = "Proportion Reaching Elimination")+
-  theme_bw(base_size=20)+
+  theme_bw(base_size=12)+
   theme(panel.grid=element_blank())
 
 ggsave("VaxImmElim.jpeg", width = 10, height = 7, units = "in")
@@ -146,7 +194,7 @@ ggplot(data=prop_elim, aes(x=factor(sero), y = prop,
   theme_bw(base_size=14)+
   theme(panel.grid=element_blank())
 
-# ggsave("./full_Figs/prop_elim_box.jpeg", width = 7, 
+# ggsave("./full_Figs/prop_elim_box.jpeg", width = 7,
 #        height = 5, units = "in")
 
 ggplot(data = prop_elim, aes(x = factor(sero), y = prop,
@@ -180,23 +228,6 @@ ggplot(data = prop_elim, aes(x = factor(rate),
 # ggsave("./full_Figs/prop_elim_imvars.jpeg",
 #        width = 7, height = 5, units = "in")
 
-# Look at immigration type
-elim.typesero <- prop_elim %>%
-  group_by(type, sero) %>%
-  summarise(mean.prop = mean(prop))
-  
-ggplot(data=prop_elim, aes(x=factor(sero), y=prop, 
-                               fill=type))+
-  geom_boxplot()+
-  scale_fill_viridis_d(name = "Immigration Type", end = 0.9)+
-  labs(x = "Adult Vaccination Rate", 
-       y = "Proportion Eliminated")+
-  theme_bw(base_size = 12)+
-  theme(panel.grid=element_blank())
-  
-# ggsave("./full_Figs/prop_elim_heatmap_imtype.jpeg",
-#        width = 7.5, height = 3, units = "in")
-
 # Rate & type 
 elim.typerate <- prop_elim %>%
   group_by(type, rate) %>%
@@ -217,6 +248,7 @@ ggplot(data=elim.typerate, aes(x=factor(rate), y=type,
 first_elim <- function(){
   # Get names of files
   filenames <- list.files(path = dir, pattern = "*.csv")
+  filenames <- filenames[str_detect(filenames, "rep")==F]
 
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -270,7 +302,7 @@ HSD.test(quicklook, trt = 'sero', console=T)
 ggplot(data = elim_sansbar, aes(x=factor(sero),y=years,
                                 fill = factor(rate)))+
   geom_boxplot()+#fill = 'lightgray')+
-  # geom_jitter()+
+  # geom_point()+
   scale_fill_viridis_d(name='Weekly Immigrants')+
   labs(x = "Adult Vaccination Rate", 
        y = "Time to Elimination (Years)")+
@@ -1353,7 +1385,8 @@ ggplot(data=meancase_seros, aes(x=nweek, y=median_cases,
 # Avg Prevalence -----------------------
 prev <- function(metric){
   # Get names of files
-  filenames <- list.files(path = "./Outputs", pattern = "*.csv")
+  filenames <- list.files(path = "./outputs", pattern = "*.csv")
+  filenames <- filenames[str_detect(filenames, "rep")==F]
   
   # Progress bar
   pb = progressBar(min = 1, max = length(filenames), initial = 1,
@@ -1361,7 +1394,7 @@ prev <- function(metric){
   
   for(i in 1:length(filenames)){
     # Read 'em in
-    testfile <- read.csv(paste(getwd(),"/Outputs/",filenames[i],
+    testfile <- read.csv(paste(getwd(),"/outputs/",filenames[i],
                                sep = ""))
 
     cases_frame <- testfile %>%

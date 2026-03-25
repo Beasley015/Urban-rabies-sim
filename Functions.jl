@@ -263,7 +263,7 @@ function spread_disease(;dat, home)
         HR_exposure = HR_exposure[dat.vaccinated[HR_exposure] .== 0]
 
         # Infect with set probability
-        infections = rand(Bernoulli(0.015), length(HR_exposure))
+        infections = rand(Bernoulli(0.02), length(HR_exposure))
         HR_exposure = HR_exposure[infections .== 1]
 
         dat.incubation[HR_exposure] .= 1
