@@ -1,35 +1,27 @@
-ERROR: LoadError: ArgumentError: input string is empty or only contains whitespace
+ERROR: LoadError: SystemError: opening file "~/outputs/sero0.0im_rate0.5im_dis0.0im_typepropagulerep1.csv": No such file or directory
 Stacktrace:
-  [1] tryparse_internal(#unused#::Type{Int64}, s::String, startpos::Int64, endpos::Int64, base_::Int64, raise::Bool)
-    @ Base ./parse.jl:109
-  [2] parse(::Type{Int64}, s::String; base::Nothing)
-    @ Base ./parse.jl:246
-  [3] parse
-    @ ./parse.jl:245 [inlined]
-  [4] _broadcast_getindex_evalf
-    @ ./broadcast.jl:683 [inlined]
-  [5] _broadcast_getindex
-    @ ./broadcast.jl:666 [inlined]
-  [6] getindex
-    @ ./broadcast.jl:610 [inlined]
-  [7] macro expansion
-    @ ./broadcast.jl:974 [inlined]
-  [8] macro expansion
-    @ ./simdloop.jl:77 [inlined]
-  [9] copyto!
-    @ ./broadcast.jl:973 [inlined]
- [10] copyto!
-    @ ./broadcast.jl:926 [inlined]
- [11] copy
-    @ ./broadcast.jl:898 [inlined]
- [12] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultArrayStyle{1}, Nothing, typeof(parse), Tuple{Base.RefValue{Type{Int64}}, Vector{String}}})
-    @ Base.Broadcast ./broadcast.jl:873
- [13] immigration(; dat::DataFrame, home::DataFrame, land_size::Int64, immigration_rate::Float64, sero_rate::Int64, disease_rate::Float64, type::String, year::Int64)
-    @ Main ~/Functions.jl:576
- [14] immigration
-    @ ~/Functions.jl:566 [inlined]
- [15] the_mega_loop(; years::Int64, time_steps::Int64, seros::Float64, rep::Int64, immigration_type::String15, immigration_disease::Float64, immigration_rate::Float64, outputs::DataFrame)
-    @ Main ~/RunTheSim.jl:63
- [16] top-level scope
-    @ ~/RunTheSim.jl:131
+  [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
+    @ Base ./error.jl:176
+  [2] #systemerror#82
+    @ ./error.jl:175 [inlined]
+  [3] systemerror
+    @ ./error.jl:175 [inlined]
+  [4] open(fname::String; lock::Bool, read::Nothing, write::Nothing, create::Nothing, truncate::Bool, append::Nothing)
+    @ Base ./iostream.jl:293
+  [5] open
+    @ ./iostream.jl:275 [inlined]
+  [6] open(fname::String, mode::String; lock::Bool)
+    @ Base ./iostream.jl:356
+  [7] open(fname::String, mode::String)
+    @ Base ./iostream.jl:355
+  [8] with(f::CSV.var"#107#108"{Bool, Bool, Tables.Schema{(:rep, :year, :week, :sero, :disease, :rate, :type, :total_pop, :n_infected, :n_symptomatic, :actual_sero, :elim), NTuple{12, Any}}, DataFrames.DataFrameRows{DataFrame}, CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}, Vector{UInt8}, Int64, Int64, NTuple{12, Symbol}}, io::Any, append::Bool, compress::Bool)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:287
+  [9] #write#106
+    @ ~/.julia/packages/CSV/LiiJM/src/write.jl:215 [inlined]
+ [10] write(file::String, itr::DataFrame; append::Bool, compress::Bool, writeheader::Nothing, partition::Bool, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:199
+ [11] write(file::String, itr::DataFrame)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:162
+ [12] top-level scope
+    @ ~/RunTheSim.jl:139
 in expression starting at /home/ebeasley/RunTheSim.jl:124

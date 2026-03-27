@@ -103,11 +103,11 @@ ggplot(data = vax_frame, aes(x = nweek, y = mean_vax_rate,
   geom_line()+
   labs(x = "Week", y = "Immunity Rate")+
   scale_color_viridis_d(end = 0.9, name = "Adult Vax Rate")+
-  theme_bw(base_size=14)+
-  theme(panel.grid=element_blank())
+  theme_bw(base_size = 12)+
+  theme(panel.grid=element_blank(), aspect.ratio = 0.618)
 
-# ggsave("./full_Figs/vax_rates.jpeg", width = 7, height = 5,
-#        units = "in")
+# ggsave("./full_Figs/vax_rates.tiff", width = 80, height = 60,
+#        units = "mm", device = 'tiff', dpi = 600)
 
 # Function: Calculate proportion eliminated --------
 prop_elim <- function(){

@@ -1,49 +1,27 @@
-ERROR: LoadError: UndefRefError: access to undefined reference
+ERROR: LoadError: SystemError: opening file "~/outputs/sero0.0im_rate0.5im_dis0.0im_typepropagulerep1.csv": No such file or directory
 Stacktrace:
-  [1] getindex
-    @ ./essentials.jl:13 [inlined]
-  [2] _issorted(v::Vector{Tuple{Int64, Symbol}}, lo::Int64, hi::Int64, o::Base.Order.ForwardOrdering)
-    @ Base.Sort ./sort.jl:1174
-  [3] _sort!
-    @ ./sort.jl:1087 [inlined]
-  [4] _sort!
-    @ ./sort.jl:693 [inlined]
-  [5] _sort!
-    @ ./sort.jl:644 [inlined]
-  [6] _sort!(v::Vector{Tuple{Int64, Symbol}}, a::Base.Sort.Small{10, Base.Sort.InsertionSortAlg, Base.Sort.IEEEFloatOptimization{Base.Sort.IsUIntMappable{Base.Sort.Small{40, Base.Sort.InsertionSortAlg, Base.Sort.CheckSorted{Base.Sort.ComputeExtrema{Base.Sort.ConsiderCountingSort{Base.Sort.CountingSort, Base.Sort.ConsiderRadixSort{Base.Sort.RadixSort, Base.Sort.Small{80, Base.Sort.InsertionSortAlg, Base.Sort.ScratchQuickSort{Missing, Missing, Base.Sort.InsertionSortAlg}}}}}}}, Base.Sort.StableCheckSorted{Base.Sort.ScratchQuickSort{Missing, Missing, Base.Sort.InsertionSortAlg}}}}}, o::Base.Order.ForwardOrdering, kw::NamedTuple{(:scratch, :lo, :hi), Tuple{Nothing, Int64, Int64}})
-    @ Base.Sort ./sort.jl:715
-  [7] _sort!
-    @ ./sort.jl:660 [inlined]
-  [8] _sort!
-    @ ./sort.jl:596 [inlined]
-  [9] #sort!#28
-    @ ./sort.jl:1374 [inlined]
- [10] sort!
-    @ ./sort.jl:1367 [inlined]
- [11] fuzzymatch(l::Dict{Symbol, Int64}, idx::Symbol)
-    @ DataFrames ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:326
- [12] lookupname
-    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:425 [inlined]
- [13] getindex
-    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:440 [inlined]
- [14] getindex
-    @ ~/.julia/packages/DataFrames/C5AEe/src/dataframe/dataframe.jl:557
- [15] getproperty
-    @ ~/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:448 [inlined]
- [16] (::var"#11#20"{DataFrame})(c::Tuple{Int64, Int64})
-    @ Main ./none:0
- [17] iterate
-    @ ./generator.jl:47 [inlined]
- [18] collect_to!(dest::Vector{Vector{Int64}}, itr::Base.Generator{Vector{Tuple{Int64, Int64}}, var"#11#20"{DataFrame}}, offs::Int64, st::Int64)
-    @ Base ./array.jl:840
- [19] collect_to_with_first!(dest::Vector{Vector{Int64}}, v1::Vector{Int64}, itr::Base.Generator{Vector{Tuple{Int64, Int64}}, var"#11#20"{DataFrame}}, st::Int64)
-    @ Base ./array.jl:818
- [20] collect(itr::Base.Generator{Vector{Tuple{Int64, Int64}}, var"#11#20"{DataFrame}})
-    @ Base ./array.jl:792
- [21] move(coords::Vector{Vector{Tuple{Int64, Int64}}}, dat::DataFrame, home::DataFrame, landscape::Matrix{Float64}, reso::Int64, rate::Float64)
-    @ Main ~/Functions.jl:198
- [22] the_mega_loop(; years::Int64, time_steps::Int64, seros::Float64, rep::Int64, immigration_type::String15, immigration_disease::Float64, immigration_rate::Float64, outputs::DataFrame)
-    @ Main ~/RunTheSim.jl:56
- [23] top-level scope
-    @ ~/RunTheSim.jl:131
+  [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
+    @ Base ./error.jl:176
+  [2] #systemerror#82
+    @ ./error.jl:175 [inlined]
+  [3] systemerror
+    @ ./error.jl:175 [inlined]
+  [4] open(fname::String; lock::Bool, read::Nothing, write::Nothing, create::Nothing, truncate::Bool, append::Nothing)
+    @ Base ./iostream.jl:293
+  [5] open
+    @ ./iostream.jl:275 [inlined]
+  [6] open(fname::String, mode::String; lock::Bool)
+    @ Base ./iostream.jl:356
+  [7] open(fname::String, mode::String)
+    @ Base ./iostream.jl:355
+  [8] with(f::CSV.var"#107#108"{Bool, Bool, Tables.Schema{(:rep, :year, :week, :sero, :disease, :rate, :type, :total_pop, :n_infected, :n_symptomatic, :actual_sero, :elim), NTuple{12, Any}}, DataFrames.DataFrameRows{DataFrame}, CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}, Vector{UInt8}, Int64, Int64, NTuple{12, Symbol}}, io::Any, append::Bool, compress::Bool)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:287
+  [9] #write#106
+    @ ~/.julia/packages/CSV/LiiJM/src/write.jl:215 [inlined]
+ [10] write(file::String, itr::DataFrame; append::Bool, compress::Bool, writeheader::Nothing, partition::Bool, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:199
+ [11] write(file::String, itr::DataFrame)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:162
+ [12] top-level scope
+    @ ~/RunTheSim.jl:139
 in expression starting at /home/ebeasley/RunTheSim.jl:124

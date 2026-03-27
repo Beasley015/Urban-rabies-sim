@@ -18,7 +18,7 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions.jl")
 
 # Load in parameters
-job = parse(Int64, get(ENV, "SGE_TASK_ID", "1"))
+job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 Params = CSV.read("params.csv", DataFrame, skipto=job+1, limit=1, header=1)
 
 # Simulation function
@@ -132,7 +132,7 @@ for rep in 1:reps
                     immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs)
 
     # Create filename
-    filename = string("/projectnb/dietzelab/ebeasley/UrbanRabies/outputs/sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",
+    filename = string("/home/ebeasley/outputs/sero",string(Params[!,1][1]),"im_rate",string(Params[!,2][1]),"im_dis",
                     string(Params[!,3][1]), "im_type",string(Params[!,4][1]),"rep", string(rep), ".csv")
 
     # Save results
