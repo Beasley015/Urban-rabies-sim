@@ -1,5 +1,5 @@
 
-[3583704] signal (11.1): Segmentation fault
+[1623552] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
 gc_mark_loop at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:2826
 _jl_gc_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3407
@@ -15,11 +15,9 @@ array_resize_buffer at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-
 jl_array_grow_at_end at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/array.c:893
 _growend! at ./array.jl:1014 [inlined]
 resize! at ./array.jl:1249 [inlined]
-resize! at ./compiler/ssair/ir.jl:224
+resize! at ./compiler/ssair/ir.jl:225
 resize! at ./compiler/ssair/ir.jl:1408
-iterate_compact at ./compiler/ssair/ir.jl:1534
-iterate at ./compiler/ssair/ir.jl:1516 [inlined]
-batch_inline! at ./compiler/ssair/inlining.jl:712
+batch_inline! at ./compiler/ssair/inlining.jl:663
 ssa_inlining_pass! at ./compiler/ssair/inlining.jl:82 [inlined]
 run_passes at ./compiler/optimize.jl:539
 run_passes at ./compiler/optimize.jl:554 [inlined]
@@ -63,10 +61,10 @@ jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo
 jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2237
 _jl_invoke at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2750 [inlined]
 ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2940
-juvies_leave at /home/ebeasley/Functions.jl:467
-#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:75
+adults_move at /home/ebeasley/Functions.jl:545
+#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:78
 the_mega_loop at /home/ebeasley/RunTheSim.jl:25
-unknown function (ip: 0x149fb5aea762)
+unknown function (ip: 0x14d4415446d2)
 top-level scope at /home/ebeasley/RunTheSim.jl:131
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
@@ -83,8 +81,8 @@ jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/j
 true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
 jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x14a2d0bd1949)
+unknown function (ip: 0x14d75c71f949)
 __libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
 _start at julia (unknown line)
-Allocations: 29425764803 (Pool: 28473740843; Big: 952023960); GC: 135582
-/localscratch/spool/slurmd/job9457238/slurm_script: line 12: 3583704 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
+Allocations: 52512730765 (Pool: 50809942050; Big: 1702788715); GC: 242636
+/localscratch/spool/slurmd/job9558318/slurm_script: line 12: 1623552 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

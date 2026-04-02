@@ -1,5 +1,5 @@
 
-[3787512] signal (11.1): Segmentation fault
+[692916] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
 gc_mark_loop at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:2826
 _jl_gc_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3407
@@ -21,7 +21,7 @@ _broadcast_getindex_evalf at ./broadcast.jl:683 [inlined]
 _broadcast_getindex at ./broadcast.jl:656 [inlined]
 getindex at ./broadcast.jl:610 [inlined]
 copyto_nonleaf! at ./broadcast.jl:1068
-unknown function (ip: 0x14d7d88bc9cc)
+unknown function (ip: 0x14641e8b0a3c)
 copy at ./broadcast.jl:920 [inlined]
 materialize at ./broadcast.jl:873 [inlined]
 findall at ./array.jl:2359
@@ -29,7 +29,7 @@ findall at ./array.jl:2359
 dont_fear_the_reaper at /home/ebeasley/Functions.jl:357 [inlined]
 #the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:52
 the_mega_loop at /home/ebeasley/RunTheSim.jl:25
-unknown function (ip: 0x14d7d8897712)
+unknown function (ip: 0x14641e88b722)
 top-level scope at /home/ebeasley/RunTheSim.jl:131
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
@@ -46,8 +46,8 @@ jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/j
 true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
 jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x14daf396a949)
+unknown function (ip: 0x146671971949)
 __libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
 _start at julia (unknown line)
-Allocations: 17645434613 (Pool: 17066341027; Big: 579093586); GC: 82912
-/localscratch/spool/slurmd/job9456460/slurm_script: line 12: 3787512 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
+Allocations: 32631097591 (Pool: 31582131914; Big: 1048965677); GC: 150111
+/localscratch/spool/slurmd/job9553585/slurm_script: line 12: 692916 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

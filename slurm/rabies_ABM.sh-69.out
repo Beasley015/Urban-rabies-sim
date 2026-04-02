@@ -1,23 +1,49 @@
 
-[454733] signal (11.1): Segmentation fault
+[1373436] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
-gc_mark_loop at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:2826
-_jl_gc_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3407
-ijl_gc_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3713
-maybe_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:1083 [inlined]
-jl_gc_pool_alloc_inner at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:1450 [inlined]
-jl_gc_pool_alloc_noinline at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:1511 [inlined]
-jl_gc_alloc_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia_internal.h:460 [inlined]
-jl_gc_alloc at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3760
-_new_array_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/array.c:134
-ijl_array_copy at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/array.c:1181
-copy at ./array.jl:365 [inlined]
-batch_inline! at ./compiler/ssair/inlining.jl:672
-ssa_inlining_pass! at ./compiler/ssair/inlining.jl:82 [inlined]
-run_passes at ./compiler/optimize.jl:539
-run_passes at ./compiler/optimize.jl:554 [inlined]
-optimize at ./compiler/optimize.jl:503 [inlined]
-_typeinf at ./compiler/typeinfer.jl:273
+speccache_eq at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:95
+jl_smallintset_lookup at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/smallintset.c:101
+jl_specializations_get_linfo_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:114
+#specialize_method#285 at ./compiler/utilities.jl:215
+specialize_method at ./compiler/utilities.jl:196 [inlined]
+typeinf_edge at ./compiler/typeinfer.jl:877
+abstract_call_method at ./compiler/abstractinterpretation.jl:611
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:152
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2682
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
+typeinf at ./compiler/typeinfer.jl:216
+abstract_call_method_with_const_args at ./compiler/abstractinterpretation.jl:1008
+abstract_call_method_with_const_args at ./compiler/abstractinterpretation.jl:954
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:160
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2658
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
+typeinf at ./compiler/typeinfer.jl:216
+typeinf_edge at ./compiler/typeinfer.jl:932
+abstract_call_method at ./compiler/abstractinterpretation.jl:611
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:152
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2682
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
 typeinf at ./compiler/typeinfer.jl:216
 typeinf_ext at ./compiler/typeinfer.jl:1057
 typeinf_ext_toplevel at ./compiler/typeinfer.jl:1090
@@ -30,11 +56,7 @@ jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo
 jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2237
 _jl_invoke at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2750 [inlined]
 ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2940
-juvies_leave at /home/ebeasley/Functions.jl:475
-#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:75
-the_mega_loop at /home/ebeasley/RunTheSim.jl:25
-unknown function (ip: 0x148107297762)
-top-level scope at /home/ebeasley/RunTheSim.jl:131
+top-level scope at /home/ebeasley/RunTheSim.jl:139
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
 ijl_toplevel_eval_in at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:971
@@ -50,8 +72,8 @@ jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/j
 true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
 jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x1484223b8949)
+unknown function (ip: 0x1455ba198949)
 __libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
 _start at julia (unknown line)
-Allocations: 15310664474 (Pool: 14815114325; Big: 495550149); GC: 70488
-/localscratch/spool/slurmd/job9412812/slurm_script: line 12: 454733 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
+Allocations: 19851232752 (Pool: 19213227096; Big: 638005656); GC: 91205
+/localscratch/spool/slurmd/job9550669/slurm_script: line 12: 1373436 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

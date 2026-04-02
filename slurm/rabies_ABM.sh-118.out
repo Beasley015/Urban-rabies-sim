@@ -1,49 +1,35 @@
-ERROR: LoadError: UndefRefError: access to undefined reference
+ERROR: LoadError: ArgumentError: input string is empty or only contains whitespace
 Stacktrace:
-  [1] getindex
-    @ ./essentials.jl:13 [inlined]
-  [2] _issorted(v::Vector{Tuple{Int64, Symbol}}, lo::Int64, hi::Int64, o::Base.Order.ForwardOrdering)
-    @ Base.Sort ./sort.jl:1174
-  [3] _sort!
-    @ ./sort.jl:1087 [inlined]
-  [4] _sort!
-    @ ./sort.jl:693 [inlined]
-  [5] _sort!
-    @ ./sort.jl:644 [inlined]
-  [6] _sort!(v::Vector{Tuple{Int64, Symbol}}, a::Base.Sort.Small{10, Base.Sort.InsertionSortAlg, Base.Sort.IEEEFloatOptimization{Base.Sort.IsUIntMappable{Base.Sort.Small{40, Base.Sort.InsertionSortAlg, Base.Sort.CheckSorted{Base.Sort.ComputeExtrema{Base.Sort.ConsiderCountingSort{Base.Sort.CountingSort, Base.Sort.ConsiderRadixSort{Base.Sort.RadixSort, Base.Sort.Small{80, Base.Sort.InsertionSortAlg, Base.Sort.ScratchQuickSort{Missing, Missing, Base.Sort.InsertionSortAlg}}}}}}}, Base.Sort.StableCheckSorted{Base.Sort.ScratchQuickSort{Missing, Missing, Base.Sort.InsertionSortAlg}}}}}, o::Base.Order.ForwardOrdering, kw::NamedTuple{(:scratch, :lo, :hi), Tuple{Nothing, Int64, Int64}})
-    @ Base.Sort ./sort.jl:715
-  [7] _sort!
-    @ ./sort.jl:660 [inlined]
-  [8] _sort!
-    @ ./sort.jl:596 [inlined]
-  [9] #sort!#28
-    @ ./sort.jl:1374 [inlined]
- [10] sort!
-    @ ./sort.jl:1367 [inlined]
- [11] fuzzymatch(l::Dict{Symbol, Int64}, idx::Symbol)
-    @ DataFrames ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:326
- [12] lookupname
-    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:425 [inlined]
- [13] getindex
-    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:440 [inlined]
- [14] getindex
-    @ ~/.julia/packages/DataFrames/C5AEe/src/dataframe/dataframe.jl:557
- [15] getproperty
-    @ ~/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:448 [inlined]
- [16] (::var"#11#20"{DataFrame})(c::Tuple{Int64, Int64})
-    @ Main ./none:0
- [17] iterate
-    @ ./generator.jl:47 [inlined]
- [18] collect_to!(dest::Vector{Vector{Int64}}, itr::Base.Generator{Vector{Tuple{Int64, Int64}}, var"#11#20"{DataFrame}}, offs::Int64, st::Int64)
-    @ Base ./array.jl:840
- [19] collect_to_with_first!(dest::Vector{Vector{Int64}}, v1::Vector{Int64}, itr::Base.Generator{Vector{Tuple{Int64, Int64}}, var"#11#20"{DataFrame}}, st::Int64)
-    @ Base ./array.jl:818
- [20] collect(itr::Base.Generator{Vector{Tuple{Int64, Int64}}, var"#11#20"{DataFrame}})
-    @ Base ./array.jl:792
- [21] move(coords::Vector{Vector{Tuple{Int64, Int64}}}, dat::DataFrame, home::DataFrame, landscape::Matrix{Float64}, reso::Int64, rate::Float64)
-    @ Main ~/Functions.jl:198
- [22] the_mega_loop(; years::Int64, time_steps::Int64, seros::Float64, rep::Int64, immigration_type::String15, immigration_disease::Float64, immigration_rate::Float64, outputs::DataFrame)
-    @ Main ~/RunTheSim.jl:56
- [23] top-level scope
+  [1] tryparse_internal(#unused#::Type{Int64}, s::String, startpos::Int64, endpos::Int64, base_::Int64, raise::Bool)
+    @ Base ./parse.jl:109
+  [2] parse(::Type{Int64}, s::String; base::Nothing)
+    @ Base ./parse.jl:246
+  [3] parse
+    @ ./parse.jl:245 [inlined]
+  [4] _broadcast_getindex_evalf
+    @ ./broadcast.jl:683 [inlined]
+  [5] _broadcast_getindex
+    @ ./broadcast.jl:666 [inlined]
+  [6] getindex
+    @ ./broadcast.jl:610 [inlined]
+  [7] macro expansion
+    @ ./broadcast.jl:974 [inlined]
+  [8] macro expansion
+    @ ./simdloop.jl:77 [inlined]
+  [9] copyto!
+    @ ./broadcast.jl:973 [inlined]
+ [10] copyto!
+    @ ./broadcast.jl:926 [inlined]
+ [11] copy
+    @ ./broadcast.jl:898 [inlined]
+ [12] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultArrayStyle{1}, Nothing, typeof(parse), Tuple{Base.RefValue{Type{Int64}}, Vector{String}}})
+    @ Base.Broadcast ./broadcast.jl:873
+ [13] immigration(; dat::DataFrame, home::DataFrame, land_size::Int64, immigration_rate::Float64, sero_rate::Int64, disease_rate::Float64, type::String, year::Int64)
+    @ Main ~/Functions.jl:576
+ [14] immigration
+    @ ~/Functions.jl:566 [inlined]
+ [15] the_mega_loop(; years::Int64, time_steps::Int64, seros::Float64, rep::Int64, immigration_type::String15, immigration_disease::Float64, immigration_rate::Float64, outputs::DataFrame)
+    @ Main ~/RunTheSim.jl:63
+ [16] top-level scope
     @ ~/RunTheSim.jl:131
 in expression starting at /home/ebeasley/RunTheSim.jl:124

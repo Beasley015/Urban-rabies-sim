@@ -1,30 +1,18 @@
 
-[1569311] signal (11.1): Segmentation fault
+[3611101] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
 typekeyvalue_hash at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1365 [inlined]
 lookup_typevalue at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:891
-jl_inst_arg_tuple_type at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1807
-arg_type_tuple at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2100 [inlined]
-jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2884 [inlined]
+lookup_arg_type_tuple at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2105 [inlined]
+jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2874 [inlined]
 ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2936
-_broadcast_getindex_evalf at ./broadcast.jl:683 [inlined]
-_broadcast_getindex at ./broadcast.jl:656 [inlined]
-getindex at ./broadcast.jl:610 [inlined]
-macro expansion at ./broadcast.jl:992 [inlined]
-macro expansion at ./simdloop.jl:77 [inlined]
-copyto! at ./broadcast.jl:991 [inlined]
-copyto! at ./broadcast.jl:926 [inlined]
-copy at ./broadcast.jl:898 [inlined]
-materialize at ./broadcast.jl:873 [inlined]
-_filter!_helper at /home/ebeasley/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:1374
-unknown function (ip: 0x14ea9f96b72d)
-filter! at /home/ebeasley/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:1359
-unknown function (ip: 0x14ea9f96af86)
-#dont_fear_the_reaper#36 at /home/ebeasley/Functions.jl:375
-dont_fear_the_reaper at /home/ebeasley/Functions.jl:357 [inlined]
-#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:52
+indexin at ./array.jl:2484
+unknown function (ip: 0x14c8fb16be76)
+move at /home/ebeasley/Functions.jl:221
+unknown function (ip: 0x14c8fb158c20)
+#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:56
 the_mega_loop at /home/ebeasley/RunTheSim.jl:25
-unknown function (ip: 0x14ea9f942792)
+unknown function (ip: 0x14c8fb142812)
 top-level scope at /home/ebeasley/RunTheSim.jl:131
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
@@ -41,8 +29,8 @@ jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/j
 true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
 jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x14edbaac5949)
+unknown function (ip: 0x14cc16271949)
 __libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
 _start at julia (unknown line)
-Allocations: 42280097327 (Pool: 40897222470; Big: 1382874857); GC: 197457
-/localscratch/spool/slurmd/job9475729/slurm_script: line 12: 1569311 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
+Allocations: 6504799405 (Pool: 6289980528; Big: 214818877); GC: 30658
+/localscratch/spool/slurmd/job9574813/slurm_script: line 12: 3611101 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

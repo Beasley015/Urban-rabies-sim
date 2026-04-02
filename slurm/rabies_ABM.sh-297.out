@@ -1,31 +1,18 @@
 
-[2368151] signal (11.1): Segmentation fault
+[3749239] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
-typekeyvalue_hash at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1365 [inlined]
-lookup_typevalue at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:891
-jl_inst_arg_tuple_type at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1807
-arg_type_tuple at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2100 [inlined]
-jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2884 [inlined]
+jl_unwrap_unionall at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1227
+jl_typemap_entry_assoc_by_type at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/typemap.c:651
+jl_typemap_assoc_by_type at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/typemap.c:834
+jl_mt_assoc_by_type at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:1362
+jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2911 [inlined]
 ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2936
-_broadcast_getindex_evalf at ./broadcast.jl:683 [inlined]
-_broadcast_getindex at ./broadcast.jl:656 [inlined]
-getindex at ./broadcast.jl:610 [inlined]
-macro expansion at ./broadcast.jl:992 [inlined]
-macro expansion at ./simdloop.jl:77 [inlined]
-copyto! at ./broadcast.jl:991 [inlined]
-copyto! at ./broadcast.jl:926 [inlined]
-copy at ./broadcast.jl:898 [inlined]
-materialize at ./broadcast.jl:873 [inlined]
-_filter!_helper at /home/ebeasley/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:1374
-unknown function (ip: 0x146392b6b9cd)
-filter! at /home/ebeasley/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:1359
-unknown function (ip: 0x146392b6b226)
-#dont_fear_the_reaper#36 at /home/ebeasley/Functions.jl:375
-dont_fear_the_reaper at /home/ebeasley/Functions.jl:357 [inlined]
-#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:52
-the_mega_loop at /home/ebeasley/RunTheSim.jl:25
-unknown function (ip: 0x146392b42852)
-top-level scope at /home/ebeasley/RunTheSim.jl:131
+#Options#98 at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:84
+Options at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:65 [inlined]
+#write#103 at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:174
+write at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:162
+unknown function (ip: 0x148f24d52ea6)
+top-level scope at /home/ebeasley/RunTheSim.jl:139
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
 ijl_toplevel_eval_in at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:971
@@ -41,8 +28,8 @@ jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/j
 true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
 jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x1466add3d949)
+unknown function (ip: 0x14923fddb949)
 __libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
 _start at julia (unknown line)
-Allocations: 31825128534 (Pool: 30782549864; Big: 1042578670); GC: 148871
-/localscratch/spool/slurmd/job9483206/slurm_script: line 12: 2368151 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
+Allocations: 28117187775 (Pool: 27210661134; Big: 906526641); GC: 129010
+/localscratch/spool/slurmd/job9578747/slurm_script: line 12: 3749239 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

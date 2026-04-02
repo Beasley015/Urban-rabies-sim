@@ -1,21 +1,30 @@
 
-[2407145] signal (11.1): Segmentation fault
+[3120974] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
-jl_typemap_entry_assoc_exact at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/typemap.c:949
-jl_typemap_assoc_exact at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia_internal.h:1448 [inlined]
-jl_typemap_level_assoc_exact at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/typemap.c:1012
-jl_typemap_assoc_exact at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia_internal.h:1452 [inlined]
-jl_typemap_level_assoc_exact at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/typemap.c:1025
-jl_typemap_assoc_exact at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia_internal.h:1452 [inlined]
-jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2880 [inlined]
+typekeyvalue_hash at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1365 [inlined]
+lookup_typevalue at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:891
+jl_inst_arg_tuple_type at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1807
+arg_type_tuple at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2100 [inlined]
+jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2884 [inlined]
 ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2936
-broadcasted at ./broadcast.jl:1319 [inlined]
-broadcasted at ./broadcast.jl:1317
-unknown function (ip: 0x154d0715e020)
-change_state at /home/ebeasley/Functions.jl:310
-#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:92
+_broadcast_getindex_evalf at ./broadcast.jl:683 [inlined]
+_broadcast_getindex at ./broadcast.jl:656 [inlined]
+getindex at ./broadcast.jl:610 [inlined]
+macro expansion at ./broadcast.jl:992 [inlined]
+macro expansion at ./simdloop.jl:77 [inlined]
+copyto! at ./broadcast.jl:991 [inlined]
+copyto! at ./broadcast.jl:926 [inlined]
+copy at ./broadcast.jl:898 [inlined]
+materialize at ./broadcast.jl:873 [inlined]
+_filter!_helper at /home/ebeasley/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:1374
+unknown function (ip: 0x14c58676b80d)
+filter! at /home/ebeasley/.julia/packages/DataFrames/C5AEe/src/abstractdataframe/abstractdataframe.jl:1359
+unknown function (ip: 0x14c58676b066)
+#dont_fear_the_reaper#36 at /home/ebeasley/Functions.jl:375
+dont_fear_the_reaper at /home/ebeasley/Functions.jl:357 [inlined]
+#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:52
 the_mega_loop at /home/ebeasley/RunTheSim.jl:25
-unknown function (ip: 0x154d07142872)
+unknown function (ip: 0x14c586742842)
 top-level scope at /home/ebeasley/RunTheSim.jl:131
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
 jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
@@ -32,8 +41,8 @@ jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/j
 true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
 jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x1550222d7949)
+unknown function (ip: 0x14c8a186c949)
 __libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
 _start at julia (unknown line)
-Allocations: 45289742269 (Pool: 43822320952; Big: 1467421317); GC: 209870
-/localscratch/spool/slurmd/job9475338/slurm_script: line 12: 2407145 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
+Allocations: 28298426330 (Pool: 27379268240; Big: 919158090); GC: 131802
+/localscratch/spool/slurmd/job9574635/slurm_script: line 12: 3120974 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

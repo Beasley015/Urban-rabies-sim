@@ -1,0 +1,37 @@
+ERROR: LoadError: UndefRefError: access to undefined reference
+Stacktrace:
+  [1] getindex
+    @ ./essentials.jl:13 [inlined]
+  [2] ht_keyindex
+    @ ./dict.jl:272 [inlined]
+  [3] get
+    @ ./dict.jl:510 [inlined]
+  [4] lookupname
+    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:422 [inlined]
+  [5] getindex
+    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:440 [inlined]
+  [6] parentcols
+    @ ~/.julia/packages/DataFrames/C5AEe/src/other/index.jl:490 [inlined]
+  [7] getindex
+    @ ~/.julia/packages/DataFrames/C5AEe/src/dataframerow/dataframerow.jl:212 [inlined]
+  [8] getcolumn(dfr::DataFrameRow{DataFrame, DataFrames.Index}, nm::Symbol)
+    @ DataFrames ~/.julia/packages/DataFrames/C5AEe/src/other/tables.jl:31
+  [9] getcolumn
+    @ ~/.julia/packages/Tables/cRTb7/src/Tables.jl:103 [inlined]
+ [10] eachcolumn
+    @ ~/.julia/packages/Tables/cRTb7/src/utils.jl:70 [inlined]
+ [11] writerow(buf::Vector{UInt8}, pos::Base.RefValue{Int64}, len::Int64, io::IOStream, sch::Tables.Schema{(:rep, :year, :week, :sero, :disease, :rate, :type, :total_pop, :n_infected, :n_symptomatic, :actual_sero, :elim), NTuple{12, Any}}, row::DataFrameRow{DataFrame, DataFrames.Index}, cols::Int64, opts::CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)})
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:364
+ [12] (::CSV.var"#107#108"{Bool, Bool, Tables.Schema{(:rep, :year, :week, :sero, :disease, :rate, :type, :total_pop, :n_infected, :n_symptomatic, :actual_sero, :elim), NTuple{12, Any}}, DataFrames.DataFrameRows{DataFrame}, CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}, Vector{UInt8}, Int64, Int64, NTuple{12, Symbol}})(io::IOStream)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:225
+ [13] with(f::CSV.var"#107#108"{Bool, Bool, Tables.Schema{(:rep, :year, :week, :sero, :disease, :rate, :type, :total_pop, :n_infected, :n_symptomatic, :actual_sero, :elim), NTuple{12, Any}}, DataFrames.DataFrameRows{DataFrame}, CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}, Vector{UInt8}, Int64, Int64, NTuple{12, Symbol}}, io::Any, append::Bool, compress::Bool)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:299
+ [14] #write#106
+    @ ~/.julia/packages/CSV/LiiJM/src/write.jl:215 [inlined]
+ [15] write(file::String, itr::DataFrame; append::Bool, compress::Bool, writeheader::Nothing, partition::Bool, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:199
+ [16] write(file::String, itr::DataFrame)
+    @ CSV ~/.julia/packages/CSV/LiiJM/src/write.jl:162
+ [17] top-level scope
+    @ ~/RunTheSim.jl:139
+in expression starting at /home/ebeasley/RunTheSim.jl:124

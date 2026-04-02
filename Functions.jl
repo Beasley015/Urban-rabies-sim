@@ -165,7 +165,7 @@ function look_around(x,y,land_size)
     good_moves = findall([(0 .< x[1] .<= land_size) .&& (0 .< x[2] .<= land_size) for x in all_moves])
 
     # Remove impossible moves
-    poss_moves = deepcopy(all_moves[good_moves])
+    poss_moves = all_moves[good_moves]
 
     return poss_moves
 end
@@ -178,7 +178,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.001)
     # rate = rate of distance-decay. Based on trial and error so raccoons typically stay ~1km from home
 
     # Create blank arrays
-    hab_prefs = Vector{Vector{Float64}}(undef, length(coords)) # ERROR HERE
+    hab_prefs = Vector{Vector{Float64}}(undef, length(coords)) 
     dist_weights = Vector{Vector{Float64}}(undef, length(coords))
     cons = Vector{Vector{Float64}}(undef, length(coords))
 
@@ -190,7 +190,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.001)
         hab_prefs[i] = hab_frame.coef[convert.(Int64, habs)]
 
         # Movement weights as a function of distance from initial coords
-        home_loc = (home.x[i], home.y[i])  # ERROR HERE TOO
+        home_loc = (home.x[i], home.y[i])  
         distances = ((([x[1] for x in coords[i]].-home_loc[1]).^2 .+ ([x[2] for x in coords[i]].-home_loc[2]).^2)*reso)/100
         dist_weights[i] = exp.(rate .* distances)
 

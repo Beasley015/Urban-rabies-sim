@@ -1,0 +1,65 @@
+
+[537281] signal (11.1): Segmentation fault
+in expression starting at /home/ebeasley/RunTheSim.jl:124
+jl_svecref at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:989 [inlined]
+jl_max_int at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/smallintset.c:48 [inlined]
+jl_smallintset_insert at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/smallintset.c:138
+jl_specializations_get_linfo_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:178
+cache_method at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:1199
+ml_matches at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:3685
+ijl_matching_methods at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2153
+_methods_by_ftype at ./reflection.jl:952 [inlined]
+_findall at ./compiler/methodtable.jl:107 [inlined]
+#findall#275 at ./compiler/methodtable.jl:76 [inlined]
+findall at ./compiler/methodtable.jl:75 [inlined]
+#findall#277 at ./compiler/methodtable.jl:123
+findall at ./compiler/methodtable.jl:114 [inlined]
+find_matching_methods at ./compiler/abstractinterpretation.jl:336
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:80
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2682
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
+typeinf at ./compiler/typeinfer.jl:216
+typeinf_ext at ./compiler/typeinfer.jl:1057
+typeinf_ext_toplevel at ./compiler/typeinfer.jl:1090
+typeinf_ext_toplevel at ./compiler/typeinfer.jl:1086
+jfptr_typeinf_ext_toplevel_13415 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+jl_type_infer at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:320
+jl_generate_fptr_impl at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jitlayers.cpp:444
+jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2348 [inlined]
+jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2237
+_jl_invoke at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2750 [inlined]
+ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2940
+#Options#98 at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:84
+Options at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:65 [inlined]
+#write#103 at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:174
+write at /home/ebeasley/.julia/packages/CSV/LiiJM/src/write.jl:162
+unknown function (ip: 0x14f048d86e76)
+top-level scope at /home/ebeasley/RunTheSim.jl:139
+jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
+jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
+ijl_toplevel_eval_in at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+include_string at ./loading.jl:1903
+_include at ./loading.jl:1963
+include at ./Base.jl:457
+jfptr_include_41934 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+exec_options at ./client.jl:307
+_start at ./client.jl:522
+jfptr__start_46479 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
+jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x14f363f11949)
+__libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
+_start at julia (unknown line)
+Allocations: 28394903031 (Pool: 27454785819; Big: 940117212); GC: 134294
+/localscratch/spool/slurmd/job9549297/slurm_script: line 12: 537281 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

@@ -1,35 +1,36 @@
-ERROR: LoadError: ArgumentError: input string is empty or only contains whitespace
-Stacktrace:
-  [1] tryparse_internal(#unused#::Type{Int64}, s::String, startpos::Int64, endpos::Int64, base_::Int64, raise::Bool)
-    @ Base ./parse.jl:109
-  [2] parse(::Type{Int64}, s::String; base::Nothing)
-    @ Base ./parse.jl:246
-  [3] parse
-    @ ./parse.jl:245 [inlined]
-  [4] _broadcast_getindex_evalf
-    @ ./broadcast.jl:683 [inlined]
-  [5] _broadcast_getindex
-    @ ./broadcast.jl:666 [inlined]
-  [6] getindex
-    @ ./broadcast.jl:610 [inlined]
-  [7] macro expansion
-    @ ./broadcast.jl:974 [inlined]
-  [8] macro expansion
-    @ ./simdloop.jl:77 [inlined]
-  [9] copyto!
-    @ ./broadcast.jl:973 [inlined]
- [10] copyto!
-    @ ./broadcast.jl:926 [inlined]
- [11] copy
-    @ ./broadcast.jl:898 [inlined]
- [12] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultArrayStyle{1}, Nothing, typeof(parse), Tuple{Base.RefValue{Type{Int64}}, Vector{String}}})
-    @ Base.Broadcast ./broadcast.jl:873
- [13] immigration(; dat::DataFrame, home::DataFrame, land_size::Int64, immigration_rate::Float64, sero_rate::Int64, disease_rate::Float64, type::String, year::Int64)
-    @ Main ~/Functions.jl:576
- [14] immigration
-    @ ~/Functions.jl:566 [inlined]
- [15] the_mega_loop(; years::Int64, time_steps::Int64, seros::Float64, rep::Int64, immigration_type::String15, immigration_disease::Float64, immigration_rate::Float64, outputs::DataFrame)
-    @ Main ~/RunTheSim.jl:63
- [16] top-level scope
-    @ ~/RunTheSim.jl:131
+
+[699750] signal (11.1): Segmentation fault
 in expression starting at /home/ebeasley/RunTheSim.jl:124
+typekeyvalue_hash at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:1365 [inlined]
+lookup_typevalue at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jltypes.c:891
+lookup_arg_type_tuple at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2105 [inlined]
+jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2874 [inlined]
+ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2936
+indexin at ./array.jl:2484
+unknown function (ip: 0x14d006ebeae6)
+move at /home/ebeasley/Functions.jl:221
+unknown function (ip: 0x14d006ea8b50)
+#the_mega_loop#121 at /home/ebeasley/RunTheSim.jl:56
+the_mega_loop at /home/ebeasley/RunTheSim.jl:25
+unknown function (ip: 0x14d006e92722)
+top-level scope at /home/ebeasley/RunTheSim.jl:131
+jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:903
+jl_toplevel_eval_flex at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:856
+ijl_toplevel_eval_in at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+include_string at ./loading.jl:1903
+_include at ./loading.jl:1963
+include at ./Base.jl:457
+jfptr_include_41934 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+exec_options at ./client.jl:307
+_start at ./client.jl:522
+jfptr__start_46479 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
+jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x14d051f96949)
+__libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
+_start at julia (unknown line)
+Allocations: 1476647989 (Pool: 1431120187; Big: 45527802); GC: 6502
+/localscratch/spool/slurmd/job9562480/slurm_script: line 12: 699750 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

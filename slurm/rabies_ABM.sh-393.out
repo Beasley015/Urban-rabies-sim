@@ -1,0 +1,25 @@
+
+[2115339] signal (11.1): Segmentation fault
+in expression starting at none:0
+jl_lookup_generic_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2859 [inlined]
+ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2936
+display_error at ./client.jl:110
+unknown function (ip: 0x14afce0cb0a6)
+display_error at ./client.jl:114
+jfptr_display_error_47902 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+jl_f__call_latest at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/builtins.c:774
+#invokelatest#2 at ./essentials.jl:819 [inlined]
+invokelatest at ./essentials.jl:816 [inlined]
+exec_options at ./client.jl:310
+_start at ./client.jl:522
+jfptr__start_46479 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
+jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x14b0c9220949)
+__libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
+_start at julia (unknown line)
+Allocations: 56470459794 (Pool: 54647845204; Big: 1822614590); GC: 260657
+/localscratch/spool/slurmd/job9583829/slurm_script: line 12: 2115339 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID

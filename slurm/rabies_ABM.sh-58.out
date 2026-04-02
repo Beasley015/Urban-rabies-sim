@@ -1,0 +1,102 @@
+
+[2364167] signal (11.1): Segmentation fault
+in expression starting at none:0
+gc_mark_loop at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:2826
+_jl_gc_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3407
+ijl_gc_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3713
+maybe_collect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:1083 [inlined]
+jl_gc_pool_alloc_inner at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:1450 [inlined]
+jl_gc_pool_alloc_noinline at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:1511 [inlined]
+jl_gc_alloc_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia_internal.h:460 [inlined]
+jl_gc_alloc at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gc.c:3760
+ijl_alloc_svec_uninit at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/simplevector.c:60
+ijl_alloc_svec at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/simplevector.c:69
+intersect_tuple at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:2870 [inlined]
+intersect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:3246
+intersect_unionall_ at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:2720
+intersect_unionall at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:2765
+intersect at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:3229
+intersect_all at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:3322
+jl_type_intersection_env_s at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/subtype.c:3550
+jl_type_intersection2 at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:1813
+ml_matches at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:3460
+ijl_matching_methods at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2153
+_methods_by_ftype at ./reflection.jl:952 [inlined]
+_findall at ./compiler/methodtable.jl:107 [inlined]
+#findall#275 at ./compiler/methodtable.jl:76 [inlined]
+findall at ./compiler/methodtable.jl:75 [inlined]
+#findall#277 at ./compiler/methodtable.jl:123
+findall at ./compiler/methodtable.jl:114 [inlined]
+find_matching_methods at ./compiler/abstractinterpretation.jl:336
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:80
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2682
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
+typeinf at ./compiler/typeinfer.jl:216
+typeinf_edge at ./compiler/typeinfer.jl:932
+abstract_call_method at ./compiler/abstractinterpretation.jl:611
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:152
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2658
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
+typeinf at ./compiler/typeinfer.jl:216
+typeinf_edge at ./compiler/typeinfer.jl:932
+abstract_call_method at ./compiler/abstractinterpretation.jl:611
+abstract_call_gf_by_type at ./compiler/abstractinterpretation.jl:152
+abstract_call_known at ./compiler/abstractinterpretation.jl:1949
+abstract_call at ./compiler/abstractinterpretation.jl:2020
+abstract_call at ./compiler/abstractinterpretation.jl:1999
+abstract_eval_statement_expr at ./compiler/abstractinterpretation.jl:2183
+abstract_eval_statement at ./compiler/abstractinterpretation.jl:2396
+abstract_eval_basic_statement at ./compiler/abstractinterpretation.jl:2682
+typeinf_local at ./compiler/abstractinterpretation.jl:2867
+typeinf_nocycle at ./compiler/abstractinterpretation.jl:2955
+_typeinf at ./compiler/typeinfer.jl:246
+typeinf at ./compiler/typeinfer.jl:216
+typeinf_ext at ./compiler/typeinfer.jl:1057
+typeinf_ext_toplevel at ./compiler/typeinfer.jl:1090
+typeinf_ext_toplevel at ./compiler/typeinfer.jl:1086
+jfptr_typeinf_ext_toplevel_13415 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+jl_type_infer at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:320
+jl_generate_fptr_impl at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jitlayers.cpp:444
+jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2348 [inlined]
+jl_compile_method_internal at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2237
+_jl_invoke at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2750 [inlined]
+ijl_apply_generic at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/gf.c:2940
+#showerror#899 at ./errorshow.jl:96
+showerror at ./errorshow.jl:94
+unknown function (ip: 0x153837f88312)
+show_exception_stack at ./errorshow.jl:895
+display_error at ./client.jl:111
+unknown function (ip: 0x153837f87a46)
+display_error at ./client.jl:114
+jfptr_display_error_47902 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+jl_f__call_latest at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/builtins.c:774
+#invokelatest#2 at ./essentials.jl:819 [inlined]
+invokelatest at ./essentials.jl:816 [inlined]
+exec_options at ./client.jl:310
+_start at ./client.jl:522
+jfptr__start_46479 at /cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v4/Compiler/gcccore/julia/1.9.3/lib/julia/sys.so (unknown line)
+jl_apply at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/julia.h:1880 [inlined]
+true_main at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:573
+jl_repl_entrypoint at /tmp/ebuser/avx512/Julia/1.9.3/GCCcore-12.3-gentoo/julia-1.9.3/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x153b5311a949)
+__libc_start_main at /cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/lib64/libc.so.6 (unknown line)
+_start at julia (unknown line)
+Allocations: 41012929824 (Pool: 39692860215; Big: 1320069609); GC: 188773
+/localscratch/spool/slurmd/job9550531/slurm_script: line 12: 2364167 Segmentation fault      (core dumped) julia --project RunTheSim.jl $SLURM_ARRAY_TASK_ID
