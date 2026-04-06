@@ -121,7 +121,7 @@ end
 # Run it!
 reps = 50
 
-for rep in 14:reps
+for rep in 42:reps
     # Create empty data frame
     outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[]],
                     ["rep", "year", "week","sero","disease","rate","type", "total_pop", "n_infected", 
