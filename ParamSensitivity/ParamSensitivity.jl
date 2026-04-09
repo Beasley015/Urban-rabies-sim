@@ -67,19 +67,9 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             # Spread disease
             spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
 
-            # Immigration can be a propagule rain (steady rate) or a wave (seasonal bursts of high immigration)
-            # Remove when doing parameter sensitivity
-            #=
-            if immigration_type == "propagule"
-                immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                sero_rate=0, immigration_rate=immigration_rate, year=year)
-            elseif immigration_type == "wave"
-                if 40 < step < 50
-                    immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = immigration_disease,
-                                type="wave", sero_rate=0, immigration_rate=immigration_rate, year=year)
-                end
-            end
-            =#
+            # Immigration as propagule rain
+            immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = 0,
+                            sero_rate=0, immigration_rate=1, year=year)  
 
             # Dispersal
             if 41 <= step <= 45
@@ -127,7 +117,6 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
 
             push!(outputs, row)
         end
-        println(string("year = ", year))
     end
 end
 
@@ -140,19 +129,18 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 
 
 reps = 20
-lsize = [40, 60, 80, 100]
+lam1 = [0.0059, 0.0092, 0.0143, 0.0224, 0.0349, 0.0543, 0.0847]
 
 for rep in 1:reps
-    for i in 1:length(lsize)
-        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=lsize[i], maxK=30, l1=0.015,
-                        l2=0.006, start_cases=10, amort = 0.0075, jmort=0.015)
-
-        println(string("land size = ", lsize[i], ", rep = ", rep))
+    for i in 1:length(lam1)
+        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=lam1[i],
+                        l2=0, start_cases=10, amort = 0.0075, jmort=0.015)
+        println(string("l1 = ", lam1[i], "rep = ", rep))
     end
 end
 
 # Create filename
-filename = "land_size.csv"
+filename = string("l1_sens_wide.csv")
 
 # Save results
 CSV.write(filename, outputs)

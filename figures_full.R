@@ -153,7 +153,13 @@ prop_elim <- prop_elim() %>%
 # Figs: Proportion of outbreaks eliminated ---------
 # Quick glance
 summary(lm(data=prop_elim, prop~sero+rate+disease+type))
-# 1% increase in sero is approx. 8% increase in elim prob
+
+prop_elim %>%
+  group_by(sero) %>%
+  summarise(mn = mean(prop)) %>%
+  ungroup() %>%
+  mutate(diff = mn - lag(mn)) %>%
+  summarise(mdiff = mean(diff, na.rm=T))
 
 # dev.new(width = 80, height = 60, unit = "mm", res=600,
 #         noRStudioGD=TRUE)

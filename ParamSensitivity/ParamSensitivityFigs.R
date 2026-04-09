@@ -136,7 +136,7 @@ prop_eliminated <- dis.wide %>%
   select(rep, lambda1) %>%
   group_by(lambda1) %>%
   distinct() %>%
-  summarise(prop = n()/10)
+  summarise(prop = n()/20)
 # 0.0224 has lowest elimination rate at 60%
 
 unique(prop_eliminated$prop)
