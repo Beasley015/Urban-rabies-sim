@@ -129,18 +129,18 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 
 
 reps = 20
-lam1 = [0.0059, 0.0092, 0.0143, 0.0224, 0.0349, 0.0543, 0.0847]
+lam2 = [0.001, 0.00197, 0.0039, 0.0077, 0.0152, 0.03]
 
 for rep in 1:reps
-    for i in 1:length(lam1)
-        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=lam1[i],
-                        l2=0, start_cases=10, amort = 0.0075, jmort=0.015)
-        println(string("l1 = ", lam1[i], "rep = ", rep))
+    for i in 1:length(lam2)
+        the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=0.0275,
+                        l2=lam2[i], start_cases=10, amort = 0.0075, jmort=0.015)
+        println(string("l2 = ", lam2[i], ", rep = ", rep))
     end
 end
 
 # Create filename
-filename = string("l1_sens_wide.csv")
+filename = string("l2_sens_wide.csv")
 
 # Save results
 CSV.write(filename, outputs)
