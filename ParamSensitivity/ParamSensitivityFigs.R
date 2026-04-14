@@ -283,7 +283,7 @@ prop_eliminated <- dis.wide %>%
   select(rep, lambda2) %>%
   group_by(lambda2) %>%
   distinct() %>%
-  summarise(prop = n()/10)
+  summarise(prop = n()/20)
 # Elimination ranges from 20% to 70%
 
 unique(prop_eliminated$prop)
@@ -403,7 +403,7 @@ ggplot(data = re.df, aes(x = factor(lambda2), y = Re))+
 re.df %>%
   group_by(lambda2) %>%
   summarise(re = median(Re))
-# All are *slightly* too high... but the 0.004-0.008 range is closest
+# 0.004ish looks like the winner
 
 # Transmission Rates: full sweep -----------------------
 # Combine files 
@@ -432,7 +432,7 @@ prop_eliminated <- dis.wide %>%
   group_by(lambda1,lambda2) %>%
   distinct() %>%
   summarise(prop = n()/20)
-# Elimination ranges from 20% to 70%
+# Elimination ranges from 30% to 70%
 
 unique(prop_eliminated$prop)
 
@@ -473,7 +473,7 @@ ggplot(data = time_to_elim, aes(x = lambda1, y = lambda2,
   labs(x = expression(lambda[1]), y = expression(lambda[2]))+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
-# Lowest l1 and l2 eliminate very quickly
+# Top left corner eliminates very quickly (low l1 and high l2)
 
 # Start filtering values
 poss.combos <- time_to_elim %>%
@@ -577,8 +577,10 @@ ggplot(data=re.means, aes(x=lambda1, y = lambda2, fill = mean.re))+
 # ggsave("re_full.jpeg", width = 8, height = 6,
 #        units = "in")
 
-re.tab <-filter(re.means, mean.re > 1.1 & mean.re < 1.25)
-write.table(re.tab, file="re_table.csv", sep = ",")
+re.tab <-filter(re.means, mean.re > 1 & mean.re < 1.25)
+# write.table(re.tab, file="re_table.csv", sep = ",")
+
+# write.table(poss.combos, "poss.combos.csv")
 
 # Population sizes with disease ------------------
 dis_pop <- dis %>%
