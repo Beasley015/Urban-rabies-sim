@@ -151,9 +151,9 @@ time_to_elim <- dis.wide %>%
   distinct() %>%
   mutate(lambda1 = factor(lambda1))
 
-all_combos <- expand_grid(unique(time_to_elim$lambda1), 
-                          unique(time_to_elim$rep))
-colnames(all_combos) <- c("lambda1", "rep")
+# all_combos <- expand_grid(unique(time_to_elim$lambda1), 
+#                           unique(time_to_elim$rep))
+# colnames(all_combos) <- c("lambda1", "rep")
 
 time_to_elim <- time_to_elim %>%
   right_join(all_combos, by=c("rep", "lambda1")) %>%
@@ -167,7 +167,7 @@ time_to_elim %>%
 
 ggplot(data = time_to_elim, aes(x = lambda1, y = nweek))+
   geom_boxplot(fill = "lightgray")+
-  labs(x = bquote("Transmission Rate (" ~ lambda[1] ~ ")"), 
+  labs(x = bquote("Transmission Rate (" ~ lambda  [1] ~ ")"), 
        y = "Week of Elimination")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
@@ -296,9 +296,9 @@ time_to_elim <- dis.wide %>%
   distinct() %>%
   mutate(lambda2 = factor(lambda2))
 
-all_combos <- expand_grid(unique(time_to_elim$lambda2), 
-                          unique(time_to_elim$rep))
-colnames(all_combos) <- c("lambda2", "rep")
+# all_combos <- expand_grid(unique(time_to_elim$lambda2), 
+#                           unique(time_to_elim$rep))
+# colnames(all_combos) <- c("lambda2", "rep")
 
 time_to_elim <- time_to_elim %>%
   right_join(all_combos, by=c("rep", "lambda2")) %>%
@@ -586,8 +586,8 @@ re.tab <-filter(re.means, mean.re > 1 & mean.re < 1.25)
 dis_pop <- dis %>%
   group_by(nweek,lambda1, lambda2) %>%
   mutate(lambda1=factor(lambda1), lambda2=factor(lambda2)) %>%
-  filter(lambda1 %in% c(0.015, 0.03) & lambda2 %in% c(0.006, 0.007)) %>%
-  filter(!(lambda1 == 0.03 & lambda2 == 0.007))
+  filter(lambda1 %in% c(0.015, 0.025) & lambda2 %in% c(0.002, 0.005)) %>%
+  filter((lambda1 == 0.015 & lambda2 == 0.002) | (lambda1 == 0.025 & lambda2 == 0.005))
 
 ggplot(data = dis_pop, aes (x = nweek, y = total_pop,
                             color = lambda1))+
@@ -595,7 +595,6 @@ ggplot(data = dis_pop, aes (x = nweek, y = total_pop,
   geom_vline(xintercept = 53, linetype = 'dashed')+
   scale_color_viridis_d(name = "Within-cell transmission",
                         end = 0.9)+
-  facet_grid(rows = vars(lambda2))+
   labs(x="Week", y = "Mean Population Size")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
