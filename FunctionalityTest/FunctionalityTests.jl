@@ -22,14 +22,10 @@ Params = DataFrame(seros = 0.0, imm_rate = 0, imm_dis = 0, imm_type = "wave")
 
 # Simulation function
 function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigration_disease, immigration_rate, 
-                        outputs, movement_test=false, mortality_test=false)
+                        outputs, movement_test=false, mortality_test=false, disp_test=false)
 
     # create landscape
-    if movement_test==true
-        land_size=20
-    else
-        land_size=60
-    end
+    land_size=60
     
     landscape = initialize_land(land_size=land_size, habitats = hab_frame, movement_test=movement_test)
 
@@ -44,7 +40,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             n_recover = zeros(years*time_steps)
 
             # Initialize disease at year 2, when population stabilizes
-            if movement_test==false
+            if movement_test==false && disp_test == false
                 if year == 2 && step == 1
                     initialize_disease(lil_guys)
                 end
@@ -55,9 +51,9 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
 
             # Move around
             moves = look_around.(lil_guys.x, lil_guys.y, land_size)
-            move(moves, lil_guys, home_coords, landscape, 500, -0.001)
+            move(moves, lil_guys, home_coords, landscape, 500, -0.1)
 
-            if movement_test==false
+            if movement_test==false && disp_test == false
                 # Spread disease
                 spread_disease(dat=lil_guys, home=home_coords)
             end
@@ -68,12 +64,19 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
         
             # Dispersal
-            if step == 43
+            if 41 <= step <= 45
+                # Add starting coords to df
+                if step == 41 && year == 2
+                    disp_smol = DataFrame(id = lil_guys.id, age = ifelse.(lil_guys.age .> 52, "A", "J"),
+                                            week = step-1, x = lil_guys.x, y = lil_guys.y)
+                    append!(outputs, disp_smol, promote = true)
+                end
+
                 # all juveniles go through the dispersal function, but a dispersal distance of 0 is possible
-                juvies_leave(lil_guys, home_coords, land_size)
+                juvies_leave(lil_guys, home_coords, land_size, year, disp_test, step)
                         
                 # Not all adults affected by this function, and some have a dispersal distance of 0
-                adults_move(lil_guys, home_coords, land_size, year)
+                adults_move(lil_guys, home_coords, land_size, year, disp_test,step)
             end
 
             # Function where some infected guys become symptomatic or recover
@@ -99,7 +102,7 @@ function the_mega_loop(;years, time_steps, seros, rep, immigration_type, immigra
             end
             
             # Code for testing disease transition functions:
-            if movement_test==false && mortality_test==false
+            if movement_test==false && mortality_test==false && disp_test == false
                 if year >= 2
                     # get locations of symptomatic guys
                     infec = filter([:infectious, :time_since_disease] => (x,y) -> x .== 1 && y .== 1, lil_guys)
@@ -136,7 +139,6 @@ end
 # Create filename
 filename = "mvt_test.csv"
 =#
-
 #=
 # Data frame for disease transmission tests
 outputs = DataFrame([[],[],[],[],[],[],[]], ["id","incubation", "week","infectious", "time_since_inf","time_since_disease","recover"])
@@ -153,6 +155,7 @@ filename = "disease.csv"
 =#
 
 # Data frame for mortality tests
+#=
 outputs = DataFrame([[], [], [], [], [], [],[]], 
             ["step", "n_random_mort", "n_dis_mort", "orphan_mort", "juvie_cc_mort", "adult_cc_mort", "pop_size"])
 
@@ -166,6 +169,17 @@ end
 
 # Create filename
 filename = "mvt_mortality_test.csv"
+=#
+
+# Data frame for dispersal tests
+outputs = disp_frame = DataFrame([[],[],[],[],[]],
+                    ["id", "age", "week", "x", "y"])
+                    
+the_mega_loop(years=2, time_steps = 52, seros=Params[!,1][1], rep=1, immigration_disease = Params[!,3][1], 
+                immigration_type=Params[!,4][1], immigration_rate = Params[!,2][1], outputs = outputs,
+                mortality_test=false, disp_test=true)
+
+filename = "disp_test.csv"
 
 # Save results
 CSV.write(filename, outputs)

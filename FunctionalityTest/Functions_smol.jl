@@ -109,7 +109,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
     # rate = rate of distance-decay. Based on trial and error so raccoons typically stay ~1km from home
 
     # Create blank arrays
-    hab_prefs = Vector{Vector{Float64}}(undef, length(coords)) # ERROR HERE
+    hab_prefs = Vector{Vector{Float64}}(undef, length(coords)) 
     dist_weights = Vector{Vector{Float64}}(undef, length(coords))
     cons = Vector{Vector{Float64}}(undef, length(coords))
 
@@ -121,7 +121,7 @@ function move(coords, dat, home, landscape, reso=500, rate=-0.01)
         hab_prefs[i] = hab_frame.coef[convert.(Int64, habs)]
 
         # Movement weights as a function of distance from initial coords
-        home_loc = (home.x[i], home.y[i])  # ERROR HERE TOO
+        home_loc = (home.x[i], home.y[i])  
         distances = ((([x[1] for x in coords[i]].-home_loc[1]).^2 .+ ([x[2] for x in coords[i]].-home_loc[2]).^2)*reso)/100
         dist_weights[i] = exp.(rate .* distances)
 
@@ -377,15 +377,11 @@ function ORV(;dat, land, sero_prob)
 end
 
 # Juvenile distribution
-function juvies_leave(dat, home, land_size)
+function juvies_leave(dat, home, land_size, year, test, step)
     # Get Juveniles
     juvies = dat[findall(x -> x<52, dat.age),:]
 
-    # Create break point so it doesn't get stuck
-    niter = 0
-
-    while size(juvies,1) > 0
-        niter = niter + 1
+    if size(juvies,1) > 0 # there should be juveniles but just in case...
 
         # Pick a direction from list of inline functions
         upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
@@ -395,7 +391,7 @@ function juvies_leave(dat, home, land_size)
                         downleft, down, downright], size(juvies,1))
 
         # Get dispersal distance
-        distances = rand(Poisson(2), size(juvies,1))
+        distances = rand(Poisson(0.75), size(juvies,1))
 
         # RUN!
         coords = Vector(undef, size(juvies,1))
@@ -409,12 +405,17 @@ function juvies_leave(dat, home, land_size)
 
         juvies.x = [x[1] for x in coords]
         juvies.y = [x[2] for x in coords]
+        
+        if test == true && year == 2
+            disp_smol = DataFrame(id = juvies.id, age = "J", week = step, x = juvies.x, y = juvies.y)
+            append!(outputs, disp_smol)
+        end
 
         # Get indices of agents that left the landscape
         gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, juvies.x),
                                         findall(x-> x .< 0 || x .> land_size, juvies.y)]...)))
 
-        # Remove adults that left the landscape
+        # Remove agents that left the landscape
         gone_id = juvies.id[gone_indices]
         deleteat!(juvies, gone_indices)
 
@@ -449,16 +450,12 @@ function juvies_leave(dat, home, land_size)
         end    
 
         deleteat!(juvies,sort(unique(vcat(good_indices...))))
-
-        if niter > 2
-            break
-        end
     end
 end
 
 # Adult dispersal
-function adults_move(dat, home, land_size, year)
-    if year < 5
+function adults_move(dat, home, land_size, year, test, step)
+    if year < 2
         # Place home range attractor at current position-
         # Helps center the rare wandering raccoon while population stabilizes
         home = deepcopy(dat[:,[1,2,3]])
@@ -490,12 +487,7 @@ function adults_move(dat, home, land_size, year)
     # Adults in a non-crowded cell do not disperse
     deleteat!(adults,sort(unique(vcat(good_indices...))))
 
-    # Create break point so it doesn't get stuck
-    niter = 0
-
-    while size(adults,1) > 0
-        niter = niter + 1
-
+    if size(adults,1) > 0 # again, there should be raccoons but...
         # Pick a direction from list of inline functions
         upleft(x,y)=[x-1, y+1]; up(x,y)=[x, y+1]; upright(x,y)=[x+1, y+1]
         left(x,y)=[x-1, y]; right(x,y)=[x+1, y]
@@ -504,7 +496,7 @@ function adults_move(dat, home, land_size, year)
                         downleft, down, downright], size(adults,1))
 
         # Get dispersal distance (shorter for adults)
-        distances = rand(Poisson(1), size(adults,1))
+        distances = rand(Poisson(0.5), size(adults,1))
 
         # RUN!
         coords = Vector(undef, size(adults,1))
@@ -518,6 +510,12 @@ function adults_move(dat, home, land_size, year)
 
         adults.x = [x[1] for x in coords]
         adults.y = [x[2] for x in coords]
+
+        # Record if testing
+        if test == true && year == 2
+            disp_smol = DataFrame(id = adults.id, age = "A", week = step, x = adults.x, y = adults.y)
+            append!(outputs, disp_smol)
+        end
 
         # Get indices of adults that left the landscape
         gone_indices = sort(unique(vcat([findall(x-> x .< 0 || x .> land_size, adults.x),
@@ -559,10 +557,6 @@ function adults_move(dat, home, land_size, year)
         end    
 
         deleteat!(adults,sort(unique(vcat(good_indices...))))
-
-        if niter > 2
-            break
-        end
     end
 end
 

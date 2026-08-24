@@ -3,8 +3,8 @@
 library(tidyverse)
 library(ggnewscale)
 library(patchwork)
-library(gifski)
-library(gganimate)
+# library(gifski)
+# library(gganimate)
 library(sf)
 
 setwd("./FunctionalityTest")
@@ -15,7 +15,7 @@ raccoons <- read.csv("mvt_test.csv") %>%
 
 hr_props <- raccoons %>%
   filter(week >= 27 & week <= 40) %>%
-  group_by(id, x, y, hab) %>%
+  group_by(id, x, y) %>%
   summarise(count = n()) %>%
   ungroup() %>%
   group_by(id) %>%
@@ -32,9 +32,10 @@ hr_sizes <-hr_props %>%
   group_by(id) %>%
   summarize(geometry = st_union(geometry)) %>%
   st_buffer(dist = 0.5) %>%
-  st_concave_hull(ratio = 0.3, allow_holes = F)
+  # st_concave_hull(ratio = 0.5, allow_holes = F)
+  st_convex_hull()
   
-summary(st_area(hr_sizes))
+summary(st_area(hr_sizes)/4)
 
 # Look at land cover-------------
 # Load in data
@@ -86,7 +87,7 @@ rec2 <- rec %>%
 
 rec2
 
-# Mortality tests RESUME HERE --------------------
+# Mortality tests --------------------
 mort_counts <- read.csv(file = "mvt_mortality_test.csv")
 
 # Mortality as % of population
@@ -137,3 +138,56 @@ dis <- more_percs %>%
 
 colMeans(dis, na.rm = T)
 
+# Dispersal tests --------------------------------------
+disp <- read.csv('disp_test.csv')
+
+# Filter to get start and end points of each raccoon
+disp.points <- disp %>%
+  group_by(id) %>%
+  filter(week == min(week) | week == max(week)) %>%
+  arrange(id) %>%
+  distinct() %>%
+  mutate(count = n())
+
+# Calculate total displacement in km
+mvts <- disp.points %>%
+  filter(count > 1) %>%
+  mutate(step = case_when(week == min(week) ~ 1, 
+                          TRUE ~ 2)) %>%
+  select(-c(week, count)) %>%
+  pivot_wider(names_from = step, values_from = c(x,y)) %>%
+  mutate(dist = sqrt((x_2-x_1)^2 + (y_2-y_1)^2)*0.5)
+
+# Adults
+a.mvt <- mvts %>%
+  filter(age == "A") %>%
+  pull(dist)
+# some didn't move
+a.0 <- length(which(disp.points$age == "A" & disp.points$count == 1))
+a.mvt <- c(a.mvt, rep(0, a.0))
+hist(a.mvt)
+summary(a.mvt)
+
+a.plt <- ggplot(mapping=aes(a.mvt))+
+  geom_histogram(binwidth = 0.5, color = 'black', fill = 'lightgray')+
+  labs(x = "Annual Displacement (km)", y = "Frequency")+
+  scale_x_continuous(breaks = seq(0,5,1))+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+# all juveniles moved in this test
+j.mvt <- mvts %>%
+  filter(age == "J") %>%
+  pull(dist)
+hist(j.mvt)
+summary(j.mvt)
+
+j.plt <- ggplot(mapping=aes(j.mvt))+
+  geom_histogram(binwidth = 0.5, color = 'black', fill = 'lightgray')+
+  labs(x = "Annual Displacement (km)", y = "Frequency")+
+  scale_x_continuous(breaks = seq(0,7,1))+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+(a.plt | j.plt) +
+  plot_annotation(tag_levels = "a")
