@@ -110,6 +110,27 @@ pop_fig_list[[3]]/pop_fig_list[[5]]/pop_fig_list[[6]]
 
 # ggsave(filename="K_sens.jpeg", width = 14, height = 7, units = "in")
 
+# Kmax: Variance tests --------------
+rep5 <- vector("list", 20)
+rep5 <- lapply(rep5, function(x) x <- sample(unique(seasonal$rep), 
+                                     size = 5, replace = F))
+
+rep5.var <- tibble()
+for(i in 1:20){
+  subst <- seasonal %>%
+    filter(rep %in% rep5[[i]],
+           year == 5) %>%
+    group_by(a_mort, j_mort, season) %>%
+    summarise(vnce = var(total_pop)) %>%
+    mutate(num.rep = 5)
+  
+  rep5.var <- bind_rows(rep5.var, subst)
+}
+
+rep10 <- list()
+
+rep15 <- list()
+
 # Transmission Rates: lambda1 Wide Sweep -----------
 # Combine files into 1, if needed
 # filenames <- list.files(pattern = "broadsweep.csv")

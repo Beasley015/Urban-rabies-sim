@@ -20,15 +20,21 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions_sensitivity.jl")
 
 # Create table of param combinations
-lambda1 = [0.015, 0.02, 0.025, 0.03, 0.035]
-lambda2 = [0.002, 0.003, 0.004, 0.005, 0.006]
+maxK = [20,25,30]
+a_mort = [0.005, 0.0075, 0.01]
+j_mort = [0.015, 0.02, 0.025]
 
-all_combos = DataFrame(Iterators.product(lambda1, lambda2))
+all_combos = DataFrame(Iterators.product(maxK, a_mort, j_mort))
+
+#lambda1 = [0.015, 0.02, 0.025, 0.03, 0.035]
+#lambda2 = [0.002, 0.003, 0.004, 0.005, 0.006]
+
+#all_combos = DataFrame(Iterators.product(lambda1, lambda2))
 
 # Assign job 
 job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 
-params = [all_combos[job,1], all_combos[job,2]]
+params = [all_combos[job,1], all_combos[job,2], all_combos[job,3]]
 
 # Simulation function
 function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, amort, jmort)
@@ -63,7 +69,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             move(moves, lil_guys, home_coords, landscape, 500, -0.001)
 
             # Spread disease
-            spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
+            # spread_disease(dat=lil_guys, home=home_coords, lambda1=l1, lambda2=l2)
 
             # Immigration as propagule rain
             immigration(dat=lil_guys,home=home_coords,land_size=land_size, disease_rate = 0,
@@ -89,7 +95,7 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             end
         
             # Function where some infected guys become symptomatic or recover
-            change_state(lil_guys)
+            #change_state(lil_guys)
 
             # all guys age 1 week
             lil_guys.age = lil_guys.age .+ 1
@@ -99,9 +105,11 @@ function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2
             lil_guys.time_since_disease[lil_guys.infectious .== 1] = lil_guys.time_since_disease[lil_guys.infectious.==1] .+ 1
 
             # Initialize disease when population stabilizes
+            #=
             if year == 2 && step == 1
                 initialize_disease(dat=lil_guys, nstart=start_cases)
             end       
+            =#
 
             elimination = ifelse(sum(lil_guys.incubation) .== 0 .&& sum(lil_guys.infectious) .== 0, "True", "False")
 
@@ -128,12 +136,13 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 
 reps = 20
 
-for rep in 17:reps
-    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=params[1],
-                    l2=params[2], start_cases=10, amort = 0.0075, jmort=0.015)
+for rep in 15:reps
+    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=params[1], l1=0,
+                    l2=0, start_cases=0, amort = params[2], jmort=params[3])
 
     # Create filename
-    filename = string("l1", string(params[1]),"l2",string(params[2]),"rep", string(rep), ".csv")
+    filename = string("Kmax", string(params[1]),"a_mort",string(params[2]), "j_mort", string(params[3]),
+                        "rep", string(rep), ".csv")
 
     # Save results
     CSV.write(filename, outputs)
