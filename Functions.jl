@@ -385,7 +385,7 @@ function dont_fear_the_reaper(;dat, home)
     indices = [findall(==(x), new_location) for x in many_guys] # This is a major slowdown
 
     # Find cells with max number of guys or greater
-    too_many_guys = findall(length.(indices) .> 30) 
+    too_many_guys = findall(length.(indices) .> 25) 
 
     crowded_spots = many_guys[too_many_guys]
 
@@ -401,8 +401,8 @@ function dont_fear_the_reaper(;dat, home)
     crowded_juvies = intersect(crowded_indices, findall(x -> x <= 52, dat.age))
 
     # Decide who dies
-    dead_adults = rand(Bernoulli(0.0075), length(crowded_adults))
-    dead_juvies = rand(Bernoulli(0.015), length(crowded_juvies))
+    dead_adults = rand(Bernoulli(0.005), length(crowded_adults))
+    dead_juvies = rand(Bernoulli(0.025), length(crowded_juvies))
 
     dead_guys = sort(vcat(crowded_adults[dead_adults .== 1], crowded_juvies[dead_juvies .== 1]))
 

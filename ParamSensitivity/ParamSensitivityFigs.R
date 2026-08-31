@@ -7,6 +7,19 @@ library(R0)
 setwd("./ParamSensitivity")
 
 # Carrying capacity: max K, adult mortality, juvie mortality ---------
+# Combine files into 1, if needed
+# filenames <- list.files(pattern = "Kmax")
+# 
+# file.list <- list()
+# for(i in 1:length(filenames)){
+#   file.list[[i]] <- read.csv(filenames[i])
+# }
+# 
+# mort.frame <- do.call(rbind, file.list)
+# 
+# write.csv(mort.frame, "K_mortality_sensitivity.csv")
+# file.remove(filenames)
+
 kmort <- read.csv("K_mortality_sensitivity.csv") %>%
   select(rep, year, week, total_pop, a_mort, j_mort, maxK) %>%
   mutate(nweek = ((year-1)*52)+week)
@@ -69,23 +82,19 @@ for(i in 1:nrow(best.combos)){
          title = bquote(expr = ~ K[max] == .(row1) ~ ", Adult Mortality =" ~
                           .(row2) ~ ", Juvenile Mortality =" ~ .(row3),
                         where = globalenv()))+
-    theme_bw(base_size = 12)+
+    theme_bw(base_size = 10)+
     theme(panel.grid = element_blank()) 
 }
 
-layout <- "
-AABB
-CCDD
-EEFF
-"
-
-dens_fig_list[[1]]+dens_fig_list[[2]]+dens_fig_list[[3]]+dens_fig_list[[4]]+
-  dens_fig_list[[5]]+dens_fig_list[[6]]+
-  plot_layout(design=layout)
+(dens_fig_list[[1]]|dens_fig_list[[2]])/
+  (dens_fig_list[[3]]|dens_fig_list[[4]])/
+  (dens_fig_list[[5]]|plot_spacer())+
+  plot_layout()
 
 ggsave(filename="density_sens.jpeg", width = 14, height = 10, units = "in")
 
 # Make figures: total population
+best.combos <- best.combos[-c(5,3),]
 pop_fig_list <- list()
 for(i in 1:nrow(best.combos)){
   row <- best.combos[i,]
@@ -102,11 +111,11 @@ for(i in 1:nrow(best.combos)){
          title = bquote(expr = ~ K[max] == .(row1) ~ ", Adult Mortality =" ~
                           .(row2) ~ ", Juvenile Mortality =" ~ .(row3),
                         where = globalenv()))+
-    theme_bw(base_size = 12)+
+    theme_bw(base_size = 10)+
     theme(panel.grid=element_blank()) 
 }
 
-pop_fig_list[[3]]/pop_fig_list[[5]]/pop_fig_list[[6]]
+pop_fig_list[[1]]/pop_fig_list[[2]]/pop_fig_list[[3]]
 
 # ggsave(filename="K_sens.jpeg", width = 14, height = 7, units = "in")
 
@@ -120,20 +129,64 @@ for(i in 1:20){
   subst <- seasonal %>%
     filter(rep %in% rep5[[i]],
            year == 5) %>%
-    group_by(a_mort, j_mort, season) %>%
+    group_by(a_mort, j_mort, maxK, season) %>%
     summarise(vnce = var(total_pop)) %>%
     mutate(num.rep = 5)
   
   rep5.var <- bind_rows(rep5.var, subst)
 }
 
-rep10 <- list()
+rep10 <- vector("list", 20)
+rep10 <- lapply(rep10, function(x) x <- sample(unique(seasonal$rep), 
+                                              size = 10, replace = F))
 
-rep15 <- list()
+rep10.var <- tibble()
+for(i in 1:20){
+  subst <- seasonal %>%
+    filter(rep %in% rep10[[i]],
+           year == 5) %>%
+    group_by(a_mort, j_mort, maxK, season) %>%
+    summarise(vnce = var(total_pop)) %>%
+    mutate(num.rep = 10)
+  
+  rep10.var <- bind_rows(rep10.var, subst)
+}
+
+rep15 <- vector("list", 20)
+rep15 <- lapply(rep15, function(x) x <- sample(unique(seasonal$rep), 
+                                               size = 10, replace = F))
+rep15.var <- tibble()
+for(i in 1:20){
+  subst <- seasonal %>%
+    filter(rep %in% rep15[[i]],
+           year == 5) %>%
+    group_by(a_mort, j_mort, maxK, season) %>%
+    summarise(vnce = var(total_pop)) %>%
+    mutate(num.rep = 15)
+  
+  rep15.var <- bind_rows(rep15.var, subst)
+}
+
+rep20.var <- seasonal %>%
+  filter(year == 5) %>%
+  group_by(a_mort, j_mort, maxK, season) %>%
+  summarise(vnce = var(total_pop)) %>%
+  mutate(num.rep = 20)
+
+# put 'em all together
+rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var) 
+
+ggplot(data = rep.var, aes(x = factor(num.rep), y = vnce))+#, fill=factor(num.rep)))+
+  geom_boxplot(fill = 'lightgray') +
+  # scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  # labs(x = "Carrying Capacity", y = "Variance")+
+  labs(x = "# Reps", y = "Variance")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
 
 # Transmission Rates: lambda1 Wide Sweep -----------
 # Combine files into 1, if needed
-# filenames <- list.files(pattern = "broadsweep.csv")
+# filenames <- list.files(pattern = "l10")
 # 
 # file.list <- list()
 # for(i in 1:length(filenames)){
