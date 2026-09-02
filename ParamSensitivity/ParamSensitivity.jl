@@ -20,11 +20,13 @@ hab_frame = DataFrame(type = hab_names, prop = land_proportions, coef = hab_coef
 include("Functions_sensitivity.jl")
 
 # Create table of param combinations
+#=
 maxK = [20,25,30]
 a_mort = [0.005, 0.0075, 0.01]
 j_mort = [0.015, 0.02, 0.025]
 
 all_combos = DataFrame(Iterators.product(maxK, a_mort, j_mort))
+=#
 
 #lambda1 = [0.015, 0.02, 0.025, 0.03, 0.035]
 #lambda2 = [0.002, 0.003, 0.004, 0.005, 0.006]
@@ -32,9 +34,9 @@ all_combos = DataFrame(Iterators.product(maxK, a_mort, j_mort))
 #all_combos = DataFrame(Iterators.product(lambda1, lambda2))
 
 # Assign job 
-job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
+#job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 
-params = [all_combos[job,1], all_combos[job,2], all_combos[job,3]]
+#params = [all_combos[job,1], all_combos[job,2], all_combos[job,3]]
 
 # Simulation function
 function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, amort, jmort)
@@ -135,10 +137,10 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 reps = 20
 lam1 = [0.001, 0.00188, 0.00355, 0.00669, 0.0126, 0.0238, 0.0448, 0.0845, 0.159, 0.3]
 
-for rep in reps #1:reps
+for rep in 1:reps
     for i in 1:length(lam1)
         the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=25, l1=lam1[i],
-                        l2=0, start_cases=0, amort = 0.005, jmort=0.025)
+                        l2=0, start_cases=10, amort = 0.005, jmort=0.025)
 
         # Create filename
         filename = string("l1", string(lam1[i]), "rep", string(rep), ".csv")

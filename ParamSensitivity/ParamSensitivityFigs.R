@@ -206,7 +206,7 @@ dis.wide <- read.csv("l1_sens_wide.csv") %>%
 
 # proportion eliminated
 prop_eliminated <- dis.wide %>%
-  filter(year >= 2, elim == "True") %>%
+  filter(year >= 2, elim == "True") #%>%
   select(rep, lambda1) %>%
   group_by(lambda1) %>%
   distinct() %>%
