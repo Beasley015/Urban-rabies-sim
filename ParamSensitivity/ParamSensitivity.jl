@@ -135,7 +135,7 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 reps = 20
 lam1 = [0.001, 0.00188, 0.00355, 0.00669, 0.0126, 0.0238, 0.0448, 0.0845, 0.159, 0.3]
 
-for rep in 1:(reps-1)
+for rep in reps #1:reps
     for i in 1:length(lam1)
         the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=25, l1=lam1[i],
                         l2=0, start_cases=0, amort = 0.005, jmort=0.025)
