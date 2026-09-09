@@ -1,0 +1,2741 @@
+﻿Year,Species,Geography_Type,Geography_Name,Count_of_Positives,OBJECTID
+All Years,Skunk,County,Chittenden,88,1
+All Years,Skunk,County,Caledonia,24,2
+All Years,Skunk,County,Bennington,10,3
+All Years,Skunk,County,Addison,25,4
+All Years,Skunk,Town,Woodstock,1,5
+All Years,Skunk,Town,Winooski,4,6
+All Years,Skunk,Town,Williston,7,7
+All Years,Skunk,Town,Williamstown,2,8
+All Years,Skunk,Town,Westminster,3,9
+All Years,Skunk,Town,West Rutland,1,10
+All Years,Skunk,Town,Waterbury,1,11
+All Years,Skunk,Town,Wallingford,1,12
+All Years,Skunk,Town,Walden,2,13
+All Years,Skunk,Town,Waitsfield,1,14
+All Years,Skunk,Town,Vernon,1,15
+All Years,Skunk,Town,Vergennes,1,16
+All Years,Skunk,Town,Underhill,2,17
+All Years,Skunk,Town,Tunbridge,1,18
+All Years,Skunk,Town,Thetford,1,19
+All Years,Skunk,Town,Swanton,1,20
+All Years,Skunk,Town,Strafford,2,21
+All Years,Skunk,Town,Stowe,2,22
+All Years,Skunk,Town,Stockbridge,2,23
+All Years,Skunk,Town,St. Johnsbury,2,24
+All Years,Skunk,Town,St. George,1,25
+All Years,Skunk,Town,St. Albans Town,4,26
+All Years,Skunk,Town,St. Albans City,2,27
+All Years,Skunk,Town,Springfield,1,28
+All Years,Skunk,Town,South Hero,3,29
+All Years,Skunk,Town,South Burlington,10,30
+All Years,Skunk,Town,Shrewsbury,1,31
+All Years,Skunk,Town,Shoreham,1,32
+All Years,Skunk,Town,Sheldon,2,33
+All Years,Skunk,Town,Shelburne,7,34
+All Years,Skunk,Town,Sheffield,1,35
+All Years,Skunk,Town,Shaftsbury,2,36
+All Years,Skunk,Town,Ryegate,1,37
+All Years,Skunk,Town,Rupert,3,38
+All Years,Skunk,Town,Royalton,3,39
+All Years,Skunk,Town,Rutland,1,40
+All Years,Skunk,Town,Roxbury,1,41
+All Years,Skunk,Town,Rockingham,4,42
+All Years,Skunk,Town,Richmond,2,43
+All Years,Skunk,Town,Randolph,3,44
+All Years,Skunk,Town,Pomfret,1,45
+All Years,Skunk,Town,Plainfield,2,46
+All Years,Skunk,Town,Pittsford,1,47
+All Years,Skunk,Town,Peacham,1,48
+All Years,Skunk,Town,Pawlet,2,49
+All Years,Skunk,Town,Panton,3,50
+All Years,Skunk,Town,Northfield,1,51
+All Years,Skunk,Town,Norwich,1,52
+All Years,Skunk,Town,Newbury,2,53
+All Years,Skunk,Town,New Haven,2,54
+All Years,Skunk,Town,Morristown,4,55
+All Years,Skunk,Town,Moretown,1,56
+All Years,Skunk,Town,Montpelier,2,57
+All Years,Skunk,Town,Monkton,2,58
+All Years,Skunk,Town,Milton,1,59
+All Years,Skunk,Town,Middlebury,1,60
+All Years,Skunk,Town,Manchester,1,61
+All Years,Skunk,Town,Lyndon,3,62
+All Years,Skunk,Town,Leicester,2,63
+All Years,Skunk,Town,Kirby,1,64
+All Years,Skunk,Town,Johnson,1,65
+All Years,Skunk,Town,Jericho,3,66
+All Years,Skunk,Town,Irasburg,2,67
+All Years,Skunk,Town,Hyde Park,2,68
+All Years,Skunk,Town,Hubbardton,1,69
+All Years,Skunk,Town,Hinesburg,1,70
+All Years,Skunk,Town,Highgate,4,71
+All Years,Skunk,Town,Hartland,1,72
+All Years,Skunk,Town,Hartford,2,73
+All Years,Skunk,Town,Hardwick,3,74
+All Years,Skunk,Town,Guilford,1,75
+All Years,Skunk,Town,Groton,1,76
+All Years,Skunk,Town,Greensboro,1,77
+All Years,Skunk,Town,Grand Isle,2,78
+All Years,Skunk,Town,Grafton,1,79
+All Years,Skunk,Town,Georgia,2,80
+All Years,Skunk,Town,Franklin,3,81
+All Years,Skunk,Town,Ferrisburg,4,82
+All Years,Skunk,Town,Fairlee,1,83
+All Years,Skunk,Town,Fairfield,2,84
+All Years,Skunk,Town,Fairfax,6,85
+All Years,Skunk,Town,Fair Haven,2,86
+All Years,Skunk,Town,Essex,4,87
+All Years,Skunk,Town,Elmore,3,88
+All Years,Skunk,Town,East Montpelier,1,89
+All Years,Skunk,Town,Dummerston,1,90
+All Years,Skunk,Town,Derby,3,91
+All Years,Skunk,Town,Danville,5,92
+All Years,Skunk,Town,Craftsbury,4,93
+All Years,Skunk,Town,Coventry,4,94
+All Years,Skunk,Town,Cornwall,1,95
+All Years,Skunk,Town,Corinth,2,96
+All Years,Skunk,Town,Concord,1,97
+All Years,Skunk,Town,Colchester,10,98
+All Years,Skunk,Town,Chittenden,1,99
+All Years,Skunk,Town,Chester,1,100
+All Years,Skunk,Town,Chelsea,2,101
+All Years,Skunk,Town,Charlotte,4,102
+All Years,Skunk,Town,Calais,1,103
+All Years,Skunk,Town,Burke,1,104
+All Years,Skunk,Town,Burlington,32,105
+All Years,Skunk,Town,Brookline,1,106
+All Years,Skunk,Town,Brookfield,2,107
+All Years,Skunk,Town,Bristol,2,108
+All Years,Skunk,Town,Bridport,4,109
+All Years,Skunk,Town,Brattleboro,2,110
+All Years,Skunk,Town,Brandon,3,111
+All Years,Skunk,Town,Braintree,1,112
+All Years,Skunk,Town,Bradford,4,113
+All Years,Skunk,Town,Bethel,2,114
+All Years,Skunk,Town,Berkshire,2,115
+All Years,Skunk,Town,Benson,1,116
+All Years,Skunk,Town,Bennington,4,117
+All Years,Skunk,Town,Barre Town,4,118
+All Years,Skunk,Town,Barre City,6,119
+All Years,Skunk,Town,Barnet,4,120
+All Years,Skunk,Town,Addison,1,121
+All Years,Skunk,Town,Albany,3,122
+All Years,Sheep,County,Windsor,1,123
+All Years,Sheep,County,Franklin,1,124
+All Years,Sheep,County,Chittenden,1,125
+All Years,Sheep,Town,Woodstock,1,126
+All Years,Sheep,Town,St. Albans Town,1,127
+All Years,Sheep,Town,Charlotte,1,128
+All Years,Raccoon,County,Windsor,30,129
+All Years,Raccoon,County,Windham,40,130
+All Years,Raccoon,County,Washington,26,131
+All Years,Raccoon,County,Rutland,20,132
+All Years,Raccoon,County,Orleans,43,133
+All Years,Raccoon,County,Orange,20,134
+All Years,Raccoon,County,Lamoille,28,135
+All Years,Raccoon,County,Grand Isle,17,136
+All Years,Raccoon,County,Franklin,100,137
+All Years,Raccoon,County,Chittenden,101,138
+All Years,Raccoon,County,Caledonia,39,139
+All Years,Raccoon,County,Bennington,26,140
+All Years,Raccoon,County,Addison,40,141
+All Years,Raccoon,Town,Woodstock,2,142
+All Years,Raccoon,Town,Woodford,1,143
+All Years,Raccoon,Town,Woodbury,1,144
+All Years,Raccoon,Town,Winooski,2,145
+All Years,Raccoon,Town,Windsor,2,146
+All Years,Raccoon,Town,Wilmington,1,147
+All Years,Raccoon,Town,Williston,5,148
+All Years,Raccoon,Town,Williamstown,4,149
+All Years,Raccoon,Town,Wheelock,4,150
+All Years,Raccoon,Town,Whiting,1,151
+All Years,Raccoon,Town,White River Junction,1,152
+All Years,Raccoon,Town,Weybridge,1,153
+All Years,Raccoon,Town,Weston,1,154
+All Years,Raccoon,Town,Westminster,9,155
+All Years,Raccoon,Town,Westmore,1,156
+All Years,Raccoon,Town,West Haven,1,157
+All Years,Raccoon,Town,West Windsor,1,158
+All Years,Raccoon,Town,Weathersfield,3,159
+All Years,Raccoon,Town,Waterbury,2,160
+All Years,Raccoon,Town,Washington,2,161
+All Years,Raccoon,Town,Wardsboro,2,162
+All Years,Raccoon,Town,Wallingford,1,163
+All Years,Raccoon,Town,Walden,1,164
+All Years,Raccoon,Town,Waitsfield,1,165
+All Years,Raccoon,Town,Vershire,2,166
+All Years,Raccoon,Town,Vergennes,2,167
+All Years,Raccoon,Town,Underhill,3,168
+All Years,Raccoon,Town,Townshend,3,169
+All Years,Raccoon,Town,Tinmouth,1,170
+All Years,Raccoon,Town,Swanton,11,171
+All Years,Raccoon,Town,Sunderland,1,172
+All Years,Raccoon,Town,Stowe,19,173
+All Years,Raccoon,Town,St. Johnsbury,5,174
+All Years,Raccoon,Town,St. Albans Town,13,175
+All Years,Raccoon,Town,St. Albans City,16,176
+All Years,Raccoon,Town,South Hero,4,177
+All Years,Raccoon,Town,South Burlington,14,178
+All Years,Raccoon,Town,Shrewsbury,1,179
+All Years,Raccoon,Town,Shoreham,3,180
+All Years,Raccoon,Town,Sheldon,4,181
+All Years,Raccoon,Town,Shelburne,4,182
+All Years,Raccoon,Town,Sharon,1,183
+All Years,Raccoon,Town,Shaftsbury,1,184
+All Years,Raccoon,Town,Ryegate,2,185
+All Years,Raccoon,Town,Rutland City,5,186
+All Years,Raccoon,Town,Rupert,2,187
+All Years,Raccoon,Town,Royalton,1,188
+All Years,Raccoon,Town,Rockingham,5,189
+All Years,Raccoon,Town,Rochester,2,190
+All Years,Raccoon,Town,Reading,2,191
+All Years,Raccoon,Town,Randolph,1,192
+All Years,Raccoon,Town,Putney,1,193
+All Years,Raccoon,Town,Pownal,4,194
+All Years,Raccoon,Town,Poultney,2,195
+All Years,Raccoon,Town,Plainfield,2,196
+All Years,Raccoon,Town,Pittsfield,1,197
+All Years,Raccoon,Town,Peru,1,198
+All Years,Raccoon,Town,Peacham,9,199
+All Years,Raccoon,Town,Pawlet,1,200
+All Years,Raccoon,Town,Panton,2,201
+All Years,Raccoon,Town,Norwich,1,202
+All Years,Raccoon,Town,Northfield,2,203
+All Years,Raccoon,Town,North Hero,2,204
+All Years,Raccoon,Town,Newport City,2,205
+All Years,Raccoon,Town,Newport Town,1,206
+All Years,Raccoon,Town,Newfane,1,207
+All Years,Raccoon,Town,New Haven,3,208
+All Years,Raccoon,Town,Newbury,2,209
+All Years,Raccoon,Town,Mount Holly,2,210
+All Years,Raccoon,Town,Morristown,5,211
+All Years,Raccoon,Town,Moretown,1,212
+All Years,Raccoon,Town,Montpelier,1,213
+All Years,Raccoon,Town,Montgomery,1,214
+All Years,Raccoon,Town,Monkton,2,215
+All Years,Raccoon,Town,Middletown Springs,2,216
+All Years,Raccoon,Town,Middlesex,2,217
+All Years,Raccoon,Town,Middlebury,7,218
+All Years,Raccoon,Town,Milton,1,219
+All Years,Raccoon,Town,Marshfield,1,220
+All Years,Raccoon,Town,Manchester,10,221
+All Years,Raccoon,Town,Lyndon,1,222
+All Years,Raccoon,Town,Lowell,1,223
+All Years,Raccoon,Town,Lincoln,5,224
+All Years,Raccoon,Town,Leicester,1,225
+All Years,Raccoon,Town,Kirby,1,226
+All Years,Raccoon,Town,Johnson,1,227
+All Years,Raccoon,Town,Jericho,4,228
+All Years,Raccoon,Town,Irasburg,6,229
+All Years,Raccoon,Town,Hyde Park,1,230
+All Years,Raccoon,Town,Holland,1,231
+All Years,Raccoon,Town,Huntington,1,232
+All Years,Raccoon,Town,Hubbardton,1,233
+All Years,Raccoon,Town,Hinesburg,2,234
+All Years,Raccoon,Town,Highgate,19,235
+All Years,Raccoon,Town,Hartland,3,236
+All Years,Raccoon,Town,Hartford,3,237
+All Years,Raccoon,Town,Halifax,1,238
+All Years,Raccoon,Town,Guilford,2,239
+All Years,Raccoon,Town,Greensboro,2,240
+All Years,Raccoon,Town,Grand Isle,3,241
+All Years,Raccoon,Town,Grafton,2,242
+All Years,Raccoon,Town,Groton,1,243
+All Years,Raccoon,Town,Glover,4,244
+All Years,Raccoon,Town,Georgia,5,245
+All Years,Raccoon,Town,Franklin,16,246
+All Years,Raccoon,Town,Fletcher,4,247
+All Years,Raccoon,Town,Ferrisburgh,1,248
+All Years,Raccoon,Town,Ferrisburg,4,249
+All Years,Raccoon,Town,Fairlee,2,250
+All Years,Raccoon,Town,Fairfield,4,251
+All Years,Raccoon,Town,Fairfax,3,252
+All Years,Raccoon,Town,Essex,10,253
+All Years,Raccoon,Town,Enosburg,2,254
+All Years,Raccoon,Town,East Montpelier,1,255
+All Years,Raccoon,Town,Duxbury,2,256
+All Years,Raccoon,Town,Dummerston,2,257
+All Years,Raccoon,Town,Dover,3,258
+All Years,Raccoon,Town,Dorset,3,259
+All Years,Raccoon,Town,Derby,10,260
+All Years,Raccoon,Town,Danville,8,261
+All Years,Raccoon,Town,Craftsbury,2,262
+All Years,Raccoon,Town,Coventry,6,263
+All Years,Raccoon,Town,Cornwall,2,264
+All Years,Raccoon,Town,Corinth,3,265
+All Years,Raccoon,Town,Colchester,7,266
+All Years,Raccoon,Town,Clarendon,1,267
+All Years,Raccoon,Town,Chittenden,1,268
+All Years,Raccoon,Town,Chester,2,269
+All Years,Raccoon,Town,Chelsea,2,270
+All Years,Raccoon,Town,Charlotte,5,271
+All Years,Raccoon,Town,Castleton,1,272
+All Years,Raccoon,Town,Cavendish,1,273
+All Years,Raccoon,Town,Cambridge,1,274
+All Years,Raccoon,Town,Calais,3,275
+All Years,Raccoon,Town,Cabot,2,276
+All Years,Raccoon,Town,Burlington,40,277
+All Years,Raccoon,Town,Brownington,1,278
+All Years,Raccoon,Town,Brookline,1,279
+All Years,Raccoon,Town,Bristol,1,280
+All Years,Raccoon,Town,Bridport,3,281
+All Years,Raccoon,Town,Bridgewater,1,282
+All Years,Raccoon,Town,Brattleboro,7,283
+All Years,Raccoon,Town,Brandon,1,284
+All Years,Raccoon,Town,Braintree,1,285
+All Years,Raccoon,Town,Bradford,2,286
+All Years,Raccoon,Town,Bolton,1,287
+All Years,Raccoon,Town,Bethel,1,288
+All Years,Raccoon,Town,Bennington,3,289
+All Years,Raccoon,Town,Belvidere,1,290
+All Years,Raccoon,Town,Barton,7,291
+All Years,Raccoon,Town,Barre Town,1,292
+All Years,Raccoon,Town,Barre City,4,293
+All Years,Raccoon,Town,Barnet,6,294
+All Years,Raccoon,Town,Barnard,1,295
+All Years,Raccoon,Town,Baltimore,1,296
+All Years,Raccoon,Town,Bakersfield,1,297
+All Years,Raccoon,Town,Alburg,8,298
+All Years,Raccoon,Town,Addison,3,299
+All Years,Rabbit,County,Caledonia,1,300
+All Years,Rabbit,Town,St. Johnsbury,1,301
+All Years,Otter,County,Windham,1,302
+All Years,Otter,County,Orange,1,303
+All Years,Otter,Town,Bradford,1,304
+All Years,Otter,Town,Guilford,1,305
+All Years,Horse,County,Windsor,1,306
+All Years,Horse,County,Rutland,1,307
+All Years,Horse,County,Essex,1,308
+All Years,Horse,Town,Hartford,1,309
+All Years,Horse,Town,Concord,1,310
+All Years,Horse,Town,Benson,1,311
+All Years,Goat,Town,Windsor,1,312
+All Years,Fox,County,Windsor,9,313
+All Years,Fox,County,Windham,12,314
+All Years,Fox,County,Washington,5,315
+All Years,Fox,County,Rutland,8,316
+All Years,Fox,County,Orange,7,317
+All Years,Fox,County,Lamoille,2,318
+All Years,Fox,County,Franklin,2,319
+All Years,Fox,County,Caledonia,1,320
+All Years,Fox,County,Chittenden,5,321
+All Years,Fox,County,Bennington,6,322
+All Years,Fox,County,Addison,8,323
+All Years,Fox,Town,Woodstock,1,324
+All Years,Fox,Town,Windham,1,325
+All Years,Fox,Town,Williamstown,2,326
+All Years,Fox,Town,Weathersfield,1,327
+All Years,Fox,Town,West Pawlet,1,328
+All Years,Fox,Town,Waitsfield,1,329
+All Years,Fox,Town,Underhill,1,330
+All Years,Fox,Town,Thetford,3,331
+All Years,Fox,Town,Stowe,2,332
+All Years,Fox,Town,St. Albans,1,333
+All Years,Fox,Town,Springfield,1,334
+All Years,Fox,Town,South Burlington,2,335
+All Years,Fox,Town,Shaftsbury,1,336
+All Years,Fox,Town,Saxtons River,1,337
+All Years,Fox,Town,Rutland Town,1,338
+All Years,Fox,Town,Rutland City,2,339
+All Years,Fox,Town,Rockingham,2,340
+All Years,Fox,Town,Rochester,1,341
+All Years,Fox,Town,Putney,1,342
+All Years,Goat,County,Windsor,1,343
+All Years,Fox,Town,Proctor,1,344
+All Years,Fox,Town,Poultney,1,345
+All Years,Fox,Town,Montpelier,1,346
+All Years,Fox,Town,Middlebury,4,347
+All Years,Fox,Town,Manchester,1,348
+All Years,Fox,Town,Lyndon,1,349
+All Years,Fox,Town,Ludlow,2,350
+All Years,Fox,Town,Londonderry,1,351
+All Years,Fox,Town,Jamaica,2,352
+All Years,Fox,Town,Highgate,1,353
+All Years,Fox,Town,Hinesburg,1,354
+All Years,Fox,Town,Hartford,2,355
+All Years,Fox,Town,Grafton,1,356
+All Years,Fox,Town,Ferrisburg,2,357
+All Years,Fox,Town,Fayston,1,358
+All Years,Fox,Town,Dummerston,1,359
+All Years,Fox,Town,Danby,1,360
+All Years,Fox,Town,Chester,1,361
+All Years,Fox,Town,Chelsea,1,362
+All Years,Fox,Town,Calais,1,363
+All Years,Fox,Town,Burlington,1,364
+All Years,Fox,Town,Bristol,1,365
+All Years,Fox,Town,Bridgewater,1,366
+All Years,Fox,Town,Brandon,1,367
+All Years,Fox,Town,Brattleboro,2,368
+All Years,Fox,Town,Braintree,1,369
+All Years,Fox,Town,Bennington,2,370
+All Years,Fox,Town,Barre Town,1,371
+All Years,Fox,Town,Arlington,2,372
+All Years,Dog,County,Addison,1,373
+All Years,Dog,Town,New Haven,1,374
+All Years,Coyote,County,Addison,2,375
+All Years,Coyote,Town,Salisbury,1,376
+All Years,Coyote,Town,New Haven,1,377
+All Years,Cat,County,Windsor,2,378
+All Years,Cat,County,Windham,2,379
+All Years,Cat,County,Washington,3,380
+All Years,Cat,County,Rutland,1,381
+All Years,Cat,County,Orleans,1,382
+All Years,Cat,County,Chittenden,1,383
+All Years,Cat,County,Caledonia,1,384
+All Years,Cat,County,Bennington,1,385
+All Years,Cat,County,Addison,5,386
+All Years,Cat,Town,Vergennes,1,387
+All Years,Cat,Town,Shoreham,1,388
+All Years,Cat,Town,Rockingham,2,389
+All Years,Cat,Town,New Haven,1,390
+All Years,Cat,Town,Ludlow,1,391
+All Years,Cat,Town,Leicester,1,392
+All Years,Cat,Town,Hardwick,1,393
+All Years,Cat,Town,Granville,1,394
+All Years,Cat,Town,Ferrisburgh,1,395
+All Years,Cat,Town,Danville,1,396
+All Years,Cat,Town,Coventry,1,397
+All Years,Cat,Town,Charlotte,1,398
+All Years,Cat,Town,Benson,1,399
+All Years,Cat,Town,Barre Town,2,400
+All Years,Cat,Town,Arlington,1,401
+All Years,Bovine,County,Windsor,1,402
+All Years,Bovine,County,Washington,1,403
+All Years,Bovine,County,Rutland,1,404
+All Years,Bovine,County,Orleans,2,405
+All Years,Bovine,County,Orange,1,406
+All Years,Bovine,County,Lamoille,1,407
+All Years,Bovine,County,Franklin,1,408
+All Years,Bovine,County,Chittenden,2,409
+All Years,Bovine,County,Caledonia,2,410
+All Years,Bovine,County,Bennington,1,411
+All Years,Bovine,County,Addison,6,412
+All Years,Bovine,Town,Warren,1,413
+All Years,Bovine,Town,Strafford,1,414
+All Years,Bovine,Town,Shoreham,1,415
+All Years,Bovine,Town,Shaftsbury,1,416
+All Years,Bovine,Town,New Haven,1,417
+All Years,Bovine,Town,Middlebury,1,418
+All Years,Bovine,Town,Hyde Park,1,419
+All Years,Bovine,Town,Hardwick,1,420
+All Years,Bovine,Town,Greensboro,1,421
+All Years,Bovine,Town,Ferrisburg,1,422
+All Years,Bovine,Town,Danville,1,423
+All Years,Bovine,Town,Chelsea,1,424
+All Years,Bovine,Town,Charlotte,2,425
+All Years,Bovine,Town,Bridport,1,426
+All Years,Bovine,Town,Brandon,1,427
+All Years,Bovine,Town,Barton,1,428
+All Years,Bovine,Town,Bakersfield,1,429
+All Years,Bovine,Town,Addison,1,430
+All Years,Bobcat,County,Windsor,3,431
+All Years,Bobcat,County,Windham,2,432
+All Years,Bobcat,County,Washington,2,433
+All Years,Bobcat,County,Rutland,1,434
+All Years,Bobcat,County,Caledonia,1,435
+All Years,Bobcat,Town,Windsor,1,436
+All Years,Bobcat,Town,Stockbridge,1,437
+All Years,Bobcat,Town,Newark,1,438
+All Years,Bobcat,Town,Northfield,1,439
+All Years,Bobcat,Town,Hartford,1,440
+All Years,Bobcat,Town,Dummerston,1,441
+All Years,Bobcat,Town,Clarendon,1,442
+All Years,Bobcat,Town,Calais,1,443
+All Years,Bobcat,Town,Athens,1,444
+All Years,Bat,County,Windsor,5,445
+All Years,Bat,County,Windham,5,446
+All Years,Bat,County,Washington,3,447
+All Years,Bat,County,Rutland,18,448
+All Years,Bat,County,Orleans,2,449
+All Years,Bat,County,Orange,2,450
+All Years,Bat,County,Lamoille,4,451
+All Years,Bat,County,Grand Isle,1,452
+All Years,Bat,County,Franklin,7,453
+All Years,Bat,County,Chittenden,30,454
+All Years,Bat,County,Caledonia,4,455
+All Years,Bat,County,Bennington,3,456
+All Years,Bat,County,Addison,2,457
+All Years,Bat,Town,Winooski,1,458
+All Years,Bat,Town,Williston,1,459
+All Years,Bat,Town,Westminster,1,460
+All Years,Bat,Town,West Rutland,2,461
+All Years,Bat,Town,Waterbury,1,462
+All Years,Bat,Town,Thetford,2,463
+All Years,Bat,Town,Stowe,1,464
+All Years,Bat,Town,Stamford,2,465
+All Years,Bat,Town,St. Johnsbury,2,466
+All Years,Bat,Town,St. Albans Town,1,467
+All Years,Bat,Town,St. Albans City,1,468
+All Years,Bat,Town,St. Albans,1,469
+All Years,Bat,Town,Springfield,1,470
+All Years,Bat,Town,South Hero,1,471
+All Years,Bat,Town,South Burlington,2,472
+All Years,Bat,Town,Shelburne,7,473
+All Years,Bat,Town,Ryegate,1,474
+All Years,Bat,Town,Rutland City,1,475
+All Years,Bat,Town,Rockingham,1,476
+All Years,Bat,Town,Poultney,2,477
+All Years,Bat,Town,Pittsford,1,478
+All Years,Bat,Town,Pawlet,1,479
+All Years,Bat,Town,Northfield,1,480
+All Years,Bat,Town,Norwich,1,481
+All Years,Bat,Town,Newport Town,1,482
+All Years,Bat,Town,Newfane,1,483
+All Years,Bat,Town,Morristown,1,484
+All Years,Bat,Town,Montpelier,1,485
+All Years,Bat,Town,Milton,1,486
+All Years,Bat,Town,Middletown Springs,1,487
+All Years,Bat,Town,Middlebury,2,488
+All Years,Bat,Town,Johnson,1,489
+All Years,Bat,Town,Hartford,2,490
+All Years,Bat,Town,Grand Isle,1,491
+All Years,Bat,Town,Georgia,2,492
+All Years,Bat,Town,Fairfield,1,493
+All Years,Bat,Town,Fair Haven,1,494
+All Years,Bat,Town,Fairfax,3,495
+All Years,Bat,Town,Essex,1,496
+All Years,Bat,Town,Dummerston,1,497
+All Years,Bat,Town,Danville,1,498
+All Years,Bat,Town,Colchester,3,499
+All Years,Bat,Town,Clarendon,1,500
+All Years,Bat,Town,Chester,1,501
+All Years,Bat,Town,Castleton,7,502
+All Years,Bat,Town,Cambridge,1,503
+All Years,Bat,Town,Burlington,11,504
+All Years,Bat,Town,Brookfield,1,505
+All Years,Bat,Town,Brattleboro,1,506
+All Years,Bat,Town,Benson,1,507
+All Years,Bat,Town,Bennington,1,508
+All Years,All Species,County,Windsor,40,509
+All Years,All Species,County,Windham,78,510
+All Years,All Species,County,Washington,63,511
+All Years,All Species,County,Rutland,69,512
+All Years,All Species,County,Orleans,65,513
+All Years,All Species,County,Orange,55,514
+All Years,All Species,County,Lamoille,47,515
+All Years,All Species,County,Grand Isle,23,516
+All Years,All Species,County,Franklin,140,517
+All Years,All Species,County,Essex,2,518
+All Years,All Species,County,Chittenden,230,519
+All Years,All Species,County,Caledonia,75,520
+All Years,All Species,County,Bennington,48,521
+All Years,All Species,County,Addison,89,522
+All Years,All Species,Town,Woodstock,5,523
+All Years,All Species,Town,Woodford,1,524
+All Years,All Species,Town,Woodbury,1,525
+All Years,All Species,Town,Winooski,7,526
+All Years,All Species,Town,Windsor,4,527
+All Years,All Species,Town,Windham,1,528
+All Years,All Species,Town,Wilmington,1,529
+All Years,All Species,Town,Williston,14,530
+All Years,All Species,Town,Williamstown,8,531
+All Years,All Species,Town,White River Junction,1,532
+All Years,All Species,Town,Whiting,1,533
+All Years,All Species,Town,Wheelock,4,534
+All Years,All Species,Town,Weybridge,1,535
+All Years,All Species,Town,Weston,1,536
+All Years,All Species,Town,Westmore,1,537
+All Years,All Species,Town,Westminster,13,538
+All Years,All Species,Town,West Pawlet,1,539
+All Years,All Species,Town,West Windsor,1,540
+All Years,All Species,Town,West Rutland,3,541
+All Years,All Species,Town,West Haven,1,542
+All Years,All Species,Town,Weathersfield,4,543
+All Years,All Species,Town,Waterbury,4,544
+All Years,All Species,Town,Washington,2,545
+All Years,All Species,Town,Warren,1,546
+All Years,All Species,Town,Wardsboro,2,547
+All Years,All Species,Town,Wallingford,2,548
+All Years,All Species,Town,Walden,3,549
+All Years,All Species,Town,Waitsfield,3,550
+All Years,All Species,Town,Vershire,2,551
+All Years,All Species,Town,Vernon,1,552
+All Years,All Species,Town,Vergennes,4,553
+All Years,All Species,Town,Underhill,6,554
+All Years,All Species,Town,Tunbridge,1,555
+All Years,All Species,Town,Townshend,3,556
+All Years,All Species,Town,Tinmouth,1,557
+All Years,All Species,Town,Thetford,6,558
+All Years,All Species,Town,Swanton,12,559
+All Years,All Species,Town,Sunderland,1,560
+All Years,All Species,Town,Strafford,3,561
+All Years,All Species,Town,Stowe,24,562
+All Years,All Species,Town,Stockbridge,3,563
+All Years,All Species,Town,Stamford,2,564
+All Years,All Species,Town,St. Johnsbury,10,565
+All Years,All Species,Town,St. George,1,566
+All Years,All Species,Town,St. Albans Town,21,567
+All Years,All Species,Town,St. Albans City,19,568
+All Years,All Species,Town,St. Albans,1,569
+All Years,All Species,Town,Springfield,4,570
+All Years,All Species,Town,South Hero,8,571
+All Years,All Species,Town,South Burlington,28,572
+All Years,All Species,Town,Shrewsbury,2,573
+All Years,All Species,Town,Shoreham,6,574
+All Years,All Species,Town,Sheldon,6,575
+All Years,All Species,Town,Shelburne,18,576
+All Years,All Species,Town,Sheffield,1,577
+All Years,All Species,Town,Sharon,1,578
+All Years,All Species,Town,Shaftsbury,5,579
+All Years,All Species,Town,Saxtons River,1,580
+All Years,All Species,Town,Salisbury,1,581
+All Years,All Species,Town,Ryegate,4,582
+All Years,All Species,Town,Rutland Town,1,583
+All Years,All Species,Town,Rutland City,12,584
+All Years,All Species,Town,Rupert,5,585
+All Years,All Species,Town,Royalton,4,586
+All Years,All Species,Town,Roxbury,1,587
+All Years,All Species,Town,Rockingham,14,588
+All Years,All Species,Town,Rochester,3,589
+All Years,All Species,Town,Richmond,2,590
+All Years,All Species,Town,Reading,2,591
+All Years,All Species,Town,Randolph,4,592
+All Years,All Species,Town,Putney,2,593
+All Years,All Species,Town,Pownal,4,594
+All Years,All Species,Town,Proctor,1,595
+All Years,All Species,Town,Poultney,5,596
+All Years,All Species,Town,Pomfret,1,597
+All Years,All Species,Town,Plainfield,4,598
+All Years,All Species,Town,Pittsfield,1,599
+All Years,All Species,Town,Pittsford,2,600
+All Years,All Species,Town,Peru,1,601
+All Years,All Species,Town,Peacham,10,602
+All Years,All Species,Town,Pawlet,4,603
+All Years,All Species,Town,Panton,5,604
+All Years,All Species,Town,Orange,1,605
+All Years,All Species,Town,Norwich,3,606
+All Years,All Species,Town,Northfield,6,607
+All Years,All Species,Town,North Hero,2,608
+All Years,All Species,Town,Newport Town,2,609
+All Years,All Species,Town,Newport City,2,610
+All Years,All Species,Town,Newfane,2,611
+All Years,All Species,Town,Newbury,4,612
+All Years,All Species,Town,Newark,1,613
+All Years,All Species,Town,New Haven,9,614
+All Years,All Species,Town,Mount Holly,2,615
+All Years,All Species,Town,Morrisville,1,616
+All Years,All Species,Town,Morristown,9,617
+All Years,All Species,Town,Moretown,2,618
+All Years,All Species,Town,Montpelier,5,619
+All Years,All Species,Town,Montgomery,1,620
+All Years,All Species,Town,Monkton,4,621
+All Years,All Species,Town,Milton,4,622
+All Years,All Species,Town,Middletown Springs,3,623
+All Years,All Species,Town,Middlesex,2,624
+All Years,All Species,Town,Middlebury,15,625
+All Years,All Species,Town,Marshfield,1,626
+All Years,All Species,Town,Manchester,12,627
+All Years,All Species,Town,Lyndon,8,628
+All Years,All Species,Town,Ludlow,3,629
+All Years,All Species,Town,Lowell,1,630
+All Years,All Species,Town,Londonderry,1,631
+All Years,All Species,Town,Lincoln,4,632
+All Years,All Species,Town,Leicester,4,633
+All Years,All Species,Town,Kirby,2,634
+All Years,All Species,Town,Johnson,3,635
+All Years,All Species,Town,Jericho,7,636
+All Years,All Species,Town,Jamaica,2,637
+All Years,All Species,Town,Irasburg,8,638
+All Years,All Species,Town,Hyde Park,4,639
+All Years,All Species,Town,Holland,1,640
+All Years,All Species,Town,Huntington,1,641
+All Years,All Species,Town,Hubbardton,2,642
+All Years,All Species,Town,Hinesburg,4,643
+All Years,All Species,Town,Highgate,24,644
+All Years,All Species,Town,Hartland,4,645
+All Years,All Species,Town,Hartford,11,646
+All Years,All Species,Town,Hardwick,5,647
+All Years,All Species,Town,Halifax,1,648
+All Years,All Species,Town,Guilford,5,649
+All Years,All Species,Town,Groton,2,650
+All Years,All Species,Town,Greensboro,4,651
+All Years,All Species,Town,Granville,1,652
+All Years,All Species,Town,Grand Isle,6,653
+All Years,All Species,Town,Grafton,4,654
+All Years,All Species,Town,Glover,4,655
+All Years,All Species,Town,Georgia,9,656
+All Years,All Species,Town,Franklin,19,657
+All Years,All Species,Town,Fletcher,4,658
+All Years,All Species,Town,Ferrisburgh,2,659
+All Years,All Species,Town,Ferrisburg,11,660
+All Years,All Species,Town,Fayston,1,661
+All Years,All Species,Town,Fairlee,3,662
+All Years,All Species,Town,Fairfield,7,663
+All Years,All Species,Town,Fairfax,12,664
+All Years,All Species,Town,Fair Haven,3,665
+All Years,All Species,Town,Essex,15,666
+All Years,All Species,Town,Enosburg,2,667
+All Years,All Species,Town,Elmore,3,668
+All Years,All Species,Town,East Montpelier,2,669
+All Years,All Species,Town,Duxbury,2,670
+All Years,All Species,Town,Dummerston,6,671
+All Years,All Species,Town,Dover,3,672
+All Years,All Species,Town,Dorset,3,673
+All Years,All Species,Town,Derby,13,674
+All Years,All Species,Town,Danville,16,675
+All Years,All Species,Town,Danby,1,676
+All Years,All Species,Town,Craftsbury,6,677
+All Years,All Species,Town,Coventry,11,678
+All Years,All Species,Town,Cornwall,3,679
+All Years,All Species,Town,Corinth,5,680
+All Years,All Species,Town,Concord,2,681
+All Years,All Species,Town,Colchester,20,682
+All Years,All Species,Town,Clarendon,3,683
+All Years,All Species,Town,Chittenden,2,684
+All Years,All Species,Town,Chester,5,685
+All Years,All Species,Town,Chelsea,6,686
+All Years,All Species,Town,Charlotte,13,687
+All Years,All Species,Town,Cavendish,1,688
+All Years,All Species,Town,Castleton,8,689
+All Years,All Species,Town,Cambridge,2,690
+All Years,All Species,Town,Calais,6,691
+All Years,All Species,Town,Cabot,2,692
+All Years,All Species,Town,Burlington,85,693
+All Years,All Species,Town,Burke,1,694
+All Years,All Species,Town,Brownington,1,695
+All Years,All Species,Town,Brookline,2,696
+All Years,All Species,Town,Brookfield,3,697
+All Years,All Species,Town,Bristol,4,698
+All Years,All Species,Town,Bridport,8,699
+All Years,All Species,Town,Bridgewater,2,700
+All Years,All Species,Town,Brattleboro,12,701
+All Years,All Species,Town,Brandon,6,702
+All Years,All Species,Town,Braintree,3,703
+All Years,All Species,Town,Bradford,8,704
+All Years,All Species,Town,Bolton,1,705
+All Years,All Species,Town,Bethel,3,706
+All Years,All Species,Town,Berkshire,2,707
+All Years,All Species,Town,Benson,4,708
+All Years,All Species,Town,Bennington,11,709
+All Years,All Species,Town,Belvidere,1,710
+All Years,All Species,Town,Barton,8,711
+All Years,All Species,Town,Barre Town,9,712
+All Years,All Species,Town,Barre City,10,713
+All Years,All Species,Town,Barnet,10,714
+All Years,All Species,Town,Barnard,1,715
+All Years,All Species,Town,Baltimore,1,716
+All Years,All Species,Town,Bakersfield,2,717
+All Years,All Species,Town,Athens,1,718
+All Years,All Species,Town,Arlington,3,719
+All Years,All Species,Town,Alburg,8,720
+All Years,All Species,Town,Albany,3,721
+All Years,All Species,Town,Addison,5,722
+All Years,Woodchuck,County,Windsor,1,723
+All Years,Skunk,County,Essex,1,724
+All Years,Skunk,County,Franklin,28,725
+All Years,Skunk,County,Grand Isle,5,726
+All Years,Skunk,County,Lamoille,12,727
+All Years,Skunk,County,Orange,22,728
+All Years,Skunk,County,Orleans,17,729
+All Years,Skunk,County,Rutland,14,730
+All Years,Skunk,County,Washington,21,731
+All Years,Skunk,County,Windham,15,732
+All Years,Skunk,County,Windsor,16,733
+All Years,Woodchuck,Town,Barre Town,1,734
+All Years,Woodchuck,Town,Bennington,1,735
+All Years,Woodchuck,Town,Bradford,1,736
+All Years,Woodchuck,Town,Burlington,1,737
+All Years,Woodchuck,Town,Lyndon,2,738
+All Years,Woodchuck,Town,Guilford,1,739
+All Years,Woodchuck,Town,Northfield,1,740
+All Years,Woodchuck,Town,Orange,1,741
+All Years,Woodchuck,Town,Rutland City,3,742
+All Years,Woodchuck,Town,Springfield,1,743
+All Years,Woodchuck,Town,St. Albans Town,1,744
+All Years,Woodchuck,Town,Williston,1,745
+All Years,Woodchuck,County,Bennington,1,746
+All Years,Woodchuck,County,Chittenden,2,747
+All Years,Woodchuck,County,Caledonia,3,748
+All Years,Woodchuck,County,Franklin,1,749
+All Years,Woodchuck,County,Orange,2,750
+All Years,Woodchuck,County,Rutland,3,751
+All Years,Woodchuck,County,Washington,2,752
+All Years,Woodchuck,County,Windham,1,753
+2025,Raccoon,Town,Holland,1,754
+2025,Raccoon,Town,Highgate,1,755
+2025,Raccoon,Town,Glover,1,756
+2025,Raccoon,Town,Fletcher,3,757
+2025,Raccoon,Town,Derby,9,758
+2025,Raccoon,Town,Coventry,4,759
+2025,Raccoon,Town,Castleton,1,760
+2025,Raccoon,Town,Burlington,1,761
+2025,Raccoon,Town,Brownington,1,762
+2025,Raccoon,Town,Brattleboro,1,763
+2025,Raccoon,Town,Bradford,1,764
+2025,Raccoon,Town,Barton,4,765
+2025,Raccoon,Town,Barre City,1,766
+2025,Otter,County,Orange,1,767
+2025,Otter,Town,Bradford,1,768
+2025,Fox,County,Chittenden,1,769
+2025,Fox,County,Windsor,2,770
+2025,Fox,County,Windham,1,771
+2025,Fox,Town,South Burlington,1,772
+2025,Fox,Town,Weathersfield,1,773
+2025,Fox,Town,Hartford,1,774
+2025,Fox,Town,Brattleboro,1,775
+2025,Bat,County,Windham,1,776
+2025,Bat,County,Washington,1,777
+2025,Bat,County,Rutland,2,778
+2025,Bat,County,Chittenden,2,779
+2025,Bat,Town,Pittsford,1,780
+2025,Bat,Town,Northfield,1,781
+2025,Bat,Town,Fair Haven,1,782
+2025,Bat,Town,Dummerston,1,783
+2025,Bat,Town,Burlington,2,784
+2025,All Species,County,Windsor,2,785
+2025,All Species,County,Windham,3,786
+2025,All Species,County,Washington,3,787
+2025,All Species,County,Rutland,4,788
+2025,All Species,County,Orleans,31,789
+2025,All Species,County,Orange,3,790
+2025,All Species,County,Grand Isle,1,791
+2025,All Species,County,Franklin,5,792
+2025,All Species,County,Chittenden,8,793
+2025,All Species,County,Caledonia,5,794
+2025,All Species,County,Addison,1,795
+2025,All Species,Town,Westmore,1,796
+2025,All Species,Town,West Haven,1,797
+2025,All Species,Town,Weathersfield,1,798
+2025,All Species,Town,Vershire,1,799
+2025,All Species,Town,South Hero,1,800
+2025,All Species,Town,South Burlington,2,801
+2025,All Species,Town,Sheldon,1,802
+2025,All Species,Town,Shelburne,1,803
+2025,All Species,Town,Pittsford,1,804
+2025,All Species,Town,Northfield,1,805
+2025,All Species,Town,Newport City,2,806
+2025,All Species,Town,Lyndon,1,807
+2025,All Species,Town,Lowell,1,808
+2025,All Species,Town,Irasburg,6,809
+2025,All Species,Town,Holland,1,810
+2025,All Species,Town,Highgate,1,811
+2025,All Species,Town,Hartford,1,812
+2025,All Species,Town,Glover,1,813
+2025,All Species,Town,Fletcher,3,814
+2025,All Species,Town,Fair Haven,1,815
+2025,All Species,Town,Dummerston,1,816
+2025,All Species,Town,Derby,10,817
+2025,All Species,Town,Danville,3,818
+2025,All Species,Town,Coventry,4,819
+2025,All Species,Town,Colchester,1,820
+2025,All Species,Town,Castleton,1,821
+2025,All Species,Town,Burlington,4,822
+2025,All Species,Town,Burke,1,823
+2025,All Species,Town,Brownington,1,824
+2025,All Species,Town,Bridport,1,825
+2025,All Species,Town,Brattleboro,2,826
+2025,All Species,Town,Bradford,2,827
+2025,All Species,Town,Barton,4,828
+2025,All Species,Town,Barre Town,1,829
+2025,All Species,Town,Barre City,1,830
+2025,Raccoon,Town,Irasburg,6,831
+2025,Woodchuck,County,Washington,1,832
+2025,Woodchuck,Town,Barre Town,1,833
+2025,Skunk,County,Orleans,1,834
+2025,Skunk,County,Chittenden,3,835
+2025,Skunk,County,Caledonia,5,836
+2025,Skunk,County,Addison,1,837
+2025,Skunk,Town,South Burlington,1,838
+2025,Skunk,Town,Lyndon,1,839
+2025,Skunk,Town,Derby,1,840
+2025,Skunk,Town,Danville,3,841
+2025,Skunk,Town,Colchester,1,842
+2025,Skunk,Town,Burlington,1,843
+2025,Skunk,Town,Burke,1,844
+2025,Skunk,Town,Bridport,1,845
+2025,Raccoon,County,Windham,1,846
+2025,Raccoon,County,Washington,1,847
+2025,Raccoon,County,Rutland,2,848
+2025,Raccoon,County,Orleans,30,849
+2025,Raccoon,County,Orange,2,850
+2025,Raccoon,County,Grand Isle,1,851
+2025,Raccoon,County,Franklin,5,852
+2025,Raccoon,County,Chittenden,2,853
+2025,Raccoon,Town,Westmore,1,854
+2025,Raccoon,Town,West Haven,1,855
+2025,Raccoon,Town,Vershire,1,856
+2025,Raccoon,Town,South Hero,1,857
+2025,Raccoon,Town,Sheldon,1,858
+2025,Raccoon,Town,Shelburne,1,859
+2025,Raccoon,Town,Newport City,2,860
+2025,Raccoon,Town,Lowell,1,861
+2024,Raccoon,Town,Wilmington,1,862
+2024,Raccoon,Town,Wheelock,4,863
+2024,Raccoon,Town,Swanton,2,864
+2024,Raccoon,Town,St. Johnsbury,2,865
+2024,Raccoon,Town,St. Albans Town,2,866
+2024,Raccoon,Town,St. Albans,1,867
+2024,Raccoon,Town,South Burlington,3,868
+2024,Raccoon,Town,Rutland,2,869
+2024,Raccoon,Town,Rochester ,1,870
+2024,Raccoon,Town,Newbury,1,871
+2024,Raccoon,Town,Milton,2,872
+2024,Raccoon,Town,Lyndon,1,873
+2024,Raccoon,Town,Jericho,1,874
+2024,Raccoon,Town,Highgate,1,875
+2024,Raccoon,Town,Hartford,1,876
+2024,Raccoon,Town,Groton,1,877
+2024,Raccoon,Town,Georgia,3,878
+2024,Raccoon,Town,Fairlee,1,879
+2024,Raccoon,Town,Fairfield,1,880
+2024,Raccoon,Town,Fairfax,1,881
+2024,Raccoon,Town,Essex Junction,1,882
+2024,Raccoon,Town,Corinth,1,883
+2024,Raccoon,Town,Colchester,1,884
+2024,Raccoon,Town,Burlington,1,885
+2024,Raccoon,Town,Barre Town,1,886
+2024,Rabbit,County,Caledonia,1,887
+2024,Rabbit,Town,St. Johnsbury,1,888
+2024,Fox,County,Windsor,2,889
+2024,Fox,County,Windham,1,890
+2024,Fox,County,Rutland,3,891
+2024,Fox,County,Orange,1,892
+2024,Fox,County,Chittenden,2,893
+2024,Fox,County,Bennington,1,894
+2024,Fox,Town,Woodstock,1,895
+2024,Fox,Town,Proctor,1,896
+2024,Fox,Town,Saxtons River,1,897
+2024,Fox,Town,Rutland,1,898
+2024,Fox,Town,Hinesburg,1,899
+2024,Fox,Town,Hartford,1,900
+2024,Fox,Town,Chelsea,1,901
+2024,Fox,Town,Burlington,1,902
+2024,Fox,Town,Brandon,1,903
+2024,Fox,Town,Bennington,1,904
+2024,Bobcat,County,Caledonia,1,905
+2024,Bobcat,Town,Newark,1,906
+2024,All Species,County,Windsor,6,907
+2024,All Species,County,Windham,3,908
+2024,All Species,County,Washington,1,909
+2024,All Species,County,Rutland,7,910
+2024,All Species,County,Orange,4,911
+2024,All Species,County,Franklin,13,912
+2024,All Species,County,Chittenden,15,913
+2024,All Species,County,Caledonia,14,914
+2024,All Species,County,Bennington,2,915
+2024,All Species,County,Addison,1,916
+2024,All Species,Town,Woodstock,2,917
+2024,All Species,Town,Wilmington,1,918
+2024,All Species,Town,Williston,1,919
+2024,All Species,Town,Wheelock,4,920
+2024,All Species,Town,Westminster,1,921
+2024,All Species,Town,Swanton,2,922
+2024,All Species,Town,St. Johnsbury,4,923
+2024,All Species,Town,St. Albans Town,2,924
+2024,All Species,Town,St. Albans,2,925
+2024,All Species,Town,South Burlington,3,926
+2024,All Species,Town,Saxtons River,1,927
+2024,All Species,Town,Rutland,4,928
+2024,All Species,Town,Rochester,1,929
+2024,All Species,Town,Proctor,1,930
+2024,All Species,Town,Norwich,1,931
+2024,All Species,Town,Newbury,1,932
+2024,All Species,Town,Newark,1,933
+2024,All Species,Town,Milton,2,934
+2024,All Species,Town,Lyndon,4,935
+2024,All Species,Town,Jericho,1,936
+2024,All Species,Town,Hinesburg,1,937
+2024,All Species,Town,Highgate,2,938
+2024,All Species,Town,Hartford,2,939
+2024,All Species,Town,Groton,1,940
+2024,All Species,Town,Georgia,3,941
+2024,All Species,Town,Fairlee,1,942
+2024,All Species,Town,Fairfield,1,943
+2024,All Species,Town,Fairfax,1,944
+2024,All Species,Town,Essex Junction,1,945
+2024,All Species,Town,Corinth,1,946
+2024,All Species,Town,Colchester,1,947
+2024,All Species,Town,Chittenden,1,948
+2024,All Species,Town,Chelsea,1,949
+2024,All Species,Town,Burlington,5,950
+2024,All Species,Town,Brandon,1,951
+2024,All Species,Town,Bennington,2,952
+2024,All Species,Town,Barre Town,1,953
+2024,All Species,Town,Addison,1,954
+2024,Woodchuck,County,Caledonia,2,955
+2024,Woodchuck,Town,Lyndon,2,956
+2024,Skunk,County,Windsor,2,957
+2024,Skunk,County,Windham,1,958
+2024,Skunk,County,Rutland,2,959
+2024,Skunk,County,Franklin,2,960
+2024,Skunk,County,Chittenden,4,961
+2024,Skunk,County,Caledonia,2,962
+2024,Skunk,County,Bennington,1,963
+2024,Skunk,County,Addison,1,964
+2024,Skunk,Town,Woodstock,1,965
+2024,Skunk,Town,Williston,1,966
+2024,Skunk,Town,Westminster,1,967
+2024,Skunk,Town,St. Johnsbury,1,968
+2024,Skunk,Town,St. Albans,1,969
+2024,Skunk,Town,Rutland,1,970
+2024,Skunk,Town,Norwich,1,971
+2024,Skunk,Town,Lyndon,1,972
+2024,Skunk,Town,Highgate,1,973
+2024,Skunk,Town,Chittenden,1,974
+2024,Skunk,Town,Burlington,3,975
+2024,Skunk,Town,Bennington,1,976
+2024,Skunk,Town,Addison,1,977
+2024,Raccoon,County,Windsor,2,978
+2024,Raccoon,County,Windham,1,979
+2024,Raccoon,County,Washington,1,980
+2024,Raccoon,County,Rutland,2,981
+2024,Raccoon,County,Orange,3,982
+2024,Raccoon,County,Franklin,11,983
+2024,Raccoon,County,Chittenden,9,984
+2024,Raccoon,County,Caledonia,8,985
+2023,Woodchuck,County,Chittenden,1,986
+2023,Fox,County,Rutland,1,987
+2023,Fox,County,Orange,2,988
+2023,Fox,County,Bennington,1,989
+2023,Fox,County,Addison,1,990
+2023,Fox,Town,West Pawlet,1,991
+2023,Fox,Town,Thetford,2,992
+2023,Fox,Town,Rockingham,1,993
+2023,Fox,Town,Middlebury,1,994
+2023,Fox,Town,Manchester,1,995
+2023,Fox,Town,Jamaica,1,996
+2023,Cat,County,Addison,1,997
+2023,Cat,Town,Benson,1,998
+2023,Cat,Town,Shoreham,1,999
+2023,All Species,County,Windsor,1,1000
+2023,All Species,County,Windham,2,1001
+2023,All Species,County,Washington,1,1002
+2023,All Species,County,Rutland,3,1003
+2023,Woodchuck,Town,Burlington,1,1004
+2023,All Species,County,Chittenden,20,1005
+2023,All Species,County,Caledonia,2,1006
+2023,All Species,County,Bennington,1,1007
+2023,All Species,County,Addison,3,1008
+2023,All Species,Town,Benson,1,1009
+2023,All Species,Town,Kirby,1,1010
+2023,All Species,Town,Monkton,1,1011
+2023,All Species,Town,Waterbury,1,1012
+2023,All Species,Town,Shelburne,4,1013
+2023,All Species,Town,Winooski,3,1014
+2023,All Species,Town,White River Junction,1,1015
+2023,All Species,Town,West Pawlet,1,1016
+2023,All Species,Town,Thetford,2,1017
+2023,All Species,Town,St. Johnsbury,1,1018
+2023,All Species,Town,South Burlington,3,1019
+2023,All Species,Town,Shoreham,1,1020
+2023,All Species,Town,Rockingham,1,1021
+2023,All Species,Town,Pittsfield,1,1022
+2023,All Species,Town,Newbury,1,1023
+2023,Fox,County,Windham,2,1024
+2023,All Species,Town,Manchester,1,1025
+2023,All Species,Town,Jamaica,1,1026
+2023,All Species,Town,Colchester,3,1027
+2023,All Species,Town,Burlington,7,1028
+2023,Cat,County,Rutland,1,1029
+2023,All Species,Town,Brookfield,1,1030
+2023,All Species,Town,Bradford,1,1031
+2023,All Species,County,Orange,5,1032
+2023,Bat,County,Chittenden,3,1033
+2023,Bat,Town,Shelburne,2,1034
+2023,Bat,Town,South Burlington,1,1035
+2023,Skunk,County,Washington,1,1036
+2023,Skunk,County,Orange,1,1037
+2023,Skunk,County,Chittenden,6,1038
+2023,Skunk,Town,Waterbury,1,1039
+2023,Skunk,Town,Winooski,1,1040
+2023,Skunk,Town,South Burlington,2,1041
+2023,Skunk,Town,Colchester,1,1042
+2023,Skunk,Town,Burlington,2,1043
+2023,Skunk,Town,Brookfield,1,1044
+2023,Raccoon,County,Windsor,1,1045
+2023,Raccoon,County,Rutland,1,1046
+2023,Raccoon,County,Orange,2,1047
+2023,Raccoon,County,Chittenden,10,1048
+2023,Raccoon,County,Caledonia,2,1049
+2023,Raccoon,County,Addison,1,1050
+2023,Raccoon,Town,Kirby,1,1051
+2023,Raccoon,Town,Monkton,1,1052
+2023,Raccoon,Town,Shelburne,2,1053
+2023,Raccoon,Town,Winooski,2,1054
+2023,Raccoon,Town,White River Junction,1,1055
+2023,Raccoon,Town,St. Johnsbury,1,1056
+2023,Raccoon,Town,Pittsfield,1,1057
+2023,Raccoon,Town,Newbury,1,1058
+2023,Raccoon,Town,Colchester,2,1059
+2023,Raccoon,Town,Burlington,4,1060
+2023,Raccoon,Town,Bradford,1,1061
+2023,All Species,Town,Middlebury,1,1062
+2022,Fox,County,Addison,1,1063
+2022,Bobcat,County,Windsor,1,1064
+2022,Bobcat,Town,Windsor,1,1065
+2022,Bat,County,Windsor,2,1066
+2022,Bat,County,Franklin,3,1067
+2022,Bat,County,Chittenden,2,1068
+2022,Bat,Town,Springfield,1,1069
+2022,Bat,Town,Shelburne,1,1070
+2022,Bat,Town,Georgia,1,1071
+2022,Bat,Town,Fairfield,1,1072
+2022,Bat,Town,Fairfax,1,1073
+2022,Bat,Town,Essex,1,1074
+2022,Bat,Town,Chester,1,1075
+2022,All Species,County,Windsor,7,1076
+2022,All Species,County,Washington,3,1077
+2022,All Species,County,Orange,2,1078
+2022,All Species,County,Franklin,3,1079
+2022,All Species,County,Chittenden,21,1080
+2022,All Species,County,Caledonia,1,1081
+2022,All Species,County,Addison,2,1082
+2022,All Species,Town,Windsor,2,1083
+2022,All Species,Town,Williston,1,1084
+2022,All Species,Town,Williamstown,1,1085
+2022,All Species,Town,Waitsfield,1,1086
+2022,All Species,Town,Strafford,1,1087
+2022,All Species,Town,Springfield,1,1088
+2022,All Species,Town,South Burlington,9,1089
+2022,All Species,Town,Shelburne,3,1090
+2022,All Species,Town,Sharon,1,1091
+2022,All Species,Town,Roxbury,1,1092
+2022,All Species,Town,Rochester,1,1093
+2022,All Species,Town,Moretown,1,1094
+2022,All Species,Town,Lyndonville,1,1095
+2022,All Species,Town,Ludlow,1,1096
+2022,All Species,Town,Hartland,1,1097
+2022,All Species,Town,Georgia,1,1098
+2022,All Species,Town,Fairfield,1,1099
+2022,All Species,Town,Fairfax,1,1100
+2022,All Species,Town,Essex,1,1101
+2022,All Species,Town,Cornwall,1,1102
+2022,All Species,Town,Colchester,1,1103
+2022,All Species,Town,Chester,1,1104
+2022,All Species,Town,Charlotte,3,1105
+2022,All Species,Town,Burlington,3,1106
+2022,Skunk,County,Washington,2,1107
+2022,Skunk,County,Orange,1,1108
+2022,Skunk,County,Chittenden,6,1109
+2022,Skunk,Town,Williston,1,1110
+2022,Skunk,Town,Waitsfield,1,1111
+2022,Skunk,Town,Strafford,1,1112
+2022,Skunk,Town,South Burlington,1,1113
+2022,Skunk,Town,Shelburne,1,1114
+2022,Skunk,Town,Roxbury,1,1115
+2022,Skunk,Town,Charlotte,3,1116
+2022,Raccoon,County,Windsor,2,1117
+2022,Raccoon,County,Washington,1,1118
+2022,Raccoon,County,Orange,1,1119
+2022,Raccoon,County,Chittenden,13,1120
+2022,Raccoon,County,Addison,1,1121
+2022,Raccoon,Town,Williamstown,1,1122
+2022,Raccoon,Town,South Burlington,8,1123
+2022,Raccoon,Town,Shelburne,1,1124
+2022,Raccoon,Town,Sharon,1,1125
+2022,Raccoon,Town,Moretown,1,1126
+2022,Raccoon,Town,Hartland,1,1127
+2022,Raccoon,Town,Cornwall,1,1128
+2022,Raccoon,Town,Colchester,1,1129
+2022,Raccoon,Town,Burlington,3,1130
+2022,Goat,County,Windsor,1,1131
+2022,Goat,Town,Windsor,1,1132
+2022,Fox,Town,Rochester,1,1133
+2022,Fox,Town,Lyndonville,1,1134
+2022,Fox,Town,Ludlow,1,1135
+2022,Fox,County,Windsor,1,1136
+2022,Fox,County,Caledonia,1,1137
+2021,All Species,County,Windham,3,1138
+2021,All Species,County,Washington,1,1139
+2021,All Species,County,Orange,4,1140
+2021,All Species,County,Franklin,1,1141
+2021,All Species,County,Bennington,2,1142
+2021,All Species,County,Addison,3,1143
+2021,All Species,Town,Waterbury,1,1144
+2021,All Species,Town,Vershire,1,1145
+2021,All Species,Town,Thetford,2,1146
+2021,All Species,Town,Stamford,2,1147
+2021,All Species,Town,St. Albans,1,1148
+2021,All Species,Town,Rockingham,1,1149
+2021,All Species,Town,Panton,1,1150
+2021,All Species,Town,Middlebury,1,1151
+2021,All Species,Town,Ludlow,1,1152
+2021,All Species,Town,Hartford,1,1153
+2021,All Species,Town,Ferrisburgh,1,1154
+2021,All Species,Town,Dummerston,1,1155
+2021,All Species,Town,Chelsea,1,1156
+2021,All Species,Town,Brookline,1,1157
+2021,All Species,Town,Bridgewater,1,1158
+2021,Raccoon,Town,Vershire,1,1159
+2021,Raccoon,Town,Chelsea,1,1160
+2021,Fox,County,Windsor,2,1161
+2021,Fox,County,Orange,1,1162
+2021,Fox,Town,Ludlow,1,1163
+2021,Fox,Town,Bridgewater,1,1164
+2021,Fox,Town,Thetford,1,1165
+2021,Cat,County,Windham,1,1166
+2021,Cat,County,Addison,1,1167
+2021,Cat,Town,Rockingham,1,1168
+2021,Cat,Town,Ferrisburgh,1,1169
+2021,Bovine,Town,Middlebury,1,1170
+2021,Skunk,County,Windsor,1,1171
+2021,Bobcat,County,Windham,1,1172
+2021,Bobcat,Town,Dummerston,1,1173
+2021,Bat,County,Washington,1,1174
+2021,Bat,County,Franklin,1,1175
+2021,Bat,County,Bennington,2,1176
+2021,Bat,Town,Waterbury,1,1177
+2021,Bat,Town,St. Albans,1,1178
+2021,Bat,Town,Stamford,2,1179
+2021,All Species,County,Windsor,3,1180
+2021,Bovine,County,Addison,1,1181
+2021,Raccoon,County,Windham,1,1182
+2021,Skunk,County,Orange,1,1183
+2021,Skunk,County,Addison,1,1184
+2021,Skunk,Town,Hartford,1,1185
+2021,Skunk,Town,Thetford,1,1186
+2021,Skunk,Town,Panton,1,1187
+2021,Raccoon,County,Orange,2,1188
+2021,Raccoon,Town,Brookline,1,1189
+2020,Skunk,County,Orange,1,1190
+2020,Skunk,Town,Tunbridge,1,1191
+2020,Raccoon,County,Windham,1,1192
+2020,Raccoon,County,Bennington,1,1193
+2020,Raccoon,County,Addison,2,1194
+2020,Raccoon,Town,Westminster,1,1195
+2020,Raccoon,Town,Manchester,1,1196
+2020,Raccoon,Town,Lincoln,2,1197
+2020,Cat,County,Bennington,1,1198
+2020,Cat,Town,Arlington,1,1199
+2020,Bovine,County,Windsor,1,1200
+2020,Bovine,Town,Strafford,1,1201
+2020,Bat,County,Lamoille,1,1202
+2020,Bat,County,Chittenden,2,1203
+2020,Bat,Town,Hartford,1,1204
+2020,Bat,Town,Cambridge,1,1205
+2020,Bat,Town,Burlington,2,1206
+2020,All Species,County,Windsor,2,1207
+2020,All Species,County,Windham,1,1208
+2020,All Species,County,Orange,1,1209
+2020,All Species,County,Lamoille,1,1210
+2020,All Species,Town,Manchester,1,1211
+2020,All Species,Town,Lincoln,2,1212
+2020,All Species,County,Chittenden,2,1213
+2020,All Species,Town,Hartford,1,1214
+2020,All Species,Town,Cambridge,1,1215
+2020,All Species,Town,Burlington,2,1216
+2020,All Species,Town,Arlington,1,1217
+2020,Bat,County,Windsor,1,1218
+2020,All Species,County,Bennington,2,1219
+2020,All Species,County,Addison,2,1220
+2020,All Species,Town,Westminster,1,1221
+2020,All Species,Town,Tunbridge,1,1222
+2020,All Species,Town,Strafford,1,1223
+2019,All Species,County,Chittenden,2,1224
+2019,All Species,County,Bennington,3,1225
+2019,All Species,County,Addison,4,1226
+2019,All Species,Town,Woodstock,1,1227
+2019,All Species,Town,Westminster,1,1228
+2019,All Species,Town,Salisbury,1,1229
+2019,All Species,Town,Pawlet,1,1230
+2019,All Species,Town,New Haven,1,1231
+2019,All Species,Town,Hartland,1,1232
+2019,All Species,Town,Guilford,1,1233
+2019,All Species,Town,Grafton,1,1234
+2019,All Species,Town,Ferrisburgh,1,1235
+2019,All Species,Town,Cornwall,1,1236
+2019,All Species,Town,Colchester,1,1237
+2019,All Species,Town,Brandon,1,1238
+2019,All Species,Town,Bennington,2,1239
+2019,All Species,Town,Barre City,1,1240
+2019,All Species,Town,Arlington,1,1241
+2019,Woodchuck,County,Windham,1,1242
+2019,Woodchuck,Town,Guilford,1,1243
+2019,Skunk,County,Bennington,2,1244
+2019,Skunk,County,Addison,2,1245
+2019,Skunk,Town,Bennington,2,1246
+2019,Skunk,Town,Cornwall,1,1247
+2019,Skunk,Town,Brandon,1,1248
+2019,Raccoon,County,Windsor,2,1249
+2019,Raccoon,County,Windham,1,1250
+2019,Raccoon,County,Washington,1,1251
+2019,Raccoon,County,Chittenden,1,1252
+2019,Raccoon,Town,Woodstock,1,1253
+2019,Raccoon,Town,Hartland,1,1254
+2019,Raccoon,Town,Westminster,1,1255
+2019,Raccoon,Town,Barre City,1,1256
+2019,Raccoon,Town,Ferrisburgh,1,1257
+2019,Fox,County,Windham,1,1258
+2019,Fox,County,Bennington,1,1259
+2019,Fox,Town,Grafton,1,1260
+2019,Fox,Town,Arlington,1,1261
+2019,Coyote,County,Addison,2,1262
+2019,Coyote,Town,Salisbury,1,1263
+2019,Coyote,Town,New Haven,1,1264
+2019,Bat,County,Rutland,1,1265
+2019,Bat,County,Chittenden,1,1266
+2019,Bat,Town,Pawlet,1,1267
+2019,Bat,Town,Colchester,1,1268
+2019,All Species,County,Windsor,2,1269
+2019,All Species,County,Windham,3,1270
+2019,All Species,County,Washington,1,1271
+2019,All Species,County,Rutland,1,1272
+2018,Bat,County,Grand Isle,1,1273
+2018,Bat,County,Chittenden,3,1274
+2018,Bat,Town,Hartford,1,1275
+2018,Bat,Town,Grand Isle,1,1276
+2018,Bat,Town,Colchester,1,1277
+2018,Bat,Town,Burlington,2,1278
+2018,All Species,County,Windsor,5,1279
+2018,All Species,County,Windham,5,1280
+2018,All Species,County,Washington,2,1281
+2018,All Species,County,Rutland,3,1282
+2018,All Species,County,Grand Isle,1,1283
+2018,All Species,County,Chittenden,4,1284
+2018,All Species,County,Bennington,1,1285
+2018,All Species,County,Addison,3,1286
+2018,All Species,Town,Weston,1,1287
+2018,Woodchuck,Town,Springfield,1,1288
+2018,All Species,Town,Tinmouth,1,1289
+2018,All Species,Town,Springfield,1,1290
+2018,All Species,Town,Shaftsbury,1,1291
+2018,All Species,Town,Rockingham,1,1292
+2018,All Species,Town,Poultney,2,1293
+2018,All Species,Town,Montpelier,1,1294
+2018,All Species,Town,Monkton,1,1295
+2018,All Species,Town,Leicester,1,1296
+2018,All Species,Town,Hartford,2,1297
+2018,All Species,Town,Grand Isle,1,1298
+2018,All Species,Town,Dummerston,1,1299
+2018,All Species,Town,Dover,1,1300
+2018,All Species,Town,Colchester,1,1301
+2018,All Species,Town,Chester,1,1302
+2018,All Species,Town,Charlotte,1,1303
+2018,All Species,Town,Burlington,2,1304
+2018,All Species,Town,Bridport,1,1305
+2018,All Species,Town,Brattleboro,1,1306
+2018,All Species,Town,Barre City,1,1307
+2018,Skunk,County,Washington,1,1308
+2018,Skunk,County,Addison,2,1309
+2018,Skunk,Town,Montpelier,1,1310
+2018,Skunk,Town,Monkton,1,1311
+2018,Skunk,Town,Leicester,1,1312
+2018,All Species,Town,Wardsboro,1,1313
+2018,Raccoon,County,Windsor,2,1314
+2018,Raccoon,County,Windham,3,1315
+2018,Raccoon,County,Washington,1,1316
+2018,Raccoon,County,Rutland,3,1317
+2018,Raccoon,County,Bennington,1,1318
+2018,Raccoon,County,Addison,1,1319
+2018,Raccoon,Town,Weston,1,1320
+2018,Raccoon,Town,Chester,1,1321
+2018,Raccoon,Town,Wardsboro,1,1322
+2018,Raccoon,Town,Rockingham,1,1323
+2018,Raccoon,Town,Dover,1,1324
+2018,Raccoon,Town,Barre City,1,1325
+2018,Raccoon,Town,Tinmouth,1,1326
+2018,Raccoon,Town,Poultney,2,1327
+2018,Raccoon,Town,Shaftsbury,1,1328
+2018,Raccoon,Town,Bridport,1,1329
+2018,Woodchuck,County,Windsor,1,1330
+2018,Fox,Town,Dummerston,1,1331
+2018,Fox,Town,Brattleboro,1,1332
+2018,Cat,County,Chittenden,1,1333
+2018,Cat,Town,Charlotte,1,1334
+2018,Bobcat,County,Windsor,1,1335
+2018,Bobcat,Town,Hartford,1,1336
+2018,Bat,County,Windsor,1,1337
+2018,Fox,County,Windham,2,1338
+2017,All Species,Town,West Windsor,1,1339
+2017,All Species,County,Addison,6,1340
+2017,All Species,County,Bennington,6,1341
+2017,All Species,County,Chittenden,6,1342
+2017,All Species,County,Lamoille,3,1343
+2017,All Species,County,Orleans,1,1344
+2017,All Species,County,Rutland,7,1345
+2017,All Species,County,Windham,6,1346
+2017,All Species,County,Windsor,6,1347
+2017,Bat,Town,Burlington,2,1348
+2017,Bat,Town,Fairfax,1,1349
+2017,Bat,Town,Milton,1,1350
+2017,Bat,Town,South Burlington,1,1351
+2017,Bat,Town,Newport Town,1,1352
+2017,Bat,Town,West Rutland,2,1353
+2017,Bat,County,Chittenden,5,1354
+2017,Bat,County,Orleans,1,1355
+2017,Bat,County,Rutland,2,1356
+2017,Fox,Town,Ferrisburg,1,1357
+2017,Fox,Town,Arlington,1,1358
+2017,Fox,Town,Poultney,1,1359
+2017,Fox,Town,Londonderry,1,1360
+2017,Fox,County,Addison,2,1361
+2017,Fox,County,Bennington,1,1362
+2017,Fox,County,Rutland,1,1363
+2017,Fox,County,Windham,1,1364
+2017,Raccoon,Town,Ferrisburg,1,1365
+2017,Raccoon,Town,Panton,1,1366
+2017,Raccoon,Town,Shoreham,1,1367
+2017,Raccoon,Town,Manchester,2,1368
+2017,Raccoon,Town,Peru,1,1369
+2017,Raccoon,Town,Morristown,1,1370
+2017,Raccoon,Town,Middletown Springs,1,1371
+2017,Raccoon,Town,Pawlet,1,1372
+2017,Raccoon,Town,Shrewsbury,1,1373
+2017,Raccoon,Town,Brattleboro,4,1374
+2017,Raccoon,Town,Newfane,1,1375
+2017,Raccoon,Town,Barnard,1,1376
+2017,Raccoon,Town,Bethel,1,1377
+2017,Raccoon,Town,Bridgewater,1,1378
+2017,Raccoon,Town,Cavendish,1,1379
+2017,Raccoon,Town,Weathersfield,1,1380
+2017,Raccoon,Town,West Windsor,1,1381
+2017,Raccoon,County,Addison,3,1382
+2017,Raccoon,County,Bennington,3,1383
+2017,Raccoon,County,Lamoille,1,1384
+2017,Raccoon,County,Rutland,3,1385
+2017,Raccoon,County,Windham,5,1386
+2017,Raccoon,County,Windsor,6,1387
+2017,Fox,Town,Bristol,1,1388
+2017,Fox,Town,Stowe,1,1389
+2017,Fox,County,Lamoille,1,1390
+2017,Skunk,Town,Leicester,1,1391
+2017,Skunk,Town,Manchester,1,1392
+2017,Skunk,Town,Shelburne,1,1393
+2017,Skunk,Town,Stowe,1,1394
+2017,Skunk,Town,Fair Haven,1,1395
+2017,Skunk,County,Addison,1,1396
+2017,Skunk,County,Bennington,1,1397
+2017,Skunk,County,Chittenden,1,1398
+2017,Skunk,County,Lamoille,1,1399
+2017,Skunk,County,Rutland,1,1400
+2017,Woodchuck,Town,Bennington,1,1401
+2017,Woodchuck,County,Bennington,1,1402
+2017,All Species,Town,Arlington,1,1403
+2017,All Species,Town,Barnard,1,1404
+2017,All Species,Town,Bennington,1,1405
+2017,All Species,Town,Bethel,1,1406
+2017,All Species,Town,Brattleboro,4,1407
+2017,All Species,Town,Bridgewater,1,1408
+2017,All Species,Town,Bristol,1,1409
+2017,All Species,Town,Burlington,2,1410
+2017,All Species,Town,Cavendish,1,1411
+2017,All Species,Town,Fair Haven,1,1412
+2017,All Species,Town,Fairfax,1,1413
+2017,All Species,Town,Ferrisburg,2,1414
+2017,All Species,Town,Leicester,1,1415
+2017,All Species,Town,Londonderry,1,1416
+2017,All Species,Town,Manchester,3,1417
+2017,All Species,Town,Middletown Springs,1,1418
+2017,All Species,Town,Milton,1,1419
+2017,All Species,Town,Morristown,1,1420
+2017,All Species,Town,Newfane,1,1421
+2017,All Species,Town,Newport Town,1,1422
+2017,All Species,Town,Panton,1,1423
+2017,All Species,Town,Pawlet,1,1424
+2017,All Species,Town,Peru,1,1425
+2017,All Species,Town,Poultney,1,1426
+2017,All Species,Town,Shelburne,1,1427
+2017,All Species,Town,Shoreham,1,1428
+2017,All Species,Town,Shrewsbury,1,1429
+2017,All Species,Town,South Burlington,1,1430
+2017,All Species,Town,Stowe,2,1431
+2017,All Species,Town,Weathersfield,1,1432
+2017,All Species,Town,West Rutland,2,1433
+2016,Raccoon,Town,Waterbury,1,1434
+2016,Raccoon,Town,Calais,2,1435
+2016,Raccoon,Town,Williamstown,2,1436
+2016,Raccoon,Town,Washington,1,1437
+2016,Raccoon,Town,Corinth,1,1438
+2016,Raccoon,Town,Underhill,1,1439
+2016,Raccoon,Town,Colchester,1,1440
+2016,Raccoon,Town,Burlington,1,1441
+2016,Raccoon,Town,Sunderland,1,1442
+2016,Raccoon,Town,Rupert,1,1443
+2016,Raccoon,Town,Pownal,1,1444
+2016,Raccoon,Town,Manchester,4,1445
+2016,Raccoon,Town,New Haven,1,1446
+2016,Raccoon,Town,Middlesex,1,1447
+2016,Fox,County,Orange,1,1448
+2016,Fox,County,Bennington,1,1449
+2016,Fox,Town,Williamstown,1,1450
+2016,Fox,Town,Shaftsbury,1,1451
+2016,Cat,County,Caledonia,1,1452
+2016,Cat,Town,Danville,1,1453
+2016,Bovine,County,Bennington,1,1454
+2016,Bovine,Town,Shaftsbury,1,1455
+2016,Bat,County,Rutland,1,1456
+2016,Bat,County,Orange,1,1457
+2016,Bat,County,Lamoille,2,1458
+2016,Bat,County,Chittenden,4,1459
+2016,Bat,County,Caledonia,1,1460
+2016,Bat,Town,Rutland City,1,1461
+2016,Bat,Town,Thetford,1,1462
+2016,Bat,Town,Stowe,1,1463
+2016,Bat,Town,Johnson,1,1464
+2016,Bat,Town,Winooski,1,1465
+2016,Bat,Town,Shelburne,1,1466
+2016,Bat,Town,Colchester,1,1467
+2016,Bat,Town,Burlington,1,1468
+2016,Bat,Town,Danville,1,1469
+2016,All Species,County,Windsor,4,1470
+2016,All Species,County,Windham,1,1471
+2016,All Species,County,Washington,8,1472
+2016,All Species,County,Rutland,2,1473
+2016,All Species,County,Orange,6,1474
+2016,All Species,County,Lamoille,2,1475
+2016,All Species,County,Chittenden,8,1476
+2016,All Species,County,Caledonia,2,1477
+2016,All Species,County,Bennington,11,1478
+2016,All Species,County,Addison,4,1479
+2016,All Species,Town,Woodstock,1,1480
+2016,All Species,Town,Winooski,1,1481
+2016,All Species,Town,Williamstown,4,1482
+2016,All Species,Town,Waterbury,1,1483
+2016,All Species,Town,Washington,1,1484
+2016,All Species,Town,Underhill,2,1485
+2016,All Species,Town,Thetford,1,1486
+2016,All Species,Town,Sunderland,1,1487
+2016,All Species,Town,Stowe,1,1488
+2016,All Species,Town,Shelburne,1,1489
+2016,All Species,Town,Shaftsbury,2,1490
+2016,All Species,Town,Rutland City,1,1491
+2016,All Species,Town,Rupert,3,1492
+2016,All Species,Town,Pownal,1,1493
+2016,All Species,Town,Pomfret,1,1494
+2016,All Species,Town,Pawlet,1,1495
+2016,All Species,Town,Panton,1,1496
+2016,All Species,Town,Northfield,1,1497
+2016,All Species,Town,New Haven,1,1498
+2016,All Species,Town,Middlesex,1,1499
+2016,All Species,Town,Middlebury,1,1500
+2016,All Species,Town,Manchester,4,1501
+2016,All Species,Town,Johnson,1,1502
+2016,All Species,Town,Hartland,1,1503
+2016,All Species,Town,Hartford,1,1504
+2016,All Species,Town,Grafton,1,1505
+2016,All Species,Town,Danville,2,1506
+2016,All Species,Town,Corinth,1,1507
+2016,All Species,Town,Colchester,2,1508
+2016,All Species,Town,Calais,3,1509
+2016,All Species,Town,Burlington,2,1510
+2016,All Species,Town,Barre Town,1,1511
+2016,All Species,Town,Barre City,1,1512
+2016,Raccoon,County,Addison,2,1513
+2016,Raccoon,Town,Hartford,1,1514
+2016,Raccoon,Town,Williamstown,1,1515
+2016,Skunk,County,Windsor,2,1516
+2016,Skunk,County,Windham,1,1517
+2016,Skunk,County,Washington,3,1518
+2016,Skunk,County,Rutland,1,1519
+2016,Skunk,County,Bennington,2,1520
+2016,Skunk,County,Addison,1,1521
+2016,Skunk,Town,Pomfret,1,1522
+2016,Skunk,Town,Hartland,1,1523
+2016,Skunk,Town,Grafton,1,1524
+2016,Skunk,Town,Northfield,1,1525
+2016,Skunk,Town,Barre Town,1,1526
+2016,Skunk,Town,Barre City,1,1527
+2016,Skunk,Town,Pawlet,1,1528
+2016,Skunk,Town,Rupert,2,1529
+2016,Skunk,Town,Panton,1,1530
+2016,Sheep,County,Windsor,1,1531
+2016,Sheep,Town,Woodstock,1,1532
+2016,Fox,County,Washington,1,1533
+2016,Fox,County,Chittenden,1,1534
+2016,Fox,County,Addison,1,1535
+2016,Fox,Town,Calais,1,1536
+2016,Fox,Town,Underhill,1,1537
+2016,Fox,Town,Middlebury,1,1538
+2016,Raccoon,County,Windsor,1,1539
+2016,Raccoon,County,Washington,4,1540
+2016,Raccoon,County,Orange,4,1541
+2016,Raccoon,County,Chittenden,3,1542
+2016,Raccoon,County,Bennington,7,1543
+2015,All Species,County,Windsor,1,1544
+2015,All Species,County,Windham,1,1545
+2015,All Species,County,Washington,2,1546
+2015,All Species,County,Rutland,2,1547
+2015,All Species,County,Orleans,1,1548
+2015,All Species,County,Orange,3,1549
+2015,All Species,County,Franklin,1,1550
+2015,All Species,County,Chittenden,12,1551
+2015,All Species,County,Bennington,1,1552
+2015,All Species,County,Addison,1,1553
+2015,All Species,Town,Williston,1,1554
+2015,All Species,Town,Williamstown,2,1555
+2015,All Species,Town,Shrewsbury,1,1556
+2015,All Species,Town,Shelburne,1,1557
+2015,All Species,Town,Manchester,1,1558
+2015,All Species,Town,Ludlow,1,1559
+2015,All Species,Town,Leicester,1,1560
+2015,All Species,Town,Georgia,1,1561
+2015,All Species,Town,Fairfax,1,1562
+2015,All Species,Town,Essex,1,1563
+2015,All Species,Town,Colchester,1,1564
+2015,All Species,Town,Clarendon,1,1565
+2015,All Species,Town,Chelsea,1,1566
+2015,All Species,Town,Burlington,6,1567
+2015,All Species,Town,Brookfield,1,1568
+2015,All Species,Town,Brattleboro,1,1569
+2015,All Species,Town,Bolton,1,1570
+2015,All Species,Town,Barre City,2,1571
+2015,Skunk,County,Washington,2,1572
+2015,Skunk,County,Rutland,1,1573
+2015,Skunk,County,Orange,3,1574
+2015,Skunk,Town,Barre City,2,1575
+2015,Skunk,Town,Shrewsbury,1,1576
+2015,Skunk,Town,Williamstown,2,1577
+2015,Skunk,Town,Chelsea,1,1578
+2015,Raccoon,County,Windham,1,1579
+2015,Raccoon,County,Chittenden,9,1580
+2015,Raccoon,County,Bennington,1,1581
+2015,Raccoon,Town,Brattleboro,1,1582
+2015,Raccoon,Town,Williston,1,1583
+2015,Raccoon,Town,Essex,1,1584
+2015,Raccoon,Town,Colchester,1,1585
+2015,Raccoon,Town,Burlington,5,1586
+2015,Raccoon,Town,Bolton,1,1587
+2015,Raccoon,Town,Manchester,1,1588
+2015,Cat,County,Windsor,1,1589
+2015,Cat,County,Addison,1,1590
+2015,Cat,Town,Ludlow,1,1591
+2015,Cat,Town,Leicester,1,1592
+2015,Bat,County,Rutland,1,1593
+2015,Bat,County,Orleans,1,1594
+2015,Bat,County,Franklin,1,1595
+2015,Bat,County,Chittenden,3,1596
+2015,Bat,Town,Clarendon,1,1597
+2015,Bat,Town,Brookfield,1,1598
+2015,Bat,Town,Georgia,1,1599
+2015,Bat,Town,Shelburne,1,1600
+2015,Bat,Town,Fairfax,1,1601
+2015,Bat,Town,Burlington,1,1602
+2014,Raccoon,Town,South Burlington,2,1603
+2014,Raccoon,Town,Essex,1,1604
+2014,Raccoon,Town,Colchester,1,1605
+2014,Raccoon,Town,Burlington,14,1606
+2014,Raccoon,Town,Ferrisburg,1,1607
+2014,Raccoon,Town,Addison,1,1608
+2014,Fox,County,Washington,1,1609
+2014,Fox,County,Chittenden,1,1610
+2014,Fox,County,Addison,1,1611
+2014,Fox,Town,Montpelier,1,1612
+2014,Fox,Town,South Burlington,1,1613
+2014,Fox,Town,Ferrisburg,1,1614
+2014,Cat,County,Washington,1,1615
+2014,Cat,Town,Granville,1,1616
+2014,Bobcat,County,Washington,1,1617
+2014,Bobcat,County,Rutland,1,1618
+2014,Bobcat,Town,Calais,1,1619
+2014,Bobcat,Town,Clarendon,1,1620
+2014,Bat,County,Rutland,2,1621
+2014,Bat,County,Chittenden,1,1622
+2014,Bat,Town,Poultney,1,1623
+2014,Bat,Town,Benson,1,1624
+2014,Bat,Town,Williston,1,1625
+2014,Woodchuck,County,Chittenden,1,1626
+2014,All Species,County,Windham,4,1627
+2014,All Species,County,Washington,4,1628
+2014,All Species,County,Rutland,4,1629
+2014,All Species,County,Franklin,2,1630
+2014,All Species,County,Chittenden,33,1631
+2014,All Species,County,Bennington,1,1632
+2014,All Species,County,Addison,4,1633
+2014,All Species,Town,Windsor,1,1634
+2014,All Species,Town,Williston,2,1635
+2014,All Species,Town,Westminster,1,1636
+2014,All Species,Town,Weathersfield,1,1637
+2014,All Species,Town,Wallingford,1,1638
+2014,All Species,Town,Vernon,1,1639
+2014,All Species,Town,St. Albans Town,1,1640
+2014,All Species,Town,St. Albans City,1,1641
+2014,All Species,Town,South Burlington,5,1642
+2014,All Species,Town,Rupert,1,1643
+2014,All Species,Town,Reading,1,1644
+2014,All Species,Town,Putney,1,1645
+2014,All Species,Town,Poultney,1,1646
+2014,All Species,Town,Montpelier,1,1647
+2014,All Species,Town,Jericho,1,1648
+2014,All Species,Town,Granville,1,1649
+2014,All Species,Town,Ferrisburg,3,1650
+2014,All Species,Town,Essex,2,1651
+2014,All Species,Town,Duxbury,1,1652
+2014,All Species,Town,Dummerston,1,1653
+2014,All Species,Town,Colchester,2,1654
+2014,All Species,Town,Clarendon,1,1655
+2014,All Species,Town,Calais,1,1656
+2014,All Species,Town,Burlington,21,1657
+2014,All Species,County,Windsor,3,1658
+2014,All Species,Town,Addison,1,1659
+2014,Woodchuck,Town,Williston,1,1660
+2014,Skunk,County,Windham,1,1661
+2014,Skunk,County,Franklin,2,1662
+2014,Skunk,County,Chittenden,12,1663
+2014,Skunk,County,Bennington,1,1664
+2014,Skunk,County,Addison,1,1665
+2014,Skunk,Town,Vernon,1,1666
+2014,Skunk,Town,St. Albans Town,1,1667
+2014,Skunk,Town,St. Albans City,1,1668
+2014,Skunk,Town,South Burlington,2,1669
+2014,Skunk,Town,Jericho,1,1670
+2014,Skunk,Town,Essex,1,1671
+2014,Skunk,Town,Colchester,1,1672
+2014,Skunk,Town,Burlington,7,1673
+2014,Skunk,Town,Rupert,1,1674
+2014,Skunk,Town,Ferrisburg,1,1675
+2014,Raccoon,County,Windsor,3,1676
+2014,Raccoon,County,Windham,3,1677
+2014,Raccoon,County,Washington,1,1678
+2014,Raccoon,County,Rutland,1,1679
+2014,Raccoon,County,Chittenden,18,1680
+2014,Raccoon,County,Addison,2,1681
+2014,Raccoon,Town,Windsor,1,1682
+2014,Raccoon,Town,Weathersfield,1,1683
+2014,Raccoon,Town,Reading,1,1684
+2014,Raccoon,Town,Westminster,1,1685
+2014,Raccoon,Town,Putney,1,1686
+2014,Raccoon,Town,Dummerston,1,1687
+2014,Raccoon,Town,Duxbury,1,1688
+2014,Raccoon,Town,Wallingford,1,1689
+2014,All Species,Town,Benson,1,1690
+2013,Raccoon,Town,Grafton,1,1691
+2013,Raccoon,Town,Waitsfield,1,1692
+2013,Raccoon,Town,Middletown Springs,1,1693
+2013,Raccoon,Town,Morristown,2,1694
+2013,Raccoon,Town,Swanton,1,1695
+2013,Raccoon,Town,St. Albans City,3,1696
+2013,Raccoon,Town,Burlington,6,1697
+2013,Raccoon,Town,Middlebury,1,1698
+2013,Horse,County,Essex,1,1699
+2013,Horse,Town,Concord,1,1700
+2013,Fox,County,Windsor,1,1701
+2013,Fox,County,Windham,1,1702
+2013,Fox,County,Orange,1,1703
+2013,Fox,Town,Springfield,1,1704
+2013,Fox,Town,Jamaica,1,1705
+2013,Fox,Town,Braintree,1,1706
+2013,Dog,County,Addison,1,1707
+2013,Dog,Town,New Haven,1,1708
+2013,Cat,County,Addison,1,1709
+2013,Cat,Town,New Haven,1,1710
+2013,Bovine,County,Washington,1,1711
+2013,Bovine,County,Rutland,1,1712
+2013,Skunk,Town,Bridport,1,1713
+2013,Bovine,Town,Warren,1,1714
+2013,Bovine,Town,Brandon,1,1715
+2013,Bobcat,County,Windham,1,1716
+2013,Bobcat,Town,Athens,1,1717
+2013,Bat,County,Windsor,1,1718
+2013,Bat,County,Rutland,1,1719
+2013,Bat,County,Chittenden,1,1720
+2013,Bat,Town,Norwich,1,1721
+2013,Bat,Town,Middletown Springs,1,1722
+2013,Bat,Town,Burlington,1,1723
+2013,All Species,County,Windsor,5,1724
+2013,All Species,County,Windham,4,1725
+2013,All Species,County,Washington,4,1726
+2013,All Species,County,Rutland,3,1727
+2013,All Species,County,Orleans,5,1728
+2013,All Species,County,Orange,1,1729
+2013,All Species,County,Lamoille,3,1730
+2013,All Species,County,Franklin,7,1731
+2013,All Species,County,Essex,1,1732
+2013,All Species,County,Chittenden,11,1733
+2013,All Species,County,Caledonia,1,1734
+2013,All Species,County,Bennington,1,1735
+2013,All Species,County,Addison,4,1736
+2013,All Species,Town,Warren,1,1737
+2013,All Species,Town,Waitsfield,1,1738
+2013,All Species,Town,Swanton,1,1739
+2013,All Species,Town,St. Albans City,3,1740
+2013,All Species,Town,Springfield,1,1741
+2013,All Species,Town,Shaftsbury,1,1742
+2013,All Species,Town,Royalton,1,1743
+2013,All Species,Town,Rochester,1,1744
+2013,All Species,Town,Norwich,2,1745
+2013,All Species,Town,New Haven,2,1746
+2013,All Species,Town,Morristown,2,1747
+2013,All Species,Town,Middletown Springs,2,1748
+2013,All Species,Town,Middlebury,1,1749
+2013,All Species,Town,Kirby,1,1750
+2013,All Species,Town,Jamaica,1,1751
+2013,All Species,Town,Irasburg,1,1752
+2013,All Species,Town,Hyde Park,1,1753
+2013,All Species,Town,Highgate,1,1754
+2013,All Species,Town,Grafton,1,1755
+2013,All Species,Town,Fairfield,2,1756
+2013,All Species,Town,Coventry,4,1757
+2013,All Species,Town,Concord,1,1758
+2013,All Species,Town,Burlington,11,1759
+2013,All Species,Town,Brookline,1,1760
+2013,All Species,Town,Bridport,1,1761
+2013,All Species,Town,Brandon,1,1762
+2013,All Species,Town,Braintree,1,1763
+2013,All Species,Town,Barre City,2,1764
+2013,All Species,Town,Athens,1,1765
+2013,Skunk,County,Windsor,1,1766
+2013,Skunk,County,Windham,1,1767
+2013,Skunk,County,Washington,2,1768
+2013,Skunk,County,Orleans,5,1769
+2013,Skunk,County,Lamoille,1,1770
+2013,Skunk,County,Franklin,3,1771
+2013,Skunk,County,Chittenden,4,1772
+2013,Skunk,County,Caledonia,1,1773
+2013,Skunk,County,Bennington,1,1774
+2013,Skunk,County,Addison,1,1775
+2013,Skunk,Town,Royalton,1,1776
+2013,Skunk,Town,Brookline,1,1777
+2013,Skunk,Town,Barre City,2,1778
+2013,Skunk,Town,Irasburg,1,1779
+2013,Skunk,Town,Coventry,4,1780
+2013,Skunk,Town,Hyde Park,1,1781
+2013,Skunk,Town,Highgate,1,1782
+2013,Skunk,Town,Fairfield,2,1783
+2013,Skunk,Town,Burlington,4,1784
+2013,Skunk,Town,Kirby,1,1785
+2013,Skunk,Town,Shaftsbury,1,1786
+2013,Raccoon,County,Windsor,2,1787
+2013,Raccoon,County,Windham,1,1788
+2013,Raccoon,County,Washington,1,1789
+2013,Raccoon,County,Rutland,1,1790
+2013,Raccoon,County,Lamoille,2,1791
+2013,Raccoon,County,Franklin,4,1792
+2013,Raccoon,County,Chittenden,6,1793
+2013,Raccoon,County,Addison,1,1794
+2013,Raccoon,Town,Rochester,1,1795
+2013,Raccoon,Town,Norwich,1,1796
+2012,Raccoon,County,Windsor,1,1797
+2012,Raccoon,County,Washington,2,1798
+2012,Raccoon,County,Orleans,2,1799
+2012,Raccoon,County,Orange,2,1800
+2012,Raccoon,County,Lamoille,7,1801
+2012,Raccoon,County,Franklin,3,1802
+2012,Raccoon,County,Chittenden,3,1803
+2012,Raccoon,County,Caledonia,4,1804
+2012,Raccoon,County,Bennington,1,1805
+2012,Raccoon,County,Addison,5,1806
+2012,Raccoon,Town,Chester,1,1807
+2012,Raccoon,Town,Waterbury,1,1808
+2012,Raccoon,Town,Plainfield,1,1809
+2012,Raccoon,Town,Derby,1,1810
+2012,Raccoon,Town,Craftsbury,1,1811
+2012,Raccoon,Town,Randolph,1,1812
+2012,Raccoon,Town,Chelsea,1,1813
+2012,Raccoon,Town,Stowe,5,1814
+2012,Raccoon,Town,Morristown,2,1815
+2012,Raccoon,Town,St. Albans Town,1,1816
+2012,Raccoon,Town,Greensboro,1,1817
+2012,Raccoon,Town,Franklin,1,1818
+2012,Raccoon,Town,Huntington,1,1819
+2012,Raccoon,Town,Hinesburg,1,1820
+2012,Raccoon,Town,Burlington,1,1821
+2012,Raccoon,Town,Walden,1,1822
+2012,Raccoon,Town,St. Johnsbury,1,1823
+2012,Raccoon,Town,Danville,1,1824
+2012,Raccoon,Town,Barnet,1,1825
+2012,Raccoon,Town,Pownal,1,1826
+2012,Raccoon,Town,Whiting,1,1827
+2012,Raccoon,Town,Middlebury,2,1828
+2012,Raccoon,Town,Lincoln,1,1829
+2012,Raccoon,Town,Bridport,1,1830
+2012,Cat,County,Windsor,1,1831
+2012,Cat,County,Windham,1,1832
+2012,Cat,County,Orleans,1,1833
+2012,Cat,Town,Hardwick,1,1834
+2012,Cat,Town,Rockingham,1,1835
+2012,Cat,Town,Coventry,1,1836
+2012,Bovine,County,Caledonia,1,1837
+2012,Bovine,Town,Hardwick,1,1838
+2012,Bat,County,Rutland,1,1839
+2012,Bat,County,Chittenden,2,1840
+2012,Bat,County,Caledonia,2,1841
+2012,Bat,County,Addison,1,1842
+2012,Bat,Town,Poultney,1,1843
+2012,Bat,Town,South Hero,1,1844
+2012,Bat,Town,Shelburne,1,1845
+2012,Bat,Town,St. Johnsbury,1,1846
+2012,Bat,Town,Ryegate,1,1847
+2012,Bat,Town,Middlebury,1,1848
+2012,All Species,County,Windsor,3,1849
+2012,All Species,County,Windham,3,1850
+2012,All Species,County,Washington,4,1851
+2012,All Species,County,Rutland,2,1852
+2012,All Species,County,Orleans,4,1853
+2012,All Species,County,Orange,3,1854
+2012,All Species,County,Lamoille,11,1855
+2012,All Species,County,Franklin,3,1856
+2012,All Species,County,Essex,1,1857
+2012,All Species,County,Chittenden,15,1858
+2012,All Species,County,Caledonia,10,1859
+2012,All Species,County,Bennington,2,1860
+2012,Skunk,County,Windsor,1,1861
+2012,All Species,Town,Winooski,1,1862
+2012,All Species,Town,Whiting,1,1863
+2012,All Species,Town,West Rutland,1,1864
+2012,All Species,Town,Waterbury,1,1865
+2012,All Species,Town,Walden,1,1866
+2012,All Species,Town,Strafford,1,1867
+2012,All Species,Town,Stowe,5,1868
+2012,All Species,Town,St. Johnsbury,3,1869
+2012,All Species,Town,St. Albans Town,1,1870
+2012,All Species,Town,South Hero,1,1871
+2012,All Species,Town,Shelburne,5,1872
+2012,All Species,Town,Shaftsbury,1,1873
+2012,All Species,Town,Ryegate,1,1874
+2012,All Species,Town,Rockingham,1,1875
+2012,All Species,Town,Randolph,1,1876
+2012,All Species,Town,Pownal,1,1877
+2012,All Species,Town,Poultney,1,1878
+2012,All Species,Town,Plainfield,2,1879
+2012,All Species,Town,Morristown,5,1880
+2012,All Species,Town,Montpelier,1,1881
+2012,All Species,Town,Middlebury,3,1882
+2012,All Species,Town,Lincoln,1,1883
+2012,All Species,Town,Jericho,1,1884
+2012,All Species,Town,Huntington,1,1885
+2012,All Species,Town,Hinesburg,1,1886
+2012,All Species,Town,Hardwick,5,1887
+2012,All Species,Town,Greensboro,1,1888
+2012,All Species,Town,Franklin,1,1889
+2012,All Species,Town,Elmore,1,1890
+2012,All Species,Town,Dummerston,1,1891
+2012,All Species,Town,Derby,2,1892
+2012,All Species,Town,Danville,1,1893
+2012,All Species,Town,Craftsbury,1,1894
+2012,All Species,Town,Coventry,1,1895
+2012,All Species,Town,Corinth,1,1896
+2012,All Species,Town,Concord,1,1897
+2012,All Species,Town,Chester,1,1898
+2012,All Species,Town,Chelsea,1,1899
+2012,All Species,Town,Charlotte,1,1900
+2012,All Species,Town,Burlington,4,1901
+2012,All Species,Town,Bridport,1,1902
+2012,All Species,Town,Barnet,1,1903
+2012,All Species,County,Addison,6,1904
+2012,Skunk,County,Lamoille,4,1905
+2012,Skunk,County,Windham,2,1906
+2012,Skunk,County,Washington,2,1907
+2012,Skunk,County,Rutland,1,1908
+2012,Skunk,County,Orleans,1,1909
+2012,Skunk,County,Orange,1,1910
+2012,Skunk,County,Essex,1,1911
+2012,Skunk,County,Chittenden,9,1912
+2012,Skunk,County,Caledonia,3,1913
+2012,Skunk,County,Bennington,1,1914
+2012,Skunk,Town,Hardwick,1,1915
+2012,Skunk,Town,Strafford,1,1916
+2012,Skunk,Town,Dummerston,1,1917
+2012,Skunk,Town,Plainfield,1,1918
+2012,Skunk,Town,Montpelier,1,1919
+2012,Skunk,Town,West Rutland,1,1920
+2012,Skunk,Town,Derby,1,1921
+2012,Skunk,Town,Corinth,1,1922
+2012,Skunk,Town,Morristown,3,1923
+2012,Skunk,Town,Elmore,1,1924
+2012,Skunk,Town,Concord,1,1925
+2012,Skunk,Town,Winooski,1,1926
+2012,Skunk,Town,Shelburne,4,1927
+2012,Skunk,Town,Jericho,1,1928
+2012,Skunk,Town,Burlington,3,1929
+2012,Skunk,Town,St. Johnsbury,1,1930
+2012,Skunk,Town,Hardwick,2,1931
+2012,Skunk,Town,Shaftsbury,1,1932
+2012,Sheep,County,Chittenden,1,1933
+2012,Sheep,Town,Charlotte,1,1934
+2011,Raccoon,Town,Panton,1,1935
+2011,Raccoon,Town,Monkton,1,1936
+2011,Raccoon,Town,Lincoln,1,1937
+2011,Raccoon,Town,Addison,1,1938
+2011,Bat,County,Windham,2,1939
+2011,Bat,Town,Rockingham,1,1940
+2011,Bat,Town,Brattleboro,1,1941
+2011,All Species,County,Windham,3,1942
+2011,All Species,County,Washington,7,1943
+2011,All Species,County,Rutland,2,1944
+2011,All Species,County,Orleans,1,1945
+2011,All Species,County,Orange,1,1946
+2011,All Species,County,Lamoille,1,1947
+2011,All Species,County,Chittenden,6,1948
+2011,All Species,County,Caledonia,3,1949
+2011,All Species,County,Addison,4,1950
+2011,All Species,Town,Woodbury,1,1951
+2011,All Species,Town,Walden,2,1952
+2011,Woodchuck,County,Rutland,2,1953
+2011,All Species,Town,South Burlington,1,1954
+2011,All Species,Town,Ryegate,1,1955
+2011,All Species,Town,Rutland City,2,1956
+2011,All Species,Town,Rockingham,1,1957
+2011,All Species,Town,Panton,1,1958
+2011,All Species,Town,Northfield,2,1959
+2011,All Species,Town,Monkton,1,1960
+2011,All Species,Town,Lincoln,1,1961
+2011,All Species,Town,Hyde Park,1,1962
+2011,All Species,Town,Halifax,1,1963
+2011,All Species,Town,East Montpelier,2,1964
+2011,All Species,Town,Derby,1,1965
+2011,All Species,Town,Charlotte,1,1966
+2011,All Species,Town,Cabot,1,1967
+2011,All Species,Town,Burlington,3,1968
+2011,All Species,Town,Brookfield,1,1969
+2011,All Species,Town,Brattleboro,1,1970
+2011,All Species,Town,Barre City,1,1971
+2011,All Species,Town,Addison,1,1972
+2011,Woodchuck,Town,Northfield,1,1973
+2011,Woodchuck,Town,Rutland City,2,1974
+2011,Skunk,County,Washington,1,1975
+2011,Skunk,County,Orleans,1,1976
+2011,Skunk,County,Orange,1,1977
+2011,All Species,Town,Underhill,1,1978
+2011,Skunk,County,Chittenden,3,1979
+2011,Skunk,County,Caledonia,3,1980
+2011,Skunk,Town,East Montpelier,1,1981
+2011,Skunk,Town,Derby,1,1982
+2011,Skunk,Town,Brookfield,1,1983
+2011,Skunk,Town,South Burlington,1,1984
+2011,Skunk,Town,Burlington,2,1985
+2011,Skunk,Town,Walden,2,1986
+2011,Skunk,Town,Ryegate,1,1987
+2011,Raccoon,County,Windham,1,1988
+2011,Raccoon,County,Washington,5,1989
+2011,Raccoon,County,Lamoille,1,1990
+2011,Raccoon,County,Chittenden,3,1991
+2011,Raccoon,County,Addison,4,1992
+2011,Raccoon,Town,Halifax,1,1993
+2011,Raccoon,Town,Woodbury,1,1994
+2011,Raccoon,Town,Northfield,1,1995
+2011,Raccoon,Town,East Montpelier,1,1996
+2011,Raccoon,Town,Cabot,1,1997
+2011,Raccoon,Town,Barre City,1,1998
+2011,Raccoon,Town,Hyde Park,1,1999
+2011,Woodchuck,County,Washington,1,2000
+2011,Raccoon,Town,Charlotte,1,2001
+2011,Raccoon,Town,Burlington,1,2002
+2011,Raccoon,Town,Underhill,1,2003
+2010,Skunk,Town,Ferrisburg,1,2004
+2010,Fox,Town,Rutland City,1,2005
+2010,Raccoon,County,Windsor,3,2006
+2010,Raccoon,County,Washington,1,2007
+2010,Raccoon,County,Rutland,2,2008
+2010,Raccoon,County,Orleans,2,2009
+2010,Raccoon,County,Chittenden,5,2010
+2010,Raccoon,County,Bennington,1,2011
+2010,Raccoon,County,Addison,3,2012
+2010,Raccoon,Town,Weathersfield,1,2013
+2010,Raccoon,Town,Reading,1,2014
+2010,Raccoon,Town,Hartland,1,2015
+2010,Raccoon,Town,Duxbury,1,2016
+2010,Raccoon,Town,Rutland City,1,2017
+2010,Raccoon,Town,Chittenden,1,2018
+2010,Raccoon,Town,Coventry,1,2019
+2010,Raccoon,Town,Barton,1,2020
+2010,Raccoon,Town,Williston,1,2021
+2010,Raccoon,Town,South Burlington,1,2022
+2010,Raccoon,Town,Jericho,2,2023
+2010,Raccoon,Town,Burlington,1,2024
+2010,Raccoon,Town,Woodford,1,2025
+2010,Raccoon,Town,New Haven,1,2026
+2010,Raccoon,Town,Addison,1,2027
+2010,Fox,County,Washington,2,2028
+2010,Fox,County,Rutland,3,2029
+2010,Fox,County,Bennington,1,2030
+2010,Fox,County,Addison,1,2031
+2010,Fox,Town,Rutland Town,1,2032
+2010,Fox,Town,Middlebury,1,2033
+2010,Fox,Town,Fayston,1,2034
+2010,Fox,Town,Danby,1,2035
+2010,Fox,Town,Bennington,1,2036
+2010,Fox,Town,Barre Town,1,2037
+2010,Bobcat,County,Washington,1,2038
+2010,Bobcat,Town,Northfield,1,2039
+2010,All Species,County,Windsor,6,2040
+2010,All Species,County,Washington,6,2041
+2010,All Species,County,Rutland,8,2042
+2010,All Species,County,Orleans,5,2043
+2010,All Species,County,Orange,1,2044
+2010,All Species,County,Lamoille,1,2045
+2010,All Species,County,Chittenden,14,2046
+2010,All Species,County,Caledonia,1,2047
+2010,All Species,County,Bennington,2,2048
+2010,All Species,County,Addison,7,2049
+2010,All Species,Town,Woodford,1,2050
+2010,All Species,Town,Winooski,2,2051
+2010,All Species,Town,Williston,1,2052
+2010,All Species,Town,Weybridge,1,2053
+2010,All Species,Town,Weathersfield,1,2054
+2010,All Species,Town,Wallingford,1,2055
+2010,All Species,Town,Vergennes,1,2056
+2010,All Species,Town,Springfield,1,2057
+2010,All Species,Town,South Burlington,2,2058
+2010,All Species,Town,Rutland Town,1,2059
+2010,All Species,Town,Rutland City,3,2060
+2010,All Species,Town,Royalton,1,2061
+2010,All Species,Town,Reading,1,2062
+2010,All Species,Town,Plainfield,1,2063
+2010,All Species,Town,Northfield,1,2064
+2010,All Species,Town,New Haven,2,2065
+2010,All Species,Town,Middlebury,1,2066
+2010,All Species,Town,Lyndon,1,2067
+2010,All Species,Town,Jericho,2,2068
+2010,All Species,Town,Hyde Park,1,2069
+2010,All Species,Town,Hinesburg,1,2070
+2010,All Species,Town,Hartland,1,2071
+2010,All Species,Town,Hartford,1,2072
+2010,All Species,Town,Ferrisburg,1,2073
+2010,All Species,Town,Fayston,1,2074
+2010,All Species,Town,Duxbury,1,2075
+2010,All Species,Town,Danby,1,2076
+2010,All Species,Town,Craftsbury,2,2077
+2010,All Species,Town,Coventry,1,2078
+2010,All Species,Town,Colchester,1,2079
+2010,All Species,Town,Chittenden,1,2080
+2010,All Species,Town,Burlington,5,2081
+2010,All Species,Town,Brandon,1,2082
+2010,All Species,Town,Bradford,1,2083
+2010,All Species,Town,Bennington,1,2084
+2010,All Species,Town,Barton,1,2085
+2010,All Species,Town,Barre Town,2,2086
+2010,All Species,Town,Albany,1,2087
+2010,All Species,Town,Addison,1,2088
+2010,Raccoon,Town,Weybridge,1,2089
+2010,Woodchuck,County,Rutland,1,2090
+2010,Woodchuck,Town,Rutland City,1,2091
+2010,Skunk,County,Windsor,3,2092
+2010,Skunk,County,Washington,2,2093
+2010,Skunk,County,Rutland,2,2094
+2010,Skunk,County,Orleans,3,2095
+2010,Skunk,County,Orange,1,2096
+2010,Skunk,County,Lamoille,1,2097
+2010,Skunk,County,Chittenden,9,2098
+2010,Skunk,County,Caledonia,1,2099
+2010,Skunk,County,Addison,3,2100
+2010,Skunk,Town,Springfield,1,2101
+2010,Skunk,Town,Royalton,1,2102
+2010,Skunk,Town,Hartford,1,2103
+2010,Skunk,Town,Plainfield,1,2104
+2010,Skunk,Town,Barre Town,1,2105
+2010,Skunk,Town,Wallingford,1,2106
+2010,Skunk,Town,Brandon,1,2107
+2010,Skunk,Town,Craftsbury,2,2108
+2010,Skunk,Town,Albany,1,2109
+2010,Skunk,Town,Bradford,1,2110
+2010,Skunk,Town,Hyde Park,1,2111
+2010,Skunk,Town,Winooski,2,2112
+2010,Skunk,Town,South Burlington,1,2113
+2010,Skunk,Town,Hinesburg,1,2114
+2010,Skunk,Town,Colchester,1,2115
+2010,Skunk,Town,Burlington,4,2116
+2010,Skunk,Town,Lyndon,1,2117
+2010,Skunk,Town,Vergennes,1,2118
+2010,Skunk,Town,New Haven,1,2119
+2009,Raccoon,County,Windsor,4,2120
+2009,Raccoon,County,Windham,5,2121
+2009,Raccoon,County,Washington,1,2122
+2009,Raccoon,County,Orleans,2,2123
+2009,Raccoon,County,Lamoille,1,2124
+2009,Raccoon,County,Grand Isle,3,2125
+2009,Raccoon,County,Franklin,2,2126
+2009,Raccoon,County,Chittenden,4,2127
+2009,Raccoon,County,Bennington,3,2128
+2009,Raccoon,County,Addison,6,2129
+2009,Raccoon,Town,Woodstock,1,2130
+2009,Raccoon,Town,Williston,1,2131
+2009,Raccoon,Town,Vergennes,2,2132
+2009,Raccoon,Town,Townshend,1,2133
+2009,Raccoon,Town,Stowe,1,2134
+2009,Raccoon,Town,South Hero,2,2135
+2009,Raccoon,Town,Royalton,1,2136
+2009,Raccoon,Town,Rockingham,1,2137
+2009,Raccoon,Town,Northfield,1,2138
+2009,Raccoon,Town,Manchester,1,2139
+2009,Raccoon,Town,Hartford,1,2140
+2009,Raccoon,Town,Greensboro,1,2141
+2009,Raccoon,Town,Grand Isle,1,2142
+2009,Raccoon,Town,Franklin,2,2143
+2009,Raccoon,Town,Ferrisburg,2,2144
+2009,Raccoon,Town,Essex,1,2145
+2009,Raccoon,Town,Dummerston,1,2146
+2009,Raccoon,Town,Dover,1,2147
+2009,Raccoon,Town,Dorset,1,2148
+2009,Raccoon,Town,Craftsbury,1,2149
+2009,Raccoon,Town,Cornwall,1,2150
+2009,Raccoon,Town,Charlotte,2,2151
+2009,Raccoon,Town,Bridport,1,2152
+2009,Raccoon,Town,Brattleboro,1,2153
+2009,Raccoon,Town,Bennington,1,2154
+2009,Raccoon,Town,Baltimore,1,2155
+2009,Horse,County,Windsor,1,2156
+2009,Horse,Town,Hartford,1,2157
+2009,Fox,County,Windham,1,2158
+2009,Fox,County,Washington,1,2159
+2009,Fox,Town,Waitsfield,1,2160
+2009,Fox,Town,Putney,1,2161
+2009,Bovine,County,Orleans,2,2162
+2009,Bovine,County,Lamoille,1,2163
+2009,Bovine,County,Chittenden,2,2164
+2009,Bovine,County,Addison,2,2165
+2009,Bovine,Town,Hyde Park,1,2166
+2009,Bovine,Town,Greensboro,1,2167
+2009,Bovine,Town,Charlotte,2,2168
+2009,Bovine,Town,Bridport,1,2169
+2009,Bovine,Town,Barton,1,2170
+2009,Bovine,Town,Addison,1,2171
+2009,Bat,County,Windham,1,2172
+2009,Bat,County,Addison,1,2173
+2009,Bat,Town,Newfane,1,2174
+2009,Bat,Town,Middlebury,1,2175
+2009,All Species,County,Windsor,8,2176
+2009,All Species,County,Windham,11,2177
+2009,All Species,County,Washington,3,2178
+2009,All Species,County,Rutland,1,2179
+2009,All Species,County,Orleans,9,2180
+2009,All Species,County,Lamoille,3,2181
+2009,All Species,County,Grand Isle,4,2182
+2009,All Species,County,Franklin,3,2183
+2009,All Species,County,Chittenden,11,2184
+2009,All Species,County,Caledonia,1,2185
+2009,All Species,County,Bennington,3,2186
+2009,All Species,County,Addison,10,2187
+2009,All Species,Town,Woodstock,1,2188
+2009,All Species,Town,Williston,2,2189
+2009,All Species,Town,Waitsfield,1,2190
+2009,All Species,Town,Vergennes,2,2191
+2009,All Species,Town,Townshend,1,2192
+2009,All Species,Town,Stowe,1,2193
+2009,All Species,Town,Stockbridge,2,2194
+2009,All Species,Town,St. George,1,2195
+2009,All Species,Town,South Hero,3,2196
+2009,All Species,Town,Shelburne,1,2197
+2009,All Species,Town,Sheffield,1,2198
+2009,All Species,Town,Royalton,2,2199
+2009,All Species,Town,Rockingham,2,2200
+2009,All Species,Town,Putney,1,2201
+2009,All Species,Town,Pawlet,1,2202
+2009,All Species,Town,Northfield,1,2203
+2009,All Species,Town,Newfane,1,2204
+2009,All Species,Town,Milton,1,2205
+2009,All Species,Town,Middlebury,1,2206
+2009,All Species,Town,Manchester,1,2207
+2009,All Species,Town,Hyde Park,1,2208
+2009,All Species,Town,Hartford,2,2209
+2009,All Species,Town,Guilford,1,2210
+2009,All Species,Town,Greensboro,3,2211
+2009,All Species,Town,Grand Isle,1,2212
+2009,All Species,Town,Franklin,2,2213
+2009,All Species,Town,Ferrisburg,2,2214
+2009,All Species,Town,Fairfax,1,2215
+2009,All Species,Town,Essex,1,2216
+2009,All Species,Town,Elmore,1,2217
+2009,All Species,Town,Dummerston,1,2218
+2009,All Species,Town,Dover,1,2219
+2009,All Species,Town,Dorset,1,2220
+2009,All Species,Town,Craftsbury,3,2221
+2009,All Species,Town,Cornwall,1,2222
+2009,All Species,Town,Charlotte,5,2223
+2009,All Species,Town,Bridport,3,2224
+2009,All Species,Town,Brattleboro,3,2225
+2009,All Species,Town,Bennington,1,2226
+2009,All Species,Town,Barton,1,2227
+2009,All Species,Town,Barre City,1,2228
+2009,All Species,Town,Baltimore,1,2229
+2009,All Species,Town,Albany,2,2230
+2009,All Species,Town,Addison,1,2231
+2009,Skunk,Town,Albany,2,2232
+2009,Skunk,County,Windsor,3,2233
+2009,Skunk,County,Windham,4,2234
+2009,Skunk,County,Washington,1,2235
+2009,Skunk,County,Rutland,1,2236
+2009,Skunk,County,Orleans,5,2237
+2009,Skunk,County,Lamoille,1,2238
+2009,Skunk,County,Grand Isle,1,2239
+2009,Skunk,County,Franklin,1,2240
+2009,Skunk,County,Chittenden,5,2241
+2009,Skunk,County,Caledonia,1,2242
+2009,Skunk,County,Addison,1,2243
+2009,Skunk,Town,Williston,1,2244
+2009,Skunk,Town,Stockbridge,2,2245
+2009,Skunk,Town,St. George,1,2246
+2009,Skunk,Town,South Hero,1,2247
+2009,Skunk,Town,Shelburne,1,2248
+2009,Skunk,Town,Sheffield,1,2249
+2009,Skunk,Town,Royalton,1,2250
+2009,Skunk,Town,Rockingham,1,2251
+2009,Skunk,Town,Pawlet,1,2252
+2009,Skunk,Town,Milton,1,2253
+2009,Skunk,Town,Guilford,1,2254
+2009,Skunk,Town,Greensboro,1,2255
+2009,Skunk,Town,Fairfax,1,2256
+2009,Skunk,Town,Elmore,1,2257
+2009,Skunk,Town,Craftsbury,2,2258
+2009,Skunk,Town,Charlotte,1,2259
+2009,Skunk,Town,Bridport,1,2260
+2009,Skunk,Town,Brattleboro,2,2261
+2009,Skunk,Town,Barre City,1,2262
+2008,Fox,County,Windham,2,2263
+2008,Fox,Town,Windham,1,2264
+2008,Fox,Town,Rockingham,1,2265
+2008,Fox,Town,Chester,1,2266
+2008,Raccoon,County,Windsor,1,2267
+2008,Raccoon,County,Windham,14,2268
+2008,Raccoon,County,Orleans,7,2269
+2008,Raccoon,County,Lamoille,4,2270
+2008,Raccoon,County,Grand Isle,5,2271
+2008,Raccoon,County,Franklin,6,2272
+2008,Raccoon,County,Chittenden,2,2273
+2008,Raccoon,County,Addison,1,2274
+2008,Raccoon,Town,Windsor,1,2275
+2008,Raccoon,Town,Westminster,6,2276
+2008,Raccoon,Town,Wardsboro,1,2277
+2008,Raccoon,Town,Townshend,2,2278
+2008,Raccoon,Town,Swanton,1,2279
+2008,Raccoon,Town,Stowe,4,2280
+2008,Raccoon,Town,South Hero,1,2281
+2008,Raccoon,Town,Shoreham,1,2282
+2008,Raccoon,Town,Rockingham,1,2283
+2008,Raccoon,Town,North Hero,1,2284
+2008,Raccoon,Town,Newport Town,1,2285
+2008,Raccoon,Town,Montgomery,1,2286
+2008,Raccoon,Town,Hinesburg,1,2287
+2008,Raccoon,Town,Guilford,2,2288
+2008,Raccoon,Town,Grand Isle,2,2289
+2008,Raccoon,Town,Grafton,1,2290
+2008,Raccoon,Town,Glover,3,2291
+2008,Raccoon,Town,Franklin,3,2292
+2008,Raccoon,Town,Dover,1,2293
+2008,Raccoon,Town,Coventry,1,2294
+2008,Raccoon,Town,Charlotte,1,2295
+2008,Raccoon,Town,Barton,2,2296
+2008,Raccoon,Town,Bakersfield,1,2297
+2008,Raccoon,Town,Alburg,1,2298
+2008,Otter,County,Windham,1,2299
+2008,Otter,Town,Guilford,1,2300
+2008,Bovine,County,Franklin,1,2301
+2008,Bovine,Town,Bakersfield,1,2302
+2008,Bat,County,Lamoille,1,2303
+2008,Bat,County,Chittenden,1,2304
+2008,Bat,County,Caledonia,1,2305
+2008,Bat,Town,St. Johnsbury,1,2306
+2008,Bat,Town,Shelburne,1,2307
+2008,Bat,Town,Morristown,1,2308
+2008,All Species,County,Windsor,3,2309
+2008,All Species,County,Windham,21,2310
+2008,All Species,County,Washington,1,2311
+2008,All Species,County,Orleans,8,2312
+2008,All Species,County,Orange,2,2313
+2008,All Species,County,Lamoille,6,2314
+2008,All Species,County,Grand Isle,9,2315
+2008,All Species,County,Franklin,10,2316
+2008,All Species,County,Chittenden,10,2317
+2008,All Species,County,Caledonia,1,2318
+2008,All Species,County,Bennington,1,2319
+2008,All Species,County,Addison,2,2320
+2008,All Species,Town,Windsor,1,2321
+2008,All Species,Town,Windham,1,2322
+2008,All Species,Town,Williston,3,2323
+2008,All Species,Town,Westminster,7,2324
+2008,Woodchuck,County,Franklin,1,2325
+2008,All Species,Town,Underhill,2,2326
+2008,All Species,Town,Townshend,2,2327
+2008,All Species,Town,Swanton,1,2328
+2008,All Species,Town,Stowe,4,2329
+2008,All Species,Town,St. Johnsbury,1,2330
+2008,All Species,Town,St. Albans Town,1,2331
+2008,All Species,Town,South Hero,3,2332
+2008,All Species,Town,Shoreham,1,2333
+2008,All Species,Town,Shelburne,1,2334
+2008,All Species,Town,Rockingham,5,2335
+2008,All Species,Town,Randolph,1,2336
+2008,All Species,Town,North Hero,1,2337
+2008,All Species,Town,Newport Town,1,2338
+2008,All Species,Town,Newbury,1,2339
+2008,All Species,Town,Morristown,1,2340
+2008,All Species,Town,Moretown,1,2341
+2008,All Species,Town,Montgomery,1,2342
+2008,All Species,Town,Jericho,1,2343
+2008,All Species,Town,Irasburg,1,2344
+2008,All Species,Town,Hinesburg,1,2345
+2008,All Species,Town,Guilford,3,2346
+2008,All Species,Town,Grand Isle,4,2347
+2008,All Species,Town,Grafton,1,2348
+2008,All Species,Town,Glover,3,2349
+2008,All Species,Town,Franklin,3,2350
+2008,All Species,Town,Elmore,1,2351
+2008,All Species,Town,Dover,1,2352
+2008,All Species,Town,Coventry,1,2353
+2008,All Species,Town,Colchester,1,2354
+2008,All Species,Town,Chester,2,2355
+2008,All Species,Town,Charlotte,1,2356
+2008,All Species,Town,Bristol,1,2357
+2008,All Species,Town,Berkshire,2,2358
+2008,All Species,Town,Wardsboro,1,2359
+2008,All Species,Town,Barton,2,2360
+2008,All Species,Town,Bakersfield,2,2361
+2008,All Species,Town,Alburg,1,2362
+2008,Woodchuck,Town,St. Albans Town,1,2363
+2008,Skunk,County,Windsor,1,2364
+2008,Skunk,County,Windham,4,2365
+2008,Skunk,County,Washington,1,2366
+2008,Skunk,County,Orleans,1,2367
+2008,Skunk,County,Orange,2,2368
+2008,Skunk,County,Lamoille,1,2369
+2008,Skunk,County,Grand Isle,4,2370
+2008,Skunk,County,Franklin,2,2371
+2008,Skunk,County,Chittenden,7,2372
+2008,Skunk,County,Bennington,1,2373
+2008,Skunk,County,Addison,1,2374
+2008,Skunk,Town,Williston,3,2375
+2008,Skunk,Town,Westminster,1,2376
+2008,Skunk,Town,Underhill,2,2377
+2008,Skunk,Town,South Hero,2,2378
+2008,Skunk,Town,Rockingham,3,2379
+2008,Skunk,Town,Randolph,1,2380
+2008,Skunk,Town,Newbury,1,2381
+2008,Skunk,Town,Moretown,1,2382
+2008,Skunk,Town,Jericho,1,2383
+2008,Skunk,Town,Irasburg,1,2384
+2008,Skunk,Town,Grand Isle,2,2385
+2008,Skunk,Town,Elmore,1,2386
+2008,Skunk,Town,Colchester,1,2387
+2008,Skunk,Town,Chester,1,2388
+2008,Skunk,Town,Bristol,1,2389
+2008,Skunk,Town,Berkshire,2,2390
+2008,Skunk,Town,Bennington,1,2391
+2008,Fox,County,Windsor,1,2392
+2008,All Species,Town,Bennington,1,2393
+2007,Skunk,Town,Burlington,6,2394
+2007,Skunk,Town,Bristol,1,2395
+2007,Skunk,Town,Bridport,1,2396
+2007,Skunk,Town,Braintree,1,2397
+2007,Skunk,Town,Bradford,1,2398
+2007,Skunk,County,Rutland,1,2399
+2007,Skunk,Town,Benson,1,2400
+2007,Skunk,Town,Barre Town,1,2401
+2007,Skunk,Town,Barnet,1,2402
+2007,Sheep,County,Franklin,1,2403
+2007,Sheep,Town,St. Albans Town,1,2404
+2007,Fox,County,Orange,1,2405
+2007,Fox,County,Franklin,2,2406
+2007,Fox,Town,Williamstown,1,2407
+2007,Fox,Town,St. Albans Town,1,2408
+2007,Fox,Town,Highgate,1,2409
+2007,Raccoon,County,Windham,2,2410
+2007,Raccoon,County,Orange,1,2411
+2007,Raccoon,County,Lamoille,5,2412
+2007,Raccoon,County,Grand Isle,8,2413
+2007,Raccoon,County,Franklin,64,2414
+2007,Raccoon,County,Caledonia,8,2415
+2007,Raccoon,County,Bennington,3,2416
+2007,Raccoon,County,Addison,2,2417
+2007,Raccoon,Town,Williston,2,2418
+2007,Raccoon,Town,Underhill,1,2419
+2007,Raccoon,Town,Swanton,7,2420
+2007,Raccoon,Town,Stowe,2,2421
+2007,Raccoon,Town,St. Albans Town,8,2422
+2007,Raccoon,Town,St. Albans City,12,2423
+2007,Raccoon,Town,Sheldon,3,2424
+2007,Raccoon,Town,Rockingham,2,2425
+2007,Raccoon,Town,Pownal,1,2426
+2007,Raccoon,Town,North Hero,1,2427
+2007,Raccoon,Town,Middlebury,1,2428
+2007,Raccoon,Town,Lyndon,1,2429
+2007,Raccoon,Town,Johnson,1,2430
+2007,Raccoon,Town,Jericho,1,2431
+2007,Raccoon,Town,Highgate,15,2432
+2007,Raccoon,Town,Georgia,2,2433
+2007,Raccoon,Town,Franklin,10,2434
+2007,Raccoon,Town,Fletcher,1,2435
+2007,Raccoon,Town,Fairfield,3,2436
+2007,Raccoon,Town,Fairfax,1,2437
+2007,Raccoon,Town,Essex,5,2438
+2007,Raccoon,Town,Enosburg,2,2439
+2007,Raccoon,Town,Danville,6,2440
+2007,Raccoon,Town,Cambridge,1,2441
+2007,Raccoon,Town,Burlington,2,2442
+2007,Raccoon,Town,Bristol,1,2443
+2007,Raccoon,Town,Braintree,1,2444
+2007,Raccoon,Town,Bennington,2,2445
+2007,Raccoon,Town,Belvidere,1,2446
+2007,Raccoon,Town,Barnet,1,2447
+2007,Raccoon,Town,Alburg,7,2448
+2007,Horse,County,Rutland,1,2449
+2007,Horse,Town,Benson,1,2450
+2007,Cat,County,Washington,2,2451
+2007,Cat,County,Addison,1,2452
+2007,Cat,Town,Barre Town,2,2453
+2007,Cat,Town,Vergennes,1,2454
+2007,Bovine,County,Orange,1,2455
+2007,Bovine,Town,Chelsea,1,2456
+2007,Bobcat,County,Windsor,1,2457
+2007,Bobcat,Town,Stockbridge,1,2458
+2007,Bat,County,Washington,1,2459
+2007,Bat,County,Orange,1,2460
+2007,Bat,County,Franklin,1,2461
+2007,Bat,Town,Thetford,1,2462
+2007,Bat,Town,St. Albans City,1,2463
+2007,Bat,Town,Montpelier,1,2464
+2007,All Species,County,Windsor,1,2465
+2007,All Species,County,Windham,3,2466
+2007,All Species,County,Washington,4,2467
+2007,All Species,County,Rutland,2,2468
+2007,All Species,County,Orange,10,2469
+2007,All Species,County,Lamoille,7,2470
+2007,All Species,County,Grand Isle,8,2471
+2007,All Species,County,Franklin,84,2472
+2007,All Species,County,Chittenden,27,2473
+2007,All Species,County,Caledonia,11,2474
+2007,All Species,County,Bennington,3,2475
+2007,All Species,County,Addison,7,2476
+2007,All Species,Town,Williston,3,2477
+2007,All Species,Town,Williamstown,1,2478
+2007,All Species,Town,Westminster,1,2479
+2007,All Species,Town,Vergennes,1,2480
+2007,All Species,Town,Underhill,1,2481
+2007,All Species,Town,Thetford,1,2482
+2007,All Species,Town,Swanton,8,2483
+2007,All Species,Town,Stowe,2,2484
+2007,All Species,Town,Stockbridge,1,2485
+2007,All Species,Town,St. Albans Town,13,2486
+2007,All Species,Town,St. Albans City,13,2487
+2007,All Species,Town,South Burlington,1,2488
+2007,All Species,Town,Shoreham,1,2489
+2007,All Species,Town,Sheldon,5,2490
+2007,All Species,Town,Rockingham,2,2491
+2007,All Species,Town,Richmond,2,2492
+2007,All Species,Town,Randolph,2,2493
+2007,All Species,Town,Pownal,1,2494
+2007,All Species,Town,Orange,1,2495
+2007,All Species,Town,North Hero,1,2496
+2007,All Species,Town,Morristown,1,2497
+2007,All Species,Town,Montpelier,1,2498
+2007,All Species,Town,Middlebury,1,2499
+2007,All Species,Town,Lyndon,1,2500
+2007,All Species,Town,Johnson,2,2501
+2007,All Species,Town,Jericho,1,2502
+2007,All Species,Town,Highgate,17,2503
+2007,All Species,Town,Georgia,4,2504
+2007,All Species,Town,Franklin,13,2505
+2007,All Species,Town,Fletcher,1,2506
+2007,All Species,Town,Ferrisburg,1,2507
+2007,All Species,Town,Fairfield,3,2508
+2007,All Species,Town,Fairfax,5,2509
+2007,All Species,Town,Essex,6,2510
+2007,All Species,Town,Enosburg,2,2511
+2007,All Species,Town,Danville,8,2512
+2007,All Species,Town,Corinth,1,2513
+2007,All Species,Town,Colchester,5,2514
+2007,All Species,Town,Chelsea,1,2515
+2007,All Species,Town,Cambridge,1,2516
+2007,All Species,Town,Burlington,8,2517
+2007,All Species,Town,Bristol,2,2518
+2007,All Species,Town,Bridport,1,2519
+2007,All Species,Town,Braintree,2,2520
+2007,All Species,Town,Bradford,1,2521
+2007,All Species,Town,Benson,2,2522
+2007,All Species,Town,Bennington,2,2523
+2007,All Species,Town,Belvidere,1,2524
+2007,All Species,Town,Barre Town,3,2525
+2007,All Species,Town,Barnet,2,2526
+2007,All Species,Town,Alburg,7,2527
+2007,Raccoon,County,Chittenden,11,2528
+2007,Woodchuck,County,Orange,1,2529
+2007,Woodchuck,Town,Orange,1,2530
+2007,Skunk,County,Windham,1,2531
+2007,Skunk,County,Washington,1,2532
+2007,Skunk,County,Orange,5,2533
+2007,Skunk,County,Lamoille,2,2534
+2007,Skunk,County,Franklin,16,2535
+2007,Skunk,County,Chittenden,16,2536
+2007,Skunk,County,Caledonia,3,2537
+2007,Skunk,County,Addison,4,2538
+2007,Skunk,Town,Williston,1,2539
+2007,Skunk,Town,Westminster,1,2540
+2007,Skunk,Town,Swanton,1,2541
+2007,Skunk,Town,St. Albans Town,3,2542
+2007,Skunk,Town,South Burlington,1,2543
+2007,Skunk,Town,Shoreham,1,2544
+2007,Skunk,Town,Sheldon,2,2545
+2007,Skunk,Town,Richmond,2,2546
+2007,Skunk,Town,Randolph,2,2547
+2007,Skunk,Town,Morristown,1,2548
+2007,Skunk,Town,Johnson,1,2549
+2007,Skunk,Town,Highgate,1,2550
+2007,Skunk,Town,Georgia,2,2551
+2007,Skunk,Town,Franklin,3,2552
+2007,Skunk,Town,Ferrisburg,1,2553
+2007,Skunk,Town,Fairfax,4,2554
+2007,Skunk,Town,Essex,1,2555
+2007,Skunk,Town,Danville,2,2556
+2007,Skunk,Town,Corinth,1,2557
+2007,Skunk,Town,Colchester,5,2558
+2006,Skunk,Town,Middlebury,1,2559
+2006,Skunk,Town,Ferrisburg,1,2560
+2006,Fox,County,Lamoille,1,2561
+2006,Fox,Town,Stowe,1,2562
+2006,Raccoon,County,Washington,2,2563
+2006,Raccoon,County,Rutland,7,2564
+2006,Raccoon,County,Orange,3,2565
+2006,Raccoon,County,Lamoille,7,2566
+2006,Raccoon,County,Franklin,5,2567
+2006,Raccoon,County,Chittenden,1,2568
+2006,Raccoon,County,Caledonia,9,2569
+2006,Raccoon,County,Bennington,4,2570
+2006,Raccoon,County,Addison,4,2571
+2006,Raccoon,Town,Plainfield,1,2572
+2006,Raccoon,Town,Middlesex,1,2573
+2006,Raccoon,Town,Rutland City,2,2574
+2006,Raccoon,Town,Mount Holly,2,2575
+2006,Raccoon,Town,Hubbardton,1,2576
+2006,Woodchuck,County,Orange,1,2577
+2006,Raccoon,Town,Brandon,1,2578
+2006,Raccoon,Town,Washington,1,2579
+2006,Raccoon,Town,Fairlee,1,2580
+2006,Raccoon,Town,Corinth,1,2581
+2006,Raccoon,Town,Stowe,7,2582
+2006,Raccoon,Town,St. Albans Town,2,2583
+2006,Raccoon,Town,Highgate,2,2584
+2006,Raccoon,Town,Fairfax,1,2585
+2006,Raccoon,Town,Essex,1,2586
+2006,Raccoon,Town,St. Johnsbury,1,2587
+2006,Raccoon,Town,Ryegate,1,2588
+2006,Raccoon,Town,Peacham,4,2589
+2006,Raccoon,Town,Danville,1,2590
+2006,Raccoon,Town,Barnet,2,2591
+2006,Raccoon,Town,Rupert,1,2592
+2006,Raccoon,Town,Manchester,1,2593
+2006,Raccoon,Town,Dorset,2,2594
+2006,Raccoon,Town,Shoreham,1,2595
+2006,Raccoon,Town,New Haven,1,2596
+2006,Raccoon,Town,Middlebury,1,2597
+2006,Raccoon,Town,Leicester,1,2598
+2006,Bovine,County,Caledonia,1,2599
+2006,Bovine,County,Addison,3,2600
+2006,Bovine,Town,Danville,1,2601
+2006,Bovine,Town,Shoreham,1,2602
+2006,Bovine,Town,New Haven,1,2603
+2006,Bovine,Town,Ferrisburg,1,2604
+2006,Bat,County,Windham,1,2605
+2006,Bat,Town,Westminster,1,2606
+2006,All Species,County,Windsor,2,2607
+2006,All Species,County,Windham,1,2608
+2006,All Species,County,Washington,4,2609
+2006,All Species,County,Rutland,11,2610
+2006,All Species,County,Orange,7,2611
+2006,All Species,County,Lamoille,9,2612
+2006,All Species,County,Franklin,7,2613
+2006,All Species,County,Chittenden,4,2614
+2006,All Species,County,Caledonia,12,2615
+2006,All Species,County,Bennington,4,2616
+2006,All Species,County,Addison,12,2617
+2006,All Species,Town,Bethel,2,2618
+2006,All Species,Town,Westminster,1,2619
+2006,All Species,Town,Plainfield,1,2620
+2006,All Species,Town,Middlesex,1,2621
+2006,All Species,Town,Calais,1,2622
+2006,All Species,Town,Barre Town,1,2623
+2006,All Species,Town,Rutland City,2,2624
+2006,All Species,Town,Pittsford,1,2625
+2006,All Species,Town,Mount Holly,2,2626
+2006,All Species,Town,Hubbardton,2,2627
+2006,All Species,Town,Fair Haven,1,2628
+2006,All Species,Town,Clarendon,1,2629
+2006,All Species,Town,Brandon,2,2630
+2006,All Species,Town,Washington,1,2631
+2006,All Species,Town,Fairlee,2,2632
+2006,All Species,Town,Corinth,1,2633
+2006,All Species,Town,Chelsea,1,2634
+2006,All Species,Town,Bradford,2,2635
+2006,All Species,Town,Stowe,9,2636
+2006,All Species,Town,St. Albans Town,2,2637
+2006,All Species,Town,Highgate,3,2638
+2006,All Species,Town,Fairfax,2,2639
+2006,All Species,Town,South Burlington,1,2640
+2006,All Species,Town,Essex,3,2641
+2006,All Species,Town,St. Johnsbury,1,2642
+2006,All Species,Town,Ryegate,1,2643
+2006,All Species,Town,Peacham,5,2644
+2006,All Species,Town,Danville,2,2645
+2006,All Species,Town,Barnet,3,2646
+2006,All Species,Town,Rupert,1,2647
+2006,All Species,Town,Manchester,1,2648
+2006,All Species,Town,Dorset,2,2649
+2006,All Species,Town,Shoreham,2,2650
+2006,All Species,Town,Panton,1,2651
+2006,All Species,Town,New Haven,3,2652
+2006,All Species,Town,Monkton,1,2653
+2006,All Species,Town,Middlebury,2,2654
+2006,All Species,Town,Leicester,1,2655
+2006,All Species,Town,Ferrisburg,2,2656
+2006,Raccoon,Town,Clarendon,1,2657
+2006,Skunk,County,Caledonia,2,2658
+2006,Woodchuck,Town,Bradford,1,2659
+2006,Skunk,County,Windsor,2,2660
+2006,Skunk,County,Washington,2,2661
+2006,Skunk,County,Rutland,4,2662
+2006,Skunk,County,Orange,3,2663
+2006,Skunk,County,Lamoille,1,2664
+2006,Skunk,County,Franklin,2,2665
+2006,Skunk,County,Chittenden,3,2666
+2006,Skunk,County,Addison,5,2667
+2006,Skunk,Town,Bethel,2,2668
+2006,Skunk,Town,Calais,1,2669
+2006,Skunk,Town,Barre Town,1,2670
+2006,Skunk,Town,Pittsford,1,2671
+2006,Skunk,Town,Hubbardton,1,2672
+2006,Skunk,Town,Fair Haven,1,2673
+2006,Skunk,Town,Brandon,1,2674
+2006,Skunk,Town,Fairlee,1,2675
+2006,Skunk,Town,Chelsea,1,2676
+2006,Skunk,Town,Bradford,1,2677
+2006,Skunk,Town,Stowe,1,2678
+2006,Skunk,Town,Highgate,1,2679
+2006,Skunk,Town,Fairfax,1,2680
+2006,Skunk,Town,South Burlington,1,2681
+2006,Skunk,Town,Essex,2,2682
+2006,Skunk,Town,Peacham,1,2683
+2006,Skunk,Town,Barnet,1,2684
+2006,Skunk,Town,Panton,1,2685
+2006,Skunk,Town,New Haven,1,2686
+2006,Skunk,Town,Monkton,1,2687
+2005,All Species,County,Orange,2,2688
+2005,All Species,County,Franklin,1,2689
+2005,All Species,County,Chittenden,1,2690
+2005,All Species,County,Caledonia,11,2691
+2005,All Species,County,Bennington,2,2692
+2005,All Species,County,Addison,3,2693
+2005,All Species,Town,St. Albans Town,1,2694
+2005,All Species,Town,Ryegate,1,2695
+2005,Skunk,County,Caledonia,3,2696
+2005,All Species,Town,Peacham,5,2697
+2005,All Species,Town,Newbury,1,2698
+2005,All Species,Town,Montpelier,1,2699
+2005,All Species,Town,Middlebury,3,2700
+2005,All Species,Town,Marshfield,1,2701
+2005,All Species,Town,Groton,1,2702
+2005,All Species,Town,Charlotte,1,2703
+2005,All Species,Town,Castleton,7,2704
+2005,All Species,Town,Calais,1,2705
+2005,All Species,Town,Cabot,1,2706
+2005,All Species,Town,Bradford,1,2707
+2005,All Species,Town,Bennington,1,2708
+2005,All Species,Town,Barnet,4,2709
+2005,Skunk,Town,Bradford,1,2710
+2005,Skunk,Town,Groton,1,2711
+2005,Skunk,Town,Newbury,1,2712
+2005,Skunk,Town,Barnet,2,2713
+2005,Skunk,County,Orange,2,2714
+2005,Raccoon,County,Chittenden,1,2715
+2005,Raccoon,County,Caledonia,8,2716
+2005,Raccoon,County,Bennington,1,2717
+2005,All Species,Town,Pownal,1,2718
+2005,Raccoon,County,Addison,2,2719
+2005,Raccoon,Town,Cabot,1,2720
+2005,Raccoon,Town,Calais,1,2721
+2005,Raccoon,Town,Marshfield,1,2722
+2005,Raccoon,Town,Montpelier,1,2723
+2005,Raccoon,Town,Charlotte,1,2724
+2005,Raccoon,Town,Barnet,2,2725
+2005,Raccoon,Town,Peacham,5,2726
+2005,Raccoon,Town,Ryegate,1,2727
+2005,Raccoon,Town,Pownal,1,2728
+2005,Raccoon,Town,Middlebury,2,2729
+2005,Fox,County,Addison,1,2730
+2005,Fox,Town,Middlebury,1,2731
+2005,Bat,County,Rutland,7,2732
+2005,Bat,County,Franklin,1,2733
+2005,Bat,County,Bennington,1,2734
+2005,Bat,Town,Castleton,7,2735
+2005,Bat,Town,St. Albans Town,1,2736
+2005,Bat,Town,Bennington,1,2737
+2005,All Species,County,Washington,4,2738
+2005,All Species,County,Rutland,7,2739
+2005,Raccoon,County,Washington,4,2740
