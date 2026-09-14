@@ -134,9 +134,9 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
                     "a_mort", "j_mort", "total_pop", "n_infected", "n_symptomatic", "actual_sero", "elim"])
 
 
-reps = 20
+reps = 30
 
-for rep in 1:reps
+for rep in 20:reps
     the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=params[1],
                     l2=params[2], start_cases=10, amort = 0.005, jmort=0.025)
 

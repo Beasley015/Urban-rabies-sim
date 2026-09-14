@@ -130,7 +130,7 @@ for(i in 1:20){
     filter(rep %in% rep5[[i]],
            year == 5) %>%
     group_by(a_mort, j_mort, maxK, season) %>%
-    summarise(vnce = var(total_pop)) %>%
+    summarise(sd = sd(total_pop)) %>%
     mutate(num.rep = 5)
   
   rep5.var <- bind_rows(rep5.var, subst)
@@ -146,46 +146,65 @@ for(i in 1:20){
     filter(rep %in% rep10[[i]],
            year == 5) %>%
     group_by(a_mort, j_mort, maxK, season) %>%
-    summarise(vnce = var(total_pop)) %>%
-    mutate(num.rep = 10)
+    summarise(sd = sd(total_pop)) %>%
+    mutate(num.rep = 10) %>%
+    suppressMessages()
   
   rep10.var <- bind_rows(rep10.var, subst)
 }
 
 rep15 <- vector("list", 20)
-rep15 <- lapply(rep15, function(x) x <- sample(unique(time_to_elim$rep), 
+rep15 <- lapply(rep15, function(x) x <- sample(unique(seasonal$rep), 
                                                size = 15, replace = F))
 rep15.var <- tibble()
 for(i in 1:20){
-  subst <- time_to_elim %>%
+  subst <- seasonal %>%
     filter(rep %in% rep15[[i]]) %>%
-    group_by(lambda1) %>%
-    summarise(vnce = var(nweek)) %>%
-    mutate(num.rep = 15)
+    group_by(a_mort, j_mort, maxK, season) %>%
+    summarise(sd = sd(total_pop)) %>%
+    mutate(num.rep = 15) %>%
+    suppressMessages()
   
   rep15.var <- bind_rows(rep15.var, subst)
 }
 
-rep20.var <- time_to_elim %>%
-  group_by(lambda1) %>%
-  summarise(vnce = var(nweek)) %>%
+rep20.var <- seasonal %>%
+  group_by(a_mort, j_mort, maxK, season) %>%
+  summarise(sd = sd(total_pop)) %>%
   mutate(num.rep = 20)
 
 # put 'em all together
 rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var) 
 
-ggplot(data = rep.var, aes(x = factor(num.rep), y = vnce))+#, fill=factor(num.rep)))+
+all.combo.k <- ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+
   geom_boxplot(fill = 'lightgray') +
   # scale_fill_viridis_d(end = 0.9, name = "# Reps")+
   # labs(x = "Carrying Capacity", y = "Variance")+
-  labs(x = "# Reps", y = "Variance")+
+  labs(x = "# Reps", y = "Standard Deviation")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-ggplot(data = rep.var, aes(x = factor(lambda1), y = vnce, fill=factor(num.rep)))+
+k.ex.var <- ggplot(data = rep.var, aes(x = factor(maxK), y = sd, fill=factor(num.rep)))+
   geom_boxplot() +
   scale_fill_viridis_d(end = 0.9, name = "# Reps")+
-  labs(x = "Lambda1", y = "Variance")+
+  labs(x = "Maximum Carrying Capacity (K)", y = "Standard Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+(all.combo.k | k.ex.var) +
+  plot_annotation(tag_levels = "a")
+
+ggplot(data = rep.var, aes(x = factor(a_mort), y = sd, fill=factor(num.rep)))+
+  geom_boxplot() +
+  scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  labs(x = "Adult Mortality Rate", y = "Standard Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = rep.var, aes(x = factor(j_mort), y = sd, fill=factor(num.rep)))+
+  geom_boxplot() +
+  scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  labs(x = "Juvenile Mortality Rate", y = "Standard Deviation")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
@@ -346,7 +365,7 @@ for(i in 1:20){
   subst <- time_to_elim %>%
     filter(rep %in% rep5[[i]]) %>%
     group_by(lambda1) %>%
-    summarise(vnce = var(nweek, na.rm= T)) %>%
+    summarise(sd = sd(nweek, na.rm= T)) %>%
     mutate(num.rep = 5)
   
   rep5.var <- bind_rows(rep5.var, subst)
@@ -361,7 +380,7 @@ for(i in 1:20){
   subst <- time_to_elim %>%
     filter(rep %in% rep10[[i]]) %>%
     group_by(lambda1) %>%
-    summarise(vnce = var(nweek)) %>%
+    summarise(sd = sd(nweek)) %>%
     mutate(num.rep = 10)
   
   rep10.var <- bind_rows(rep10.var, subst)
@@ -375,7 +394,7 @@ for(i in 1:20){
   subst <- time_to_elim %>%
     filter(rep %in% rep15[[i]]) %>%
     group_by(lambda1) %>%
-    summarise(vnce = var(nweek)) %>%
+    summarise(sd = sd(nweek)) %>%
     mutate(num.rep = 15)
   
   rep15.var <- bind_rows(rep15.var, subst)
@@ -383,17 +402,23 @@ for(i in 1:20){
 
 rep20.var <- time_to_elim %>%
   group_by(lambda1) %>%
-  summarise(vnce = var(nweek)) %>%
+  summarise(sd = sd(nweek)) %>%
   mutate(num.rep = 20)
 
 # put 'em all together
 rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var) 
 
-ggplot(data = rep.var, aes(x = factor(num.rep), y = vnce))+#, fill=factor(num.rep)))+
+ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+
   geom_boxplot(fill = 'lightgray') +
-  # scale_fill_viridis_d(end = 0.9, name = "# Reps")+
-  # labs(x = "Carrying Capacity", y = "Variance")+
-  labs(x = "# Reps", y = "Variance")+
+  labs(x = "# Reps", y = "Standard Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = rep.var, aes(x = factor(lambda1), y = sd,
+                           fill = factor(num.rep)))+
+  geom_boxplot() +
+  scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  labs(x = bquote("Transmission Rate (" ~ lambda[1] ~ ")"), y = "Standard Deviation")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
@@ -555,7 +580,7 @@ for(i in 1:20){
   subst <- time_to_elim %>%
     filter(rep %in% rep5[[i]]) %>%
     group_by(lambda2) %>%
-    summarise(vnce = var(nweek, na.rm= T)) %>%
+    summarise(sd = sd(nweek, na.rm= T)) %>%
     mutate(num.rep = 5)
   
   rep5.var <- bind_rows(rep5.var, subst)
@@ -570,7 +595,7 @@ for(i in 1:20){
   subst <- time_to_elim %>%
     filter(rep %in% rep10[[i]]) %>%
     group_by(lambda2) %>%
-    summarise(vnce = var(nweek)) %>%
+    summarise(sd = sd(nweek)) %>%
     mutate(num.rep = 10)
   
   rep10.var <- bind_rows(rep10.var, subst)
@@ -584,7 +609,7 @@ for(i in 1:20){
   subst <- time_to_elim %>%
     filter(rep %in% rep15[[i]]) %>%
     group_by(lambda2) %>%
-    summarise(vnce = var(nweek)) %>%
+    summarise(sd = sd(nweek)) %>%
     mutate(num.rep = 15)
   
   rep15.var <- bind_rows(rep15.var, subst)
@@ -592,21 +617,21 @@ for(i in 1:20){
 
 rep20.var <- time_to_elim %>%
   group_by(lambda2) %>%
-  summarise(vnce = var(nweek)) %>%
+  summarise(sd = sd(nweek)) %>%
   mutate(num.rep = 20)
 
 # put 'em all together
 rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var) 
 
-ggplot(data = rep.var, aes(x = factor(num.rep), y = vnce))+#, fill=factor(num.rep)))+
+ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+#, fill=factor(num.rep)))+
   geom_boxplot(fill = 'lightgray') +
   # scale_fill_viridis_d(end = 0.9, name = "# Reps")+
   # labs(x = "Carrying Capacity", y = "Variance")+
-  labs(x = "# Reps", y = "Variance")+
+  labs(x = "# Reps", y = "Standard Deviation")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-ggplot(data = rep.var, aes(x = factor(lambda2), y = vnce, 
+ggplot(data = rep.var, aes(x = factor(lambda2), y = sd, 
                            fill=factor(num.rep)))+
   geom_boxplot()+
   scale_fill_viridis_d(end = 0.9, name = "# Reps")+
@@ -663,13 +688,13 @@ time_to_elim <- dis.wide %>%
   distinct() %>%
   mutate(lambda2 = factor(lambda2), lambda1=factor(lambda1))
 
-# all_combos <- expand_grid(unique(time_to_elim$lambda1), 
-#                           unique(time_to_elim$lambda2), 
-#                           unique(time_to_elim$rep))
-# colnames(all_combos) <- c("lambda1", "lambda2", "rep")
+all_combos <- expand_grid(unique(time_to_elim$lambda1),
+                          unique(time_to_elim$lambda2),
+                          unique(time_to_elim$rep))
+colnames(all_combos) <- c("lambda1", "lambda2", "rep")
 
 time_to_elim <- time_to_elim %>%
-  # right_join(all_combos, by=c("rep", "lambda1", "lambda2")) %>%
+  right_join(all_combos, by=c("rep", "lambda1", "lambda2")) %>%
   mutate(nweek = case_when(is.na(nweek)==T ~ 52*11,
                            TRUE ~ nweek)) %>%
   group_by(lambda1, lambda2) %>%
@@ -682,11 +707,20 @@ ggplot(data = time_to_elim, aes(x = lambda1, y = lambda2,
   labs(x = expression(lambda[1]), y = expression(lambda[2]))+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
-# Top left corner eliminates very quickly (low l1 and high l2)
+
+ggplot(data = time_to_elim, aes(x = lambda1, y = nweek))+
+  geom_boxplot()
+
+ggplot(data = time_to_elim, aes(x = lambda2, y = nweek))+
+  geom_boxplot()
+
+ggplot(data = time_to_elim, aes(x = lambda1, y = nweek,
+                                fill = lambda2))+
+  geom_boxplot()
 
 # Start filtering values
 poss.combos <- time_to_elim %>%
-  filter(meantime > 52*7) # want rabies to last at least half of the sim
+  filter(meantime > 52*7) # want rabies to last as long as it did in Burly
 
 # ggsave("TimeToElim_full.jpeg", width = 8, height = 6,
 #        units = "in")
@@ -790,6 +824,104 @@ re.tab <-filter(re.means, mean.re > 1 & mean.re < 1.25)
 # write.table(re.tab, file="re_table.csv", sep = ",")
 
 # write.table(poss.combos, "poss.combos.csv")
+
+# Full lambda sd ----------
+time_to_elim <- dis.wide %>%
+  group_by(lambda1, lambda2, rep) %>%
+  filter(year >= 2, elim == "True") %>%
+  filter(nweek == min(nweek)) %>%
+  distinct() %>%
+  mutate(lambda2 = factor(lambda2), lambda1=factor(lambda1))
+
+all_combos <- expand_grid(unique(time_to_elim$lambda1),
+                          unique(time_to_elim$lambda2),
+                          unique(time_to_elim$rep))
+colnames(all_combos) <- c("lambda1", "lambda2", "rep")
+
+time_to_elim <- time_to_elim %>%
+  right_join(all_combos, by=c("rep", "lambda1", "lambda2")) %>%
+  mutate(nweek = case_when(is.na(nweek)==T ~ 52*11,
+                           TRUE ~ nweek)) 
+
+rep5 <- vector("list", 20)
+rep5 <- lapply(rep5, function(x) x <- sample(unique(time_to_elim$rep), 
+                                             size = 5, replace = F))
+
+rep5.var <- tibble()
+for(i in 1:20){
+  subst <- time_to_elim %>%
+    filter(rep %in% rep5[[i]]) %>%
+    group_by(lambda1, lambda2) %>%
+    summarise(sd = sd(nweek, na.rm= T)) %>%
+    mutate(num.rep = 5) %>%
+    suppressMessages()
+  
+  rep5.var <- bind_rows(rep5.var, subst)
+}
+
+rep10 <- vector("list", 20)
+rep10 <- lapply(rep10, function(x) x <- sample(unique(time_to_elim$rep), 
+                                               size = 10, replace = F))
+
+rep10.var <- tibble()
+for(i in 1:20){
+  subst <- time_to_elim %>%
+    filter(rep %in% rep10[[i]]) %>%
+    group_by(lambda1, lambda2) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 10) %>%
+    suppressMessages()
+  
+  rep10.var <- bind_rows(rep10.var, subst)
+}
+
+rep15 <- vector("list", 20)
+rep15 <- lapply(rep15, function(x) x <- sample(unique(time_to_elim$rep), 
+                                               size = 15, replace = F))
+rep15.var <- tibble()
+for(i in 1:20){
+  subst <- time_to_elim %>%
+    filter(rep %in% rep15[[i]]) %>%
+    group_by(lambda1, lambda2) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 15) %>%
+    suppressMessages()
+  
+  rep15.var <- bind_rows(rep15.var, subst)
+}
+
+rep20.var <- time_to_elim %>%
+  group_by(lambda1, lambda2) %>%
+  summarise(sd = sd(nweek)) %>%
+  mutate(num.rep = 20) %>%
+  suppressMessages()
+
+# put 'em all together
+rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var) 
+
+ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+#, fill=factor(num.rep)))+
+  geom_boxplot(fill = 'lightgray') +
+  # scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  # labs(x = "Carrying Capacity", y = "Variance")+
+  labs(x = "# Reps", y = "Standard Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = rep.var, aes(x = factor(lambda1), y = sd, 
+                           fill=factor(num.rep)))+
+  geom_boxplot()+
+  scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  labs(x = "lambda1", y = "St. Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
+ggplot(data = rep.var, aes(x = factor(lambda2), y = sd, 
+                           fill=factor(num.rep)))+
+  geom_boxplot()+
+  scale_fill_viridis_d(end = 0.9, name = "# Reps")+
+  labs(x = "lambda1", y = "St. Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
 
 # Population sizes with disease ------------------
 dis_pop <- dis %>%
