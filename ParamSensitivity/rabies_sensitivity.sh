@@ -1,6 +1,6 @@
 #! /bin/bash
-#SBATCH --array=1-35
-#SBATCH --time=5:00:00
+#SBATCH --array=4
+#SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=1 
 #SBATCH --account=def-tpoisot
 #SBATCH --output=slurm\%x-%a.out 

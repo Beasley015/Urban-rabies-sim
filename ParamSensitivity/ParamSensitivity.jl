@@ -28,15 +28,17 @@ j_mort = [0.015, 0.02, 0.025]
 all_combos = DataFrame(Iterators.product(maxK, a_mort, j_mort))
 =#
 
+#=
 lambda1 = [0.02, 0.0225, 0.025, 0.0275, 0.03, 0.0325, 0.035]
 lambda2 = [0.006, 0.007, 0.008, 0.009, 0.01]
 
 all_combos = DataFrame(Iterators.product(lambda1, lambda2))
+=#
 
 # Assign job 
 job = parse(Int64, get(ENV, "SLURM_ARRAY_TASK_ID", "1"))
 
-params = [all_combos[job,1], all_combos[job,2]] #, all_combos[job,3]]
+#params = [all_combos[job,1], all_combos[job,2]] #, all_combos[job,3]]
 
 # Simulation function
 function the_mega_loop(;years, time_steps, rep, outputs, land_size, maxK, l1, l2, start_cases, amort, jmort)
@@ -135,16 +137,20 @@ outputs = DataFrame([[], [], [], [], [], [],[],[],[],[],[],[],[],[],[]],
 
 
 reps = 30
+landsize = [40,60,80,100]
 
-for rep in 20:reps
-    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=60, maxK=30, l1=params[1],
-                    l2=params[2], start_cases=10, amort = 0.005, jmort=0.025)
-
+for rep in 27:reps
+    the_mega_loop(years=11, time_steps = 52, rep=rep, outputs = outputs, land_size=landsize[job], maxK=30, l1=0.0275,
+                        l2=0.007, start_cases=10, amort=0.005, jmort=0.025)
     # Create filename
-    filename = string("l1", string(params[1]), "l2", string(params[2]), "rep", string(rep), ".csv")
+    filename = string("landsize", string(job), "rep", string(rep), ".csv")
 
     # Save results
     CSV.write(filename, outputs)
 end
 
+# Create filename
+#filename = string("landsize", job, ".csv")
 
+#Save results
+#CSV.write(filename, outputs)

@@ -649,6 +649,9 @@ ggplot(data = rep.var, aes(x = factor(lambda2), y = sd,
 # }
 # 
 # lambda.frame <- do.call(rbind, file.list)
+# prev.lambdas <- read.csv("lambda_full.csv")
+# 
+# lambda.frame <- bind_rows(prev.lambdas, lambda.frame)
 # 
 # write.csv(lambda.frame, "lambda_full.csv")
 # file.remove(filenames)
@@ -658,6 +661,7 @@ dis.wide <- read.csv("lambda_full.csv") %>%
   select(rep, year, week, total_pop, n_infected, 
          n_symptomatic, elim, lambda1, lambda2) %>%
   mutate(nweek = ((year-1)*52)+week)
+gc()
 
 # proportion eliminated
 prop_eliminated <- dis.wide %>%
@@ -665,10 +669,11 @@ prop_eliminated <- dis.wide %>%
   select(rep,lambda1,lambda2) %>%
   group_by(lambda1,lambda2) %>%
   distinct() %>%
-  summarise(prop = n()/20)
+  summarise(prop = n()/30)
 # Elimination ranges from 30% to 70%
 
-unique(prop_eliminated$prop)
+sort(unique(prop_eliminated$prop))
+summary(lm(data = prop_eliminated, prop ~ lambda1+lambda2+lambda1*lambda2))
 
 ggplot(data=prop_eliminated, aes(x=factor(lambda1), y=factor(lambda2),
                                  fill=prop))+
@@ -708,15 +713,15 @@ ggplot(data = time_to_elim, aes(x = lambda1, y = lambda2,
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
 
-ggplot(data = time_to_elim, aes(x = lambda1, y = nweek))+
-  geom_boxplot()
-
-ggplot(data = time_to_elim, aes(x = lambda2, y = nweek))+
-  geom_boxplot()
-
-ggplot(data = time_to_elim, aes(x = lambda1, y = nweek,
-                                fill = lambda2))+
-  geom_boxplot()
+# ggplot(data = time_to_elim, aes(x = lambda1, y = nweek))+
+#   geom_boxplot()
+# 
+# ggplot(data = time_to_elim, aes(x = lambda2, y = nweek))+
+#   geom_boxplot()
+# 
+# ggplot(data = time_to_elim, aes(x = lambda1, y = nweek,
+#                                 fill = lambda2))+
+#   geom_boxplot()
 
 # Start filtering values
 poss.combos <- time_to_elim %>%
@@ -743,7 +748,6 @@ ggplot(data=mean_cases, aes(x=lambda1, y = lambda2,
   labs(x = expression(lambda[1]), y = expression(lambda[2]))+
   theme_bw(base_size = 12)+
   theme(panel.grid = element_blank())
-# Highest l2 generally has too many
 
 poss.combos <- poss.combos %>%
   left_join(mean_cases, by = c("lambda1", "lambda2")) %>%
@@ -890,14 +894,45 @@ for(i in 1:20){
   rep15.var <- bind_rows(rep15.var, subst)
 }
 
-rep20.var <- time_to_elim %>%
+rep20 <- vector("list", 20)
+rep20 <- lapply(rep20, function(x) x <- sample(unique(time_to_elim$rep), 
+                                               size = 20, replace = F))
+rep20.var <- tibble()
+for(i in 1:20){
+  subst <- time_to_elim %>%
+    filter(rep %in% rep20[[i]]) %>%
+    group_by(lambda1, lambda2) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 20) %>%
+    suppressMessages()
+  
+  rep20.var <- bind_rows(rep15.var, subst)
+}
+
+rep25 <- vector("list", 20)
+rep25 <- lapply(rep25, function(x) x <- sample(unique(time_to_elim$rep), 
+                                               size = 25, replace = F))
+rep25.var <- tibble()
+for(i in 1:20){
+  subst <- time_to_elim %>%
+    filter(rep %in% rep25[[i]]) %>%
+    group_by(lambda1, lambda2) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 25) %>%
+    suppressMessages()
+  
+  rep25.var <- bind_rows(rep25.var, subst)
+}
+
+rep30.var <- time_to_elim %>%
   group_by(lambda1, lambda2) %>%
   summarise(sd = sd(nweek)) %>%
-  mutate(num.rep = 20) %>%
+  mutate(num.rep = 30) %>%
   suppressMessages()
 
 # put 'em all together
-rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var) 
+rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var, rep25.var,
+                     rep30.var) 
 
 ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+#, fill=factor(num.rep)))+
   geom_boxplot(fill = 'lightgray') +
@@ -907,7 +942,7 @@ ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+#, fill=factor(num.rep)
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-ggplot(data = rep.var, aes(x = factor(lambda1), y = sd, 
+l1.var <- ggplot(data = rep.var, aes(x = factor(lambda1), y = sd, 
                            fill=factor(num.rep)))+
   geom_boxplot()+
   scale_fill_viridis_d(end = 0.9, name = "# Reps")+
@@ -915,20 +950,27 @@ ggplot(data = rep.var, aes(x = factor(lambda1), y = sd,
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
 
-ggplot(data = rep.var, aes(x = factor(lambda2), y = sd, 
+l2.var <- ggplot(data = rep.var, aes(x = factor(lambda2), y = sd, 
                            fill=factor(num.rep)))+
   geom_boxplot()+
   scale_fill_viridis_d(end = 0.9, name = "# Reps")+
   labs(x = "lambda1", y = "St. Deviation")+
   theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
+
+(l1.var|l2.var)+
+  plot_annotation(tag_levels = 'a')+
+  plot_layout(guides = 'collect')
 
 # Population sizes with disease ------------------
-dis_pop <- dis %>%
+dis_pop <- read.csv("lambda_full.csv") %>%
+  select(rep, year, week, total_pop, lambda1, lambda2) %>%
+  mutate(nweek = ((year-1)*52)+week) %>%
   group_by(nweek,lambda1, lambda2) %>%
   mutate(lambda1=factor(lambda1), lambda2=factor(lambda2)) %>%
-  filter(lambda1 %in% c(0.015, 0.025) & lambda2 %in% c(0.002, 0.005)) %>%
-  filter((lambda1 == 0.015 & lambda2 == 0.002) | (lambda1 == 0.025 & lambda2 == 0.005))
+  filter(lambda1 %in% c(0.02, 0.0275, 0.0325) & lambda2 %in% c(0.007, 0.008)) %>%
+  filter((lambda1 == 0.02 & lambda2 == 0.007) | (lambda1 == 0.0275 & lambda2 == 0.007)
+         | (lambda1==0.0325 & lambda2==0.008))
 
 ggplot(data = dis_pop, aes (x = nweek, y = total_pop,
                             color = lambda1))+
@@ -942,6 +984,25 @@ ggplot(data = dis_pop, aes (x = nweek, y = total_pop,
 
 # ggsave(filename = "pop_change.jpeg", width = 8, height = 6,
 #        units = "in")
+
+# Compare to seasonal pop densities
+pop.season <- read.csv("lambda_full.csv") %>%
+  select(rep, year, week, total_pop, lambda1, lambda2) %>%
+  mutate(lambda1=factor(lambda1), lambda2=factor(lambda2)) %>%
+  filter(lambda1 %in% c(0.02, 0.0275, 0.0325) & lambda2 %in% c(0.007, 0.008)) %>%
+  filter((lambda1 == 0.02 & lambda2 == 0.007) | (lambda1 == 0.0275 & lambda2 == 0.007)
+         | (lambda1==0.0325 & lambda2==0.008)) %>%
+  filter(week %in% c(28:31, 41:44)) %>%
+  mutate(season = case_when(week %in% c(28:31) == T ~ "Summer",
+                            TRUE ~ "Fall")) %>%
+  group_by(season,lambda1, lambda2) %>%
+  summarise(mean_dens = mean(total_pop)/625, min = min(total_pop)/625,
+            max = max(total_pop)/625)
+
+pop.season %>%
+  mutate(likely = case_when(season=="Summer" & mean_dens>12 & mean_dens<18 ~ "YES",
+                            season=="Fall" & mean_dens>8 & mean_dens<14 ~ "YES",
+                            TRUE ~ "NO")) 
 
 # Birth pulse ---------
 births <- pop %>%
@@ -959,6 +1020,23 @@ end.year <- pop %>%
 summary(end.year$mean_growth)
 
 # Starting cases ------------------
+# Merge files
+# filenames <- list.files(pattern = "startcase")
+# filenames <- filenames[str_detect(filenames, ".csv")]
+# 
+# file.list <- list()
+# for(i in 1:length(filenames)){
+#   file.list[[i]] <- read.csv(filenames[i])
+# }
+# 
+# start.frame <- do.call(rbind, file.list)
+# start.og <- read.csv("starting_cases.csv")[,-1]
+# 
+# start.frame <- rbind(start.frame, start.og)
+# 
+# write.csv(start.frame, "starting_cases.csv")
+# file.remove(filenames)
+
 # Read it in
 stcase <- read.csv("starting_cases.csv") %>%
   filter(year > 1) %>%
@@ -968,7 +1046,7 @@ stcase <- read.csv("starting_cases.csv") %>%
 
 # Differences in elimination probability?
 stcase.elim <- stcase %>%
-  filter(elim == "True") %>%
+  filter(elim == "True", rep <= 20) %>%
   select(rep,starting_cases) %>%
   group_by(starting_cases) %>%
   distinct() %>%
@@ -1086,7 +1164,115 @@ re.mod <- aov(Re~factor(starting_cases), data=re.df)
 TukeyHSD(re.mod)
 # it's a gradient, slowly increasing
 
+# Starting cases: variance tests ----------------
+stcase.time <- stcase %>%
+  group_by(starting_cases, rep) %>%
+  filter(elim == "True") %>%
+  filter(nweek == min(nweek)) %>%
+  distinct() %>%
+  mutate(starting_cases=factor(starting_cases))
+
+rep5 <- vector("list", 20)
+rep5 <- lapply(rep5, function(x) x <- sample(unique(stcase.time$rep), 
+                                             size = 5, replace = F))
+
+rep5.var <- tibble()
+for(i in 1:20){
+  subst <- stcase.time %>%
+    filter(rep %in% rep5[[i]]) %>%
+    group_by(starting_cases) %>%
+    summarise(sd = sd(nweek, na.rm= T)) %>%
+    mutate(num.rep = 5)
+  
+  rep5.var <- bind_rows(rep5.var, subst)
+}
+
+rep10 <- vector("list", 20)
+rep10 <- lapply(rep10, function(x) x <- sample(unique(stcase.time$rep), 
+                                               size = 10, replace = F))
+
+rep10.var <- tibble()
+for(i in 1:20){
+  subst <- stcase.time %>%
+    filter(rep %in% rep10[[i]]) %>%
+    group_by(starting_cases) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 10)
+  
+  rep10.var <- bind_rows(rep10.var, subst)
+}
+
+rep15 <- vector("list", 20)
+rep15 <- lapply(rep15, function(x) x <- sample(unique(stcase.time$rep), 
+                                               size = 15, replace = F))
+rep15.var <- tibble()
+for(i in 1:20){
+  subst <- stcase.time %>%
+    filter(rep %in% rep15[[i]]) %>%
+    group_by(starting_cases) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 15)
+  
+  rep15.var <- bind_rows(rep15.var, subst)
+}
+
+rep20 <- vector("list", 20)
+rep20 <- lapply(rep20, function(x) x <- sample(unique(stcase.time$rep), 
+                                               size = 20, replace = F))
+rep20.var <- tibble()
+for(i in 1:20){
+  subst <- stcase.time %>%
+    filter(rep %in% rep20[[i]]) %>%
+    group_by(starting_cases) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 20)
+  
+  rep20.var <- bind_rows(rep20.var, subst)
+}
+
+rep25 <- vector("list", 20)
+rep25 <- lapply(rep25, function(x) x <- sample(unique(stcase.time$rep), 
+                                               size = 25, replace = F))
+rep25.var <- tibble()
+for(i in 1:20){
+  subst <- stcase.time %>%
+    filter(rep %in% rep25[[i]]) %>%
+    group_by(starting_cases) %>%
+    summarise(sd = sd(nweek)) %>%
+    mutate(num.rep = 25)
+  
+  rep25.var <- bind_rows(rep25.var, subst)
+}
+
+rep30.var <- stcase.time %>%
+  group_by(starting_cases) %>%
+  summarise(sd = sd(nweek)) %>%
+  mutate(num.rep = 30)
+
+# put 'em all together
+rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var,
+                     rep25.var)#, rep30.var) 
+
+ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+
+  geom_boxplot(fill = 'lightgray') +
+  labs(x = "# Reps", y = "Standard Deviation")+
+  theme_bw(base_size = 14)+
+  theme(panel.grid = element_blank())
+
 # Landscape size --------------------
+# Merge files
+# filenames <- list.files(pattern = "landsize")
+# 
+# file.list <- list()
+# for(i in 1:length(filenames)){
+#   file.list[[i]] <- read.csv(filenames[i])
+# }
+# 
+# land.frame <- do.call(rbind, file.list)
+# 
+# write.csv(land.frame, "land_size.csv")
+# file.remove(filenames)
+
 # Read in outputs
 landsims <- read.csv("land_size.csv") %>%
   filter(year > 1) %>%
@@ -1100,7 +1286,7 @@ landsims.elim <- landsims %>%
   select(rep,land_size) %>%
   group_by(land_size) %>%
   distinct() %>%
-  summarise(prop = n()/20)
+  summarise(prop = n()/30)
 # Strong decreases in elim probability until 80x80
 
 # Prevalence
@@ -1122,6 +1308,111 @@ ggplot(land.prev, aes(x = factor(land_size), y = med_prev))+
   geom_boxplot(fill = 'lightgray') +
   labs(x = "Landscape size (# cells)", y = "Median Rabies Prevalence")+
   theme_bw(base_size = 12)+
+  theme(panel.grid = element_blank())
+
+# Landscape sizes: variance tests -------------------
+# Read in outputs
+landsims <- read.csv("land_size.csv") %>%
+  filter(year > 1) %>%
+  select(rep, year, week, land_size, total_pop, n_infected,
+         n_symptomatic, elim) %>%
+  mutate(nweek = ((year-1)*52)+week)
+
+# Prevalence
+land.prev <- landsims %>%
+  filter(elim == "False") %>%
+  select(rep, land_size, nweek, n_symptomatic, total_pop) %>%
+  mutate(prev = n_symptomatic/total_pop) %>%
+  mutate(land_size = case_when(land_size == 40 ~ "40x40",
+                               land_size == 60 ~ "60x60",
+                               land_size == 80 ~ "80x80",
+                               TRUE ~ "100x100")) %>%
+  mutate(land_size = factor(land_size, 
+                            levels = c("40x40", "60x60", "80x80", 
+                                       "100x100"))) %>%
+  group_by(rep, land_size) %>%
+  summarise(med_prev = median(prev))
+
+rep5 <- vector("list", 20)
+rep5 <- lapply(rep5, function(x) x <- sample(unique(land.prev$rep), 
+                                             size = 5, replace = F))
+
+rep5.var <- tibble()
+for(i in 1:20){
+  subst <- land.prev %>%
+    filter(rep %in% rep5[[i]]) %>%
+    group_by(land_size) %>%
+    summarise(sd = sd(med_prev, na.rm= T)) %>%
+    mutate(num.rep = 5)
+  
+  rep5.var <- bind_rows(rep5.var, subst)
+}
+
+rep10 <- vector("list", 20)
+rep10 <- lapply(rep10, function(x) x <- sample(unique(land.prev$rep), 
+                                               size = 10, replace = F))
+
+rep10.var <- tibble()
+for(i in 1:20){
+  subst <- land.prev %>%
+    filter(rep %in% rep10[[i]]) %>%
+    group_by(land_size) %>%
+    summarise(sd = sd(med_prev)) %>%
+    mutate(num.rep = 10)
+  
+  rep10.var <- bind_rows(rep10.var, subst)
+}
+
+rep15 <- vector("list", 20)
+rep15 <- lapply(rep15, function(x) x <- sample(unique(land.prev$rep), 
+                                               size = 15, replace = F))
+rep15.var <- tibble()
+for(i in 1:20){
+  subst <- land.prev %>%
+    filter(rep %in% rep15[[i]]) %>%
+    group_by(land_size) %>%
+    summarise(sd = sd(med_prev)) %>%
+    mutate(num.rep = 15)
+  
+  rep15.var <- bind_rows(rep15.var, subst)
+}
+
+rep20 <- vector("list", 20)
+rep20 <- lapply(rep20, function(x) x <- sample(unique(land.prev$rep), 
+                                               size = 20, replace = F))
+rep20.var <- tibble()
+for(i in 1:20){
+  subst <- land.prev %>%
+    filter(rep %in% rep20[[i]]) %>%
+    group_by(land_size) %>%
+    summarise(sd = sd(med_prev)) %>%
+    mutate(num.rep = 20)
+  
+  rep20.var <- bind_rows(rep20.var, subst)
+}
+
+
+rep25 <- vector("list", 20)
+rep25 <- lapply(rep15, function(x) x <- sample(unique(land.prev$rep), 
+                                               size = 25, replace = F))
+rep25.var <- tibble()
+for(i in 1:20){
+  subst <- land.prev %>%
+    filter(rep %in% rep25[[i]]) %>%
+    group_by(land_size) %>%
+    summarise(sd = sd(med_prev)) %>%
+    mutate(num.rep = 25)
+  
+  rep25.var <- bind_rows(rep25.var, subst)
+}
+
+# put 'em all together
+rep.var <- bind_rows(rep5.var, rep10.var, rep15.var, rep20.var, rep25.var) 
+
+ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+
+  geom_boxplot(fill = 'lightgray') +
+  labs(x = "# Reps", y = "Standard Deviation")+
+  theme_bw(base_size = 14)+
   theme(panel.grid = element_blank())
   
 # VT rabies cases: open data -------------
