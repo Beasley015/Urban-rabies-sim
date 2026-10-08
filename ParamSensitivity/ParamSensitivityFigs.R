@@ -1275,7 +1275,7 @@ ggplot(data = rep.var, aes(x = factor(num.rep), y = sd))+
 
 # Read in outputs
 landsims <- read.csv("land_size.csv") %>%
-  filter(year > 1) %>%
+  filter(year > 1, rep <= 20) %>%
   select(rep, year, week, land_size, total_pop, n_infected,
          n_symptomatic, elim) %>%
   mutate(nweek = ((year-1)*52)+week)
@@ -1286,7 +1286,7 @@ landsims.elim <- landsims %>%
   select(rep,land_size) %>%
   group_by(land_size) %>%
   distinct() %>%
-  summarise(prop = n()/30)
+  summarise(prop = n()/20)
 # Strong decreases in elim probability until 80x80
 
 # Prevalence
@@ -1303,6 +1303,9 @@ land.prev <- landsims %>%
                                        "100x100"))) %>%
   group_by(rep, land_size) %>%
   summarise(med_prev = median(prev))
+
+summary(aov(data=land.prev, med_prev~land_size))
+TukeyHSD(aov(data = land.prev, med_prev~land_size))
 
 ggplot(land.prev, aes(x = factor(land_size), y = med_prev))+
   geom_boxplot(fill = 'lightgray') +

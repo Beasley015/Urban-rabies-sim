@@ -191,3 +191,19 @@ j.plt <- ggplot(mapping=aes(j.mvt))+
 
 (a.plt | j.plt) +
   plot_annotation(tag_levels = "a")
+
+# Sample movements
+juvies <- sample(unique(disp.points$id[disp.points$age == "J"]), 15, 
+                 replace = F)
+adults <- sample(unique(disp.points$id[disp.points$age == "A"]), 10, 
+                 replace = F)
+
+disp.subset <- disp.points %>%
+  filter(id %in% c(juvies, adults))
+
+ggplot(data = disp.subset, aes(x = x, y = y, color = factor(age), group = id))+
+  geom_line(linewidth = 1.5)+
+  scale_color_viridis_d(end = 0.8, name = "Age")+
+  labs(x = "X", y = "Y")+
+  theme_bw(base_size = 14)+
+  theme(legend.position = "none")
